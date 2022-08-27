@@ -4,44 +4,54 @@ import os
 import pickle
 import subprocess
 import time
-
 import qdarkstyle
-from rich import console
-
+import sys
 import requests
 from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
-    QTableWidgetItem, QMessageBox, QAbstractItemView, QHeaderView, QLabel
-from PyQt6 import QtCore, QtWidgets
+    QMessageBox, QAbstractItemView, QHeaderView, QLabel
+from PyQt6 import QtCore, QtWidgets, QtGui
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont
-import sys
 
-console = console.Console()
 gachaUrl = ""
 gachaType = {"新手祈愿": "100", "常驻祈愿": "200", "角色祈愿": "301", "武器祈愿": "302"}
 gachaTarget = ""
+
+basedir = os.path.dirname(__file__)
+
+try:
+    from ctypes import windll  # Only Windows.
+    myAppId = 'AuroraZiling.GPE.GPE.1'
+    windll.shell32.SetCurrentProcessExplicitAppUserModelID(myAppId)
+except ImportError:
+    pass
 
 
 class MainForm(QMainWindow):
     def __init__(self):
         super(MainForm, self).__init__()
         self.data_dir = f"C:/Users/{getpass.getuser()}/AppData/LocalLow/miHoYo/原神"
-        self.setWindowTitle("Genshin Pray")
+        self.setWindowTitle("Genshin Pray Export")
         self.setFixedSize(510, 600)
         self.setStyleSheet(qdarkstyle.load_stylesheet())
 
-        # File Check
-        if not os.path.exists("pray_history"):
-            os.mkdir("pray_history")
-
-        # Pray List Init
         self.loaded_pray_list = []
         self.pray_100, self.pray_200, self.pray_301, self.pray_302 = None, None, None, None
-        self.load_pray_list()
+
+        # File Check
+        if not os.path.exists("assets"):
+            QMessageBox.critical(self, "错误", "未找到必要模块，请检查目录(assets)是否存在")
+            sys.exit()
+        if not os.path.exists("modules"):
+            QMessageBox.critical(self, "错误", "未找到必要模块，请检查目录(modules)是否存在")
+            sys.exit()
+        if not os.path.exists("pray_history"):
+            os.mkdir("pray_history")
 
         # Multi-process
         self.get_pray_list_thread = PrayListThread()
 
+        # UI Design
         self.widget = QWidget()
         self.setCentralWidget(self.widget)
         self.all_layout = QVBoxLayout(self)
@@ -80,11 +90,11 @@ class MainForm(QMainWindow):
         self.initUI()
         self.debug_code()
 
-    # UI Part
     def debug_code(self):
         # self.addRow('武器', '鸦羽弓', '2022-08-13 23:17:09')
         pass
 
+    # UI Part
     def allBtnStatusChange(self, is_enabled: bool):
         self.pray_mode_100_btn.setEnabled(is_enabled)
         self.pray_mode_200_btn.setEnabled(is_enabled)
@@ -94,16 +104,18 @@ class MainForm(QMainWindow):
         self.export_btn.setEnabled(is_enabled)
         self.settings_btn.setEnabled(is_enabled)
 
-
     def initUI(self):
         # Top Layout
         self.list_label.setFont(QFont("Microsoft YaHei", 13))
         self.refresh_btn.setFixedWidth(90)
         self.export_btn.setFixedWidth(90)
         self.settings_btn.setFixedWidth(90)
+        self.export_btn.setEnabled(False)  # Locked
+        self.settings_btn.setEnabled(False)  # Locked
 
         self.refresh_btn.clicked.connect(self.refreshData)
         # Pray List
+        self.load_pray_list()
         self.pray_list.setColumnCount(3)
         self.pray_list.setHorizontalHeaderLabels(["类型", "名称", "时间"])
         self.pray_list.setColumnWidth(0, 60)
@@ -182,7 +194,7 @@ class MainForm(QMainWindow):
             os.remove("requestUrl.txt")
         time.sleep(0.5)
         subprocess.Popen("modules/GenshinProxyServer.exe")
-        # TODO:如果直接关闭，如何处理while
+        # Bug:如果直接关闭，如何处理while
         while not os.path.exists("requestUrl.txt"):
             time.sleep(0.1)
         global gachaUrl
@@ -285,6 +297,7 @@ class PrayListThread(QThread):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setWindowIcon(QtGui.QIcon(os.path.join(basedir, 'assets/icon.ico')))
     demo = MainForm()
     demo.show()
     sys.exit(app.exec())
