@@ -4,6 +4,8 @@ import os
 import pickle
 import subprocess
 import time
+
+import qdarkstyle
 from rich import console
 
 import requests
@@ -26,6 +28,7 @@ class MainForm(QMainWindow):
         self.data_dir = f"C:/Users/{getpass.getuser()}/AppData/LocalLow/miHoYo/原神"
         self.setWindowTitle("Genshin Pray")
         self.setFixedSize(510, 600)
+        self.setStyleSheet(qdarkstyle.load_stylesheet())
 
         # File Check
         if not os.path.exists("pray_history"):
