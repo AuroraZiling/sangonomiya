@@ -10,5 +10,6 @@
 
 `Genshin_Pray_Export.zip` 为免安装解压版
 
-[下载/Download](https://auroraziling.lanzouv.com/b02jk3ycb)
+### Release 1
+[下载/Download](https://auroraziling.lanzouv.com/b02jk3ydc)
 密码:0000
