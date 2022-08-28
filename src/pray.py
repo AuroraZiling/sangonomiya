@@ -83,7 +83,9 @@ class MainForm(QMainWindow):
 
         self.bottom_h_layout = QHBoxLayout(self)
         self.status_label = QLabel("状态: 无")
+        self.update_time_label = QLabel("数据时间: 未知")
         self.bottom_h_layout.addWidget(self.status_label)
+        self.bottom_h_layout.addWidget(self.update_time_label)
         self.all_layout.addLayout(self.bottom_h_layout)
 
         self.widget.setLayout(self.all_layout)
@@ -101,8 +103,9 @@ class MainForm(QMainWindow):
         self.pray_mode_301_btn.setEnabled(is_enabled)
         self.pray_mode_302_btn.setEnabled(is_enabled)
         self.refresh_btn.setEnabled(is_enabled)
-        self.export_btn.setEnabled(is_enabled)
-        self.settings_btn.setEnabled(is_enabled)
+        # Locked
+        # self.export_btn.setEnabled(is_enabled)
+        # self.settings_btn.setEnabled(is_enabled)
 
     def initUI(self):
         # Top Layout
@@ -158,6 +161,7 @@ class MainForm(QMainWindow):
         if "新手祈愿" in self.loaded_pray_list:
             self.refreshList("新手祈愿")
             self.status_label.setText("状态: 已读取新手祈愿")
+            self.update_time_label.setText("数据时间: " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime((os.path.getmtime('pray_history/100.pickle')))))
         else:
             QMessageBox.warning(self, "警告", "未找到新手祈愿记录，请更新数据后重试")
             return
@@ -166,6 +170,8 @@ class MainForm(QMainWindow):
         if "常驻祈愿" in self.loaded_pray_list:
             self.refreshList("常驻祈愿")
             self.status_label.setText("状态: 已读取常驻祈愿")
+            self.update_time_label.setText("数据时间: " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(
+                (os.path.getmtime('pray_history/200.pickle')))))
         else:
             QMessageBox.warning(self, "警告", "未找到常驻祈愿记录，请更新数据后重试")
             return
@@ -174,6 +180,8 @@ class MainForm(QMainWindow):
         if "角色祈愿" in self.loaded_pray_list:
             self.refreshList("角色祈愿")
             self.status_label.setText("状态: 已读取角色祈愿")
+            self.update_time_label.setText("数据时间: " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(
+                (os.path.getmtime('pray_history/301.pickle')))))
         else:
             QMessageBox.warning(self, "警告", "未找到角色祈愿记录，请更新数据后重试")
             return
@@ -182,6 +190,8 @@ class MainForm(QMainWindow):
         if "武器祈愿" in self.loaded_pray_list:
             self.refreshList("武器祈愿")
             self.status_label.setText("状态: 已读取武器祈愿")
+            self.update_time_label.setText("数据时间: " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(
+                (os.path.getmtime('pray_history/302.pickle')))))
         else:
             QMessageBox.warning(self, "警告", "未找到武器祈愿记录，请更新数据后重试")
             return
