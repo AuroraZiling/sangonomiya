@@ -48,6 +48,7 @@ class MainForm(QMainWindow):
         if not os.path.exists("pray_history"):
             os.mkdir("pray_history")
 
+
         # Multi-process
         self.get_pray_list_thread = PrayListThread()
 
@@ -203,10 +204,11 @@ class MainForm(QMainWindow):
         if os.path.exists("requestUrl.txt"):
             os.remove("requestUrl.txt")
         time.sleep(0.5)
-        subprocess.Popen("modules/GenshinProxyServer.exe")
-        # Bug:如果直接关闭，如何处理while
-        while not os.path.exists("requestUrl.txt"):
-            time.sleep(0.1)
+        ex_module = subprocess.Popen("modules/GenshinProxyServer.exe")
+        ex_module.wait()
+        if not os.path.exists("requestUrl.txt"):
+            QMessageBox.information(self, "提示", "代理服务器已被人为关闭")
+            return
         global gachaUrl
         gachaUrl = open("requestUrl.txt", 'r').read()
         self.pray_list_thread_execute()
