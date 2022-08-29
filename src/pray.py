@@ -21,6 +21,7 @@ basedir = os.path.dirname(__file__)
 
 try:
     from ctypes import windll  # Only Windows.
+
     myAppId = 'AuroraZiling.GPE.GPE.1'
     windll.shell32.SetCurrentProcessExplicitAppUserModelID(myAppId)
 except ImportError:
@@ -30,6 +31,8 @@ except ImportError:
 class MainForm(QMainWindow):
     def __init__(self):
         super(MainForm, self).__init__()
+        self.target_uid = ""
+        self.all_data_list = {}
         self.data_dir = f"C:/Users/{getpass.getuser()}/AppData/LocalLow/miHoYo/原神"
         self.setWindowTitle("Genshin Pray Export")
         self.setFixedSize(510, 600)
@@ -37,17 +40,6 @@ class MainForm(QMainWindow):
 
         self.loaded_pray_list = []
         self.pray_100, self.pray_200, self.pray_301, self.pray_302 = None, None, None, None
-
-        # File Check
-        if not os.path.exists("assets"):
-            QMessageBox.critical(self, "错误", "未找到必要模块，请检查目录(assets)是否存在")
-            sys.exit()
-        if not os.path.exists("modules"):
-            QMessageBox.critical(self, "错误", "未找到必要模块，请检查目录(modules)是否存在")
-            sys.exit()
-        if not os.path.exists("pray_history"):
-            os.mkdir("pray_history")
-
 
         # Multi-process
         self.get_pray_list_thread = PrayListThread()
@@ -60,7 +52,7 @@ class MainForm(QMainWindow):
         self.top_layout = QHBoxLayout(self)
         self.list_label = QLabel("祈愿记录")
         self.refresh_btn = QPushButton("更新数据")
-        self.export_btn = QPushButton("导出Excel")
+        self.export_btn = QPushButton("导出")
         self.settings_btn = QPushButton("设置")
         self.top_layout.addWidget(self.list_label)
         self.top_layout.addWidget(self.refresh_btn)
@@ -84,17 +76,73 @@ class MainForm(QMainWindow):
 
         self.bottom_h_layout = QHBoxLayout(self)
         self.status_label = QLabel("状态: 无")
+        self.current_uid_label = QLabel("UID: 未知")
         self.update_time_label = QLabel("数据时间: 未知")
         self.bottom_h_layout.addWidget(self.status_label)
+        self.bottom_h_layout.addWidget(self.current_uid_label)
         self.bottom_h_layout.addWidget(self.update_time_label)
         self.all_layout.addLayout(self.bottom_h_layout)
 
         self.widget.setLayout(self.all_layout)
+        self.pre_generate()
+        self.file_check()
         self.initUI()
         self.debug_code()
 
+    def pre_generate(self):
+        for each_dir in os.listdir("pray_history"):
+            self.all_data_list.update({each_dir: {"data_100": {"data": [], "data_time": ""},
+                                                  "data_200": {"data": [], "data_time": ""},
+                                                  "data_301": {"data": [], "data_time": ""},
+                                                  "data_302": {"data": [], "data_time": ""}}})
+            if os.path.exists(f"pray_history/{each_dir}/100.pickle"):
+                data_100 = pickle.load(open(f"pray_history/{each_dir}/100.pickle", "rb"))
+                data_time_100 = time.strftime("%Y-%m-%d %H:%M:%S",
+                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/100.pickle"))))
+                self.all_data_list[each_dir]["data_100"]["data"] = data_100
+                self.loaded_pray_list.append("新手祈愿")
+                self.pray_100 = data_100
+                self.all_data_list[each_dir]["data_100"]["data_time"] = data_time_100
+            if os.path.exists(f"pray_history/{each_dir}/200.pickle"):
+                data_200 = pickle.load(open(f"pray_history/{each_dir}/200.pickle", "rb"))
+                data_time_200 = time.strftime("%Y-%m-%d %H:%M:%S",
+                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/200.pickle"))))
+                self.all_data_list[each_dir]["data_200"]["data"] = data_200
+                self.loaded_pray_list.append("常驻祈愿")
+                self.pray_200 = data_200
+                self.all_data_list[each_dir]["data_200"]["data_time"] = data_time_200
+            if os.path.exists(f"pray_history/{each_dir}/301.pickle"):
+                data_301 = pickle.load(open(f"pray_history/{each_dir}/301.pickle", "rb"))
+                data_time_301 = time.strftime("%Y-%m-%d %H:%M:%S",
+                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/301.pickle"))))
+                self.all_data_list[each_dir]["data_301"]["data"] = data_301
+                self.loaded_pray_list.append("角色祈愿")
+                self.pray_301 = data_301
+                self.all_data_list[each_dir]["data_301"]["data_time"] = data_time_301
+            if os.path.exists(f"pray_history/{each_dir}/302.pickle"):
+                data_302 = pickle.load(open(f"pray_history/{each_dir}/302.pickle", "rb"))
+                data_time_302 = time.strftime("%Y-%m-%d %H:%M:%S",
+                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/302.pickle"))))
+                self.all_data_list[each_dir]["data_302"]["data"] = data_302
+                self.loaded_pray_list.append("武器祈愿")
+                self.pray_302 = data_302
+                self.all_data_list[each_dir]["data_302"]["data_time"] = data_time_302
+        # Pre: 多UID支持预备
+        if self.all_data_list:
+            self.target_uid = list(self.all_data_list.keys())[0]
+            self.current_uid_label.setText(f"UID: {self.target_uid}")
+
+    def file_check(self):
+        if not os.path.exists("assets"):
+            QMessageBox.critical(self, "错误", "未找到必要模块，请检查目录(assets)是否存在")
+            sys.exit()
+        if not os.path.exists("modules"):
+            QMessageBox.critical(self, "错误", "未找到必要模块，请检查目录(modules)是否存在")
+            sys.exit()
+        if not os.path.exists("pray_history"):
+            os.mkdir("pray_history")
+
     def debug_code(self):
-        # self.addRow('武器', '鸦羽弓', '2022-08-13 23:17:09')
         pass
 
     # UI Part
@@ -119,7 +167,6 @@ class MainForm(QMainWindow):
 
         self.refresh_btn.clicked.connect(self.refreshData)
         # Pray List
-        self.load_pray_list()
         self.pray_list.setColumnCount(3)
         self.pray_list.setHorizontalHeaderLabels(["类型", "名称", "时间"])
         self.pray_list.setColumnWidth(0, 60)
@@ -137,64 +184,41 @@ class MainForm(QMainWindow):
         self.pray_mode_301_btn.clicked.connect(self.pray_list_301_change)
         self.pray_mode_302_btn.clicked.connect(self.pray_list_302_change)
 
-    def load_pray_list(self):
-        self.loaded_pray_list = []
-        self.pray_100, self.pray_200, self.pray_301, self.pray_302 = None, None, None, None
-        if os.path.exists("pray_history/100.pickle"):
-            self.loaded_pray_list.append("新手祈愿")
-            with open('pray_history/100.pickle', 'rb') as f:
-                self.pray_100 = pickle.load(f)
-        if os.path.exists("pray_history/200.pickle"):
-            self.loaded_pray_list.append("常驻祈愿")
-            with open('pray_history/200.pickle', 'rb') as f:
-                self.pray_200 = pickle.load(f)
-        if os.path.exists("pray_history/301.pickle"):
-            self.loaded_pray_list.append("角色祈愿")
-            with open('pray_history/301.pickle', 'rb') as f:
-                self.pray_301 = pickle.load(f)
-        if os.path.exists("pray_history/302.pickle"):
-            self.loaded_pray_list.append("武器祈愿")
-            with open('pray_history/302.pickle', 'rb') as f:
-                self.pray_302 = pickle.load(f)
-
     # Pray Mode Part
     def pray_list_100_change(self):
         if "新手祈愿" in self.loaded_pray_list:
             self.refreshList("新手祈愿")
             self.status_label.setText("状态: 已读取新手祈愿")
-            self.update_time_label.setText("数据时间: " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime((os.path.getmtime('pray_history/100.pickle')))))
+            self.update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_100']['data_time']}")
         else:
-            QMessageBox.warning(self, "警告", "未找到新手祈愿记录，请更新数据后重试")
+            QMessageBox.warning(self, "警告", "未找到新手祈愿记录，请更新数据后重试\n也有可能没抽过")
             return
 
     def pray_list_200_change(self):
         if "常驻祈愿" in self.loaded_pray_list:
             self.refreshList("常驻祈愿")
             self.status_label.setText("状态: 已读取常驻祈愿")
-            self.update_time_label.setText("数据时间: " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(
-                (os.path.getmtime('pray_history/200.pickle')))))
+            self.update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_200']['data_time']}")
         else:
-            QMessageBox.warning(self, "警告", "未找到常驻祈愿记录，请更新数据后重试")
+            QMessageBox.warning(self, "警告", "未找到常驻祈愿记录，请更新数据后重试\n也有可能没抽过")
             return
 
     def pray_list_301_change(self):
         if "角色祈愿" in self.loaded_pray_list:
             self.refreshList("角色祈愿")
             self.status_label.setText("状态: 已读取角色祈愿")
-            self.update_time_label.setText("数据时间: " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(
-                (os.path.getmtime('pray_history/301.pickle')))))
+            self.update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_301']['data_time']}")
         else:
-            QMessageBox.warning(self, "警告", "未找到角色祈愿记录，请更新数据后重试")
+            QMessageBox.warning(self, "警告", "未找到角色祈愿记录，请更新数据后重试\n也有可能没抽过")
             return
 
     def pray_list_302_change(self):
         if "武器祈愿" in self.loaded_pray_list:
             self.refreshList("武器祈愿")
             self.status_label.setText("状态: 已读取武器祈愿")
-            self.update_time_label.setText("数据时间: " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(
-                (os.path.getmtime('pray_history/302.pickle')))))
+            self.update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_302']['data_time']}")
         else:
-            QMessageBox.warning(self, "警告", "未找到武器祈愿记录，请更新数据后重试")
+            QMessageBox.warning(self, "警告", "未找到武器祈愿记录，请更新数据后重试\n也有可能没抽过")
             return
 
     # Refresh Data Part
@@ -222,7 +246,6 @@ class MainForm(QMainWindow):
     def status_label_change(self, msg):
         self.status_label.setText(f"状态: {msg}")
         if msg == "全部列表读取完毕":
-            self.load_pray_list()
             self.list_label.setText("祈愿列表")
             self.clearList()
             self.allBtnStatusChange(True)
@@ -268,8 +291,9 @@ class MainForm(QMainWindow):
 class PrayListThread(QThread):
     trigger = pyqtSignal(str)
 
-    def __int__(self, parent=None):
+    def __init__(self, parent=None):
         super(PrayListThread, self).__init__(parent)
+        self.uid = ""
 
     def run(self):
         for key in gachaType.keys():
@@ -282,6 +306,7 @@ class PrayListThread(QThread):
             url[-4] = f"gacha_type={gachaTarget}"
             target_url = '&'.join(url)
             rep = requests.get(target_url).json()
+            self.uid = rep['data']["list"][0]['uid']
             while True:
                 try:
                     target_url = target_url.replace(f"page={old_page}", f"page={page}").replace(f"end_id={old_end_id}",
@@ -302,7 +327,9 @@ class PrayListThread(QThread):
                 except IndexError or TypeError:
                     break
             self.trigger.emit(f"{key}读取完毕")
-            with open(f'pray_history/{gachaTarget}.pickle', 'wb') as f:
+            if not os.path.exists(f"pray_history/{self.uid}"):
+                os.mkdir(f"pray_history/{self.uid}")
+            with open(f'pray_history/{self.uid}/{gachaTarget}.pickle', 'wb') as f:
                 pickle.dump(proceed_data, f)
         self.trigger.emit("全部列表读取完毕")
 
