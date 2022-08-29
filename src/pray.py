@@ -84,8 +84,8 @@ class MainForm(QMainWindow):
         self.all_layout.addLayout(self.bottom_h_layout)
 
         self.widget.setLayout(self.all_layout)
-        self.pre_generate()
         self.file_check()
+        self.pre_generate()
         self.initUI()
         self.debug_code()
 
@@ -248,6 +248,7 @@ class MainForm(QMainWindow):
         if msg == "全部列表读取完毕":
             self.list_label.setText("祈愿列表")
             self.clearList()
+            self.pre_generate()
             self.allBtnStatusChange(True)
 
     # Pray List Part
@@ -306,7 +307,10 @@ class PrayListThread(QThread):
             url[-4] = f"gacha_type={gachaTarget}"
             target_url = '&'.join(url)
             rep = requests.get(target_url).json()
-            self.uid = rep['data']["list"][0]['uid']
+            try:
+                self.uid = rep['data']["list"][0]['uid']
+            except IndexError:
+                pass
             while True:
                 try:
                     target_url = target_url.replace(f"page={old_page}", f"page={page}").replace(f"end_id={old_end_id}",

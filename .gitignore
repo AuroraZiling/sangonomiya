@@ -6,3 +6,5 @@
 /build/
 /test/
 /package.ifp
+/Pipfile
+/Pipfile.lock
