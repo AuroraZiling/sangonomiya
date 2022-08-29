@@ -17,6 +17,13 @@ gachaUrl = ""
 gachaType = {"新手祈愿": "100", "常驻祈愿": "200", "角色祈愿": "301", "武器祈愿": "302"}
 gachaTarget = ""
 
+character_5_list = ["提纳里", "钟离", "宵宫", "可莉", "枫原万叶", "荒泷一斗", "夜兰", "魈", "神里绫华", "神里绫人",
+                    "温迪", "八重神子", "甘雨", "申鹤", "优菈", "阿贝多", "胡桃", "达达利亚", "珊瑚宫心海", "雷电将军",
+                    "七七", "刻晴", "迪卢克", "莫娜", "琴"]
+character_4_list = ["柯莱", "鹿野院平藏", "久岐忍", "云堇", "五郎", "托马", "九条裟罗", "罗莎莉亚", "早柚", "雷泽",
+                    "凝光", "菲谢尔", "班尼特", "烟绯", "重云", "芭芭拉", "迪奥娜", "砂糖", "诺艾尔", "凯亚", "辛焱",
+                    "香菱", "北斗", "行秋", "安柏", "丽莎"]
+
 basedir = os.path.dirname(__file__)
 
 try:
@@ -31,6 +38,7 @@ except ImportError:
 class MainForm(QMainWindow):
     def __init__(self):
         super(MainForm, self).__init__()
+        print(len(character_5_list)+len(character_4_list))
         self.target_uid = ""
         self.all_data_list = {}
         self.data_dir = f"C:/Users/{getpass.getuser()}/AppData/LocalLow/miHoYo/原神"
