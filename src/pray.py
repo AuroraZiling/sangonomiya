@@ -7,6 +7,7 @@ import time
 import qdarkstyle
 import sys
 import requests
+from modules import result_list
 from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
     QMessageBox, QAbstractItemView, QHeaderView, QLabel
 from PyQt6 import QtCore, QtWidgets, QtGui
@@ -146,16 +147,6 @@ class MainForm(QMainWindow):
         pass
 
     # UI Part
-    def allBtnStatusChange(self, is_enabled: bool):
-        self.pray_mode_100_btn.setEnabled(is_enabled)
-        self.pray_mode_200_btn.setEnabled(is_enabled)
-        self.pray_mode_301_btn.setEnabled(is_enabled)
-        self.pray_mode_302_btn.setEnabled(is_enabled)
-        self.refresh_btn.setEnabled(is_enabled)
-        # Locked
-        # self.export_btn.setEnabled(is_enabled)
-        # self.settings_btn.setEnabled(is_enabled)
-
     def initUI(self):
         # Top Layout
         self.list_label.setFont(QFont("Microsoft YaHei", 13))
@@ -171,7 +162,7 @@ class MainForm(QMainWindow):
         self.pray_list.setHorizontalHeaderLabels(["类型", "名称", "时间"])
         self.pray_list.setColumnWidth(0, 60)
         self.pray_list.setColumnWidth(1, 180)
-        self.pray_list.setColumnWidth(2, 253)
+        self.pray_list.setColumnWidth(2, 230)
         self.pray_list.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.pray_list.setShowGrid(False)
         self.pray_list.verticalHeader().setHidden(True)
@@ -183,6 +174,16 @@ class MainForm(QMainWindow):
         self.pray_mode_200_btn.clicked.connect(self.pray_list_200_change)
         self.pray_mode_301_btn.clicked.connect(self.pray_list_301_change)
         self.pray_mode_302_btn.clicked.connect(self.pray_list_302_change)
+
+    def allBtnStatusChange(self, is_enabled: bool):
+        self.pray_mode_100_btn.setEnabled(is_enabled)
+        self.pray_mode_200_btn.setEnabled(is_enabled)
+        self.pray_mode_301_btn.setEnabled(is_enabled)
+        self.pray_mode_302_btn.setEnabled(is_enabled)
+        self.refresh_btn.setEnabled(is_enabled)
+        # Locked
+        # self.export_btn.setEnabled(is_enabled)
+        # self.settings_btn.setEnabled(is_enabled)
 
     # Pray Mode Part
     def pray_list_100_change(self):
@@ -223,8 +224,8 @@ class MainForm(QMainWindow):
 
     # Refresh Data Part
     def refreshData(self):
-        if not os.path.exists("python_interact"):
-            open("python_interact", 'w')
+        if not os.path.exists("interact"):
+            open("interact", 'w')
         if os.path.exists("requestUrl.txt"):
             os.remove("requestUrl.txt")
         time.sleep(0.5)
