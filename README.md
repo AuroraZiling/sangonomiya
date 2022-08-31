@@ -18,6 +18,6 @@
 
 ## 目标 / Goals
 
-1. 支持彩色列表
-2. 支持导出 (符合[统一可交换祈愿记录标准](https://github.com/DGP-Studio/Snap.Genshin/wiki/StandardFormat))
-3. 列表显示数据增多 (比如是否属于十连/单抽等)
+- [x] 支持彩色列表
+- [ ] 支持导出 (符合[统一可交换祈愿记录标准](https://github.com/DGP-Studio/Snap.Genshin/wiki/StandardFormat))
+- [ ] 列表显示数据增多 (比如是否属于十连/单抽等)

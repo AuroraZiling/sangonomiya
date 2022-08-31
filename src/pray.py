@@ -12,11 +12,12 @@ from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPu
     QMessageBox, QAbstractItemView, QHeaderView, QLabel
 from PyQt6 import QtCore, QtWidgets, QtGui
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
-from PyQt6.QtGui import QFont
+from PyQt6.QtGui import QFont, QBrush, QColor
 
 gachaUrl = ""
 gachaType = {"新手祈愿": "100", "常驻祈愿": "200", "角色祈愿": "301", "武器祈愿": "302"}
 gachaTarget = ""
+gachaItemLevelColor = {4: QColor(132, 112, 255), 5: QColor(255, 185, 15)}
 
 basedir = os.path.dirname(__file__)
 
@@ -274,6 +275,20 @@ class MainForm(QMainWindow):
         for i in data_list:
             self.addRow(i[0], i[1], i[2])
 
+    def setColor(self, name, row):
+        if name in result_list.weapon_4_list or name in result_list.character_4_list:
+            selected_color = gachaItemLevelColor[4]
+        elif name in result_list.weapon_5_list or name in result_list.character_5_list:
+            selected_color = gachaItemLevelColor[5]
+            self.pray_list.item(row, 0).setForeground(QBrush(QColor(0, 0, 0)))
+            self.pray_list.item(row, 1).setForeground(QBrush(QColor(0, 0, 0)))
+            self.pray_list.item(row, 2).setForeground(QBrush(QColor(0, 0, 0)))
+        else:
+            return
+        self.pray_list.item(row, 0).setBackground(QBrush(selected_color))
+        self.pray_list.item(row, 1).setBackground(QBrush(selected_color))
+        self.pray_list.item(row, 2).setBackground(QBrush(selected_color))
+
     def addRow(self, typ, name, t):
         row = self.pray_list.rowCount()
         self.pray_list.setRowCount(row + 1)
@@ -286,6 +301,7 @@ class MainForm(QMainWindow):
         item = QtWidgets.QTableWidgetItem()
         self.pray_list.setItem(row, 2, item)
         self.pray_list.item(row, 2).setText(t)
+        self.setColor(name, row)
         self.pray_list.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.pray_list.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
 
