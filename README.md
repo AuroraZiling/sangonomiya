@@ -6,15 +6,17 @@
 
 ## 下载 / Download
 
-注:
-
-`setup.exe` 为安装版
-
-`Genshin_Pray_Export.zip` 为免安装解压版
+注：均为自释放压缩包
 
 ### Release 1
-[下载/Download](https://auroraziling.lanzouv.com/b02jk3ydc)
-密码:0000
+[阿里云盘: 下载/Download](https://www.aliyundrive.com/s/rmi1YWstzXv)
+
+[蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/iF7b30am4qkd) *密码: 0000*
+
+### Release 2
+[阿里云盘: 下载/Download](https://www.aliyundrive.com/s/vv2f6pB7wB2)
+
+[蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/iKiEs0am4v6j) *密码: 0000*
 
 ## 目标 / Goals
 
