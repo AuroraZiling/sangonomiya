@@ -15,7 +15,7 @@ from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont, QBrush, QColor
 
 gachaUrl = ""
-gachaType = {"新手祈愿": "100", "常驻祈愿": "200", "角色祈愿": "301", "武器祈愿": "302"}
+gachaType = {"新手祈愿": "100", "常驻祈愿": "200", "角色活动祈愿": "301", "角色活动祈愿-2": "400", "武器祈愿": "302"}
 gachaTarget = ""
 gachaItemLevelColor = {4: QColor(132, 112, 255), 5: QColor(255, 185, 15)}
 
@@ -41,7 +41,7 @@ class MainForm(QMainWindow):
         self.setStyleSheet(qdarkstyle.load_stylesheet())
 
         self.loaded_pray_list = []
-        self.pray_100, self.pray_200, self.pray_301, self.pray_302 = None, None, None, None
+        self.pray_100, self.pray_200, self.pray_301, self.pray_400, self.pray_302 = None, None, None, None, None
 
         # Multi-process
         self.get_pray_list_thread = PrayListThread()
@@ -69,10 +69,12 @@ class MainForm(QMainWindow):
         self.pray_mode_100_btn = QPushButton("新手祈愿")
         self.pray_mode_200_btn = QPushButton("常驻祈愿")
         self.pray_mode_301_btn = QPushButton("角色祈愿")
+        self.pray_mode_400_btn = QPushButton("角色祈愿-2")
         self.pray_mode_302_btn = QPushButton("武器祈愿")
         self.pray_mode_h_layout.addWidget(self.pray_mode_100_btn)
         self.pray_mode_h_layout.addWidget(self.pray_mode_200_btn)
         self.pray_mode_h_layout.addWidget(self.pray_mode_301_btn)
+        self.pray_mode_h_layout.addWidget(self.pray_mode_400_btn)
         self.pray_mode_h_layout.addWidget(self.pray_mode_302_btn)
         self.all_layout.addLayout(self.pray_mode_h_layout)
 
@@ -96,6 +98,7 @@ class MainForm(QMainWindow):
             self.all_data_list.update({each_dir: {"data_100": {"data": [], "data_time": ""},
                                                   "data_200": {"data": [], "data_time": ""},
                                                   "data_301": {"data": [], "data_time": ""},
+                                                  "data_400": {"data": [], "data_time": ""},
                                                   "data_302": {"data": [], "data_time": ""}}})
             if os.path.exists(f"pray_history/{each_dir}/100.pickle"):
                 data_100 = pickle.load(open(f"pray_history/{each_dir}/100.pickle", "rb"))
@@ -121,6 +124,14 @@ class MainForm(QMainWindow):
                 self.loaded_pray_list.append("角色祈愿")
                 self.pray_301 = data_301
                 self.all_data_list[each_dir]["data_301"]["data_time"] = data_time_301
+            if os.path.exists(f"pray_history/{each_dir}/400.pickle"):
+                data_400 = pickle.load(open(f"pray_history/{each_dir}/400.pickle", "rb"))
+                data_time_400 = time.strftime("%Y-%m-%d %H:%M:%S",
+                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/400.pickle"))))
+                self.all_data_list[each_dir]["data_400"]["data"] = data_400
+                self.loaded_pray_list.append("角色祈愿-2")
+                self.pray_400 = data_400
+                self.all_data_list[each_dir]["data_400"]["data_time"] = data_time_400
             if os.path.exists(f"pray_history/{each_dir}/302.pickle"):
                 data_302 = pickle.load(open(f"pray_history/{each_dir}/302.pickle", "rb"))
                 data_time_302 = time.strftime("%Y-%m-%d %H:%M:%S",
@@ -150,7 +161,7 @@ class MainForm(QMainWindow):
     # UI Part
     def initUI(self):
         # Top Layout
-        self.list_label.setFont(QFont("Microsoft YaHei", 13))
+        self.list_label.setFont(QFont("Microsoft YaHei", 11))
         self.refresh_btn.setFixedWidth(90)
         self.export_btn.setFixedWidth(90)
         self.settings_btn.setFixedWidth(90)
@@ -174,12 +185,14 @@ class MainForm(QMainWindow):
         self.pray_mode_100_btn.clicked.connect(self.pray_list_100_change)
         self.pray_mode_200_btn.clicked.connect(self.pray_list_200_change)
         self.pray_mode_301_btn.clicked.connect(self.pray_list_301_change)
+        self.pray_mode_400_btn.clicked.connect(self.pray_list_400_change)
         self.pray_mode_302_btn.clicked.connect(self.pray_list_302_change)
 
     def allBtnStatusChange(self, is_enabled: bool):
         self.pray_mode_100_btn.setEnabled(is_enabled)
         self.pray_mode_200_btn.setEnabled(is_enabled)
         self.pray_mode_301_btn.setEnabled(is_enabled)
+        self.pray_mode_400_btn.setEnabled(is_enabled)
         self.pray_mode_302_btn.setEnabled(is_enabled)
         self.refresh_btn.setEnabled(is_enabled)
         # Locked
@@ -207,11 +220,20 @@ class MainForm(QMainWindow):
 
     def pray_list_301_change(self):
         if "角色祈愿" in self.loaded_pray_list:
-            self.refreshList("角色祈愿")
+            self.refreshList("角色活动祈愿")
             self.status_label.setText("状态: 已读取角色祈愿")
             self.update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_301']['data_time']}")
         else:
             QMessageBox.warning(self, "警告", "未找到角色祈愿记录，请更新数据后重试\n也有可能没抽过")
+            return
+
+    def pray_list_400_change(self):
+        if "角色祈愿-2" in self.loaded_pray_list:
+            self.refreshList("角色活动祈愿-2")
+            self.status_label.setText("状态: 已读取角色祈愿-2")
+            self.update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_400']['data_time']}")
+        else:
+            QMessageBox.warning(self, "警告", "未找到角色祈愿-2记录，请更新数据后重试\n也有可能没抽过")
             return
 
     def pray_list_302_change(self):
@@ -270,6 +292,8 @@ class MainForm(QMainWindow):
             data_list = self.pray_200
         if gachaType[pray_mode] == "301":
             data_list = self.pray_301
+        if gachaType[pray_mode] == "400":
+            data_list = self.pray_400
         if gachaType[pray_mode] == "302":
             data_list = self.pray_302
         for i in data_list:
@@ -314,6 +338,7 @@ class PrayListThread(QThread):
         self.uid = ""
 
     def run(self):
+        export_data = {"info": {"uid": "", "lang": "zh-cn", "export_time": ""}, "list": []}
         for key in gachaType.keys():
             global gachaTarget
             gachaTarget = gachaType[key]
@@ -326,6 +351,7 @@ class PrayListThread(QThread):
             rep = requests.get(target_url).json()
             try:
                 self.uid = rep['data']["list"][0]['uid']
+                export_data['info']['uid'] = self.uid
             except IndexError:
                 pass
             while True:
@@ -336,8 +362,10 @@ class PrayListThread(QThread):
                     if rep["data"] is None:
                         break
                     tmp = rep["data"]["list"]
-                    for i in range(len(tmp)):
-                        proceed_data.append([tmp[i]['item_type'], tmp[i]['name'], tmp[i]['time']])
+                    for i in tmp:
+                        each_data = {"gacha_type": i["gacha_type"], "count": "1", "time": i["time"], "name": "", "item_type": i["item_type"],
+                                     "rank_type": i["rank_type"], "id": i["id"], "uigf_gacha_type": ""}
+                        proceed_data.append([i['item_type'], i['name'], i['time']])
                     self.usleep(500)
                     old_page = page
                     old_end_id = end_id
@@ -352,6 +380,7 @@ class PrayListThread(QThread):
                 os.mkdir(f"pray_history/{self.uid}")
             with open(f'pray_history/{self.uid}/{gachaTarget}.pickle', 'wb') as f:
                 pickle.dump(proceed_data, f)
+        export_data["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.trigger.emit("全部列表读取完毕")
 
 
