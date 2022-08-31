@@ -9,7 +9,7 @@
 注：均为自释放压缩包
 
 ### Release 2 (推荐)
-[阿里云盘: 下载/Download](https://www.aliyundrive.com/s/vv2f6pB7wB2)
+[阿里云盘: 下载/Download](https://www.aliyundrive.com/s/rzJhKpizZ6Z)
 
 [蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/iKiEs0am4v6j) *密码: 0000*
 
