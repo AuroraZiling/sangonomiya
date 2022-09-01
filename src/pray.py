@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import getpass
+import json
 import os
 import pickle
 import subprocess
@@ -16,8 +17,10 @@ from PyQt6.QtGui import QFont, QBrush, QColor
 
 gachaUrl = ""
 gachaType = {"新手祈愿": "100", "常驻祈愿": "200", "角色活动祈愿": "301", "角色活动祈愿-2": "400", "武器祈愿": "302"}
+uigfGachaType = {"100": "100", "200": "200", "301": "301", "400": "301", "302": "302"}
 gachaTarget = ""
 gachaItemLevelColor = {4: QColor(132, 112, 255), 5: QColor(255, 185, 15)}
+export_data = {"info": {"uid": "", "lang": "zh-cn", "export_time": ""}, "list": []}
 
 basedir = os.path.dirname(__file__)
 
@@ -35,11 +38,11 @@ class MainForm(QMainWindow):
         super(MainForm, self).__init__()
         self.target_uid = ""
         self.all_data_list = {}
-        self.data_dir = f"C:/Users/{getpass.getuser()}/AppData/LocalLow/miHoYo/原神"
         self.setWindowTitle("Genshin Pray Export")
         self.setFixedSize(510, 600)
         self.setStyleSheet(qdarkstyle.load_stylesheet())
 
+        # Pray List Init
         self.loaded_pray_list = []
         self.pray_100, self.pray_200, self.pray_301, self.pray_400, self.pray_302 = None, None, None, None, None
 
@@ -165,7 +168,6 @@ class MainForm(QMainWindow):
         self.refresh_btn.setFixedWidth(90)
         self.export_btn.setFixedWidth(90)
         self.settings_btn.setFixedWidth(90)
-        self.export_btn.setEnabled(False)  # Locked
         self.settings_btn.setEnabled(False)  # Locked
 
         self.refresh_btn.clicked.connect(self.refreshData)
@@ -195,8 +197,8 @@ class MainForm(QMainWindow):
         self.pray_mode_400_btn.setEnabled(is_enabled)
         self.pray_mode_302_btn.setEnabled(is_enabled)
         self.refresh_btn.setEnabled(is_enabled)
+        self.export_btn.setEnabled(is_enabled)
         # Locked
-        # self.export_btn.setEnabled(is_enabled)
         # self.settings_btn.setEnabled(is_enabled)
 
     # Pray Mode Part
@@ -245,7 +247,7 @@ class MainForm(QMainWindow):
             QMessageBox.warning(self, "警告", "未找到武器祈愿记录，请更新数据后重试\n也有可能没抽过")
             return
 
-    # Refresh Data Part
+    # Data Update Part
     def refreshData(self):
         if not os.path.exists("interact"):
             open("interact", 'w')
@@ -276,7 +278,6 @@ class MainForm(QMainWindow):
             self.allBtnStatusChange(True)
 
     # Pray List Part
-
     def clearList(self):
         row = self.pray_list.rowCount()
         for i in range(row):
@@ -338,7 +339,7 @@ class PrayListThread(QThread):
         self.uid = ""
 
     def run(self):
-        export_data = {"info": {"uid": "", "lang": "zh-cn", "export_time": ""}, "list": []}
+        export_data_list = []
         for key in gachaType.keys():
             global gachaTarget
             gachaTarget = gachaType[key]
@@ -363,9 +364,10 @@ class PrayListThread(QThread):
                         break
                     tmp = rep["data"]["list"]
                     for i in tmp:
-                        each_data = {"gacha_type": i["gacha_type"], "count": "1", "time": i["time"], "name": "", "item_type": i["item_type"],
-                                     "rank_type": i["rank_type"], "id": i["id"], "uigf_gacha_type": ""}
+                        each_data = {"gacha_type": i["gacha_type"], "count": "1", "time": i["time"], "name": i['name'], "item_type": i["item_type"],
+                                     "rank_type": i["rank_type"], "id": i["id"], "uigf_gacha_type": uigfGachaType[i["gacha_type"]]}
                         proceed_data.append([i['item_type'], i['name'], i['time']])
+                        export_data_list.append(each_data)
                     self.usleep(500)
                     old_page = page
                     old_end_id = end_id
@@ -381,6 +383,8 @@ class PrayListThread(QThread):
             with open(f'pray_history/{self.uid}/{gachaTarget}.pickle', 'wb') as f:
                 pickle.dump(proceed_data, f)
         export_data["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        export_data["list"] = export_data_list
+        open(f"pray_history/{self.uid}/export_data.json", "w", encoding="utf-8").write(json.dumps(export_data, indent=2, sort_keys=True, ensure_ascii=False))
         self.trigger.emit("全部列表读取完毕")
 
 
