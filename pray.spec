@@ -8,7 +8,7 @@ a = Analysis(
     ['src\\pray.py'],
     pathex=[],
     binaries=[],
-    datas=[('.\\src\\modules', '.\\modules'),('.\\src\\python_interact', '.'),('.\\src\\assets', '.\\assets')],
+    datas=[('.\\src\\modules', '.\\modules'),('.\\src\\interact', '.'),('.\\src\\assets', '.\\assets')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

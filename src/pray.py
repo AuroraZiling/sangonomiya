@@ -1,19 +1,19 @@
 # -*- coding:utf-8 -*-
-import getpass
 import json
 import os
 import pickle
 import subprocess
+import sys
 import time
 import qdarkstyle
-import sys
 import requests
-from modules import result_list
-from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
-    QMessageBox, QAbstractItemView, QHeaderView, QLabel
 from PyQt6 import QtCore, QtWidgets, QtGui
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont, QBrush, QColor
+from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
+    QMessageBox, QAbstractItemView, QHeaderView, QLabel, QGridLayout, QFrame
+
+from modules import result_list
 
 gachaUrl = ""
 gachaType = {"新手祈愿": "100", "常驻祈愿": "200", "角色活动祈愿": "301", "角色活动祈愿-2": "400", "武器祈愿": "302"}
@@ -39,57 +39,80 @@ class MainForm(QMainWindow):
         self.target_uid = ""
         self.all_data_list = {}
         self.setWindowTitle("Genshin Pray Export")
-        self.setFixedSize(510, 600)
-        self.setStyleSheet(qdarkstyle.load_stylesheet())
+        self.setFixedSize(1200, 600)
 
         # Pray List Init
         self.loaded_pray_list = []
         self.pray_100, self.pray_200, self.pray_301, self.pray_400, self.pray_302 = None, None, None, None, None
 
         # Multi-process
-        self.get_pray_list_thread = PrayListThread()
+        self.get_pray_list_thread = LeftPrayListThread()
 
         # UI Design
         self.widget = QWidget()
         self.setCentralWidget(self.widget)
-        self.all_layout = QVBoxLayout(self)
+        self.all_layout = QHBoxLayout(self)
+        self.left_layout = QVBoxLayout(self)
+        self.right_layout = QVBoxLayout(self)
 
-        self.top_layout = QHBoxLayout(self)
-        self.list_label = QLabel("祈愿记录")
-        self.refresh_btn = QPushButton("更新数据")
-        self.export_btn = QPushButton("导出")
-        self.settings_btn = QPushButton("设置")
-        self.top_layout.addWidget(self.list_label)
-        self.top_layout.addWidget(self.refresh_btn)
-        self.top_layout.addWidget(self.export_btn)
-        self.top_layout.addWidget(self.settings_btn)
-        self.all_layout.addLayout(self.top_layout)
+        # UI Left
+        self.left_top_layout = QHBoxLayout(self)
+        self.left_list_label = QLabel("祈愿记录")
+        self.left_open_export_dir_btn = QPushButton("打开导出目录")
+        self.left_refresh_btn = QPushButton("更新数据")
+        self.left_settings_btn = QPushButton("设置")
+        self.left_top_layout.addWidget(self.left_list_label)
+        self.left_top_layout.addWidget(self.left_open_export_dir_btn)
+        self.left_top_layout.addWidget(self.left_refresh_btn)
+        self.left_top_layout.addWidget(self.left_settings_btn)
+        self.left_layout.addLayout(self.left_top_layout)
 
-        self.pray_list = QTableWidget(self)
-        self.all_layout.addWidget(self.pray_list)
+        self.left_pray_list = QTableWidget(self)
+        self.left_layout.addWidget(self.left_pray_list)
 
-        self.pray_mode_h_layout = QHBoxLayout(self)
-        self.pray_mode_100_btn = QPushButton("新手祈愿")
-        self.pray_mode_200_btn = QPushButton("常驻祈愿")
-        self.pray_mode_301_btn = QPushButton("角色祈愿")
-        self.pray_mode_400_btn = QPushButton("角色祈愿-2")
-        self.pray_mode_302_btn = QPushButton("武器祈愿")
-        self.pray_mode_h_layout.addWidget(self.pray_mode_100_btn)
-        self.pray_mode_h_layout.addWidget(self.pray_mode_200_btn)
-        self.pray_mode_h_layout.addWidget(self.pray_mode_301_btn)
-        self.pray_mode_h_layout.addWidget(self.pray_mode_400_btn)
-        self.pray_mode_h_layout.addWidget(self.pray_mode_302_btn)
-        self.all_layout.addLayout(self.pray_mode_h_layout)
+        self.left_pray_mode_h_layout = QHBoxLayout(self)
+        self.left_pray_mode_100_btn = QPushButton("新手祈愿")
+        self.left_pray_mode_200_btn = QPushButton("常驻祈愿")
+        self.left_pray_mode_301_btn = QPushButton("角色祈愿")
+        self.left_pray_mode_400_btn = QPushButton("角色祈愿-2")
+        self.left_pray_mode_302_btn = QPushButton("武器祈愿")
+        self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_100_btn)
+        self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_200_btn)
+        self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_301_btn)
+        self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_400_btn)
+        self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_302_btn)
+        self.left_layout.addLayout(self.left_pray_mode_h_layout)
 
-        self.bottom_h_layout = QHBoxLayout(self)
-        self.status_label = QLabel("状态: 无")
-        self.current_uid_label = QLabel("UID: 未知")
-        self.update_time_label = QLabel("数据时间: 未知")
-        self.bottom_h_layout.addWidget(self.status_label)
-        self.bottom_h_layout.addWidget(self.current_uid_label)
-        self.bottom_h_layout.addWidget(self.update_time_label)
-        self.all_layout.addLayout(self.bottom_h_layout)
+        self.left_bottom_h_layout = QHBoxLayout(self)
+        self.left_current_uid_label = QLabel("UID: 未知")
+        self.left_update_time_label = QLabel("数据时间: 未知")
+        self.left_bottom_h_layout.addWidget(self.left_current_uid_label)
+        self.left_bottom_h_layout.addWidget(self.left_update_time_label)
+        self.left_layout.addLayout(self.left_bottom_h_layout)
 
+        # UI Splitter
+        self.splitter = QFrame(self)
+
+        # UI Right
+        self.right_top_layout = QHBoxLayout(self)
+        self.right_label = QLabel("分析")
+        self.right_top_layout.addWidget(self.right_label)
+
+        self.right_analysis_layout = QGridLayout(self)
+        self.right_analysis_label = QLabel("暂不可用")
+        self.right_analysis_layout.addWidget(self.right_analysis_label, 0, 0)
+
+        self.right_bottom_h_layout = QHBoxLayout(self)
+        self.right_status_label = QLabel("状态: 无")
+        self.right_bottom_h_layout.addWidget(self.right_status_label)
+
+        self.right_layout.addLayout(self.right_top_layout)
+        self.right_layout.addLayout(self.right_analysis_layout)
+        self.right_layout.addLayout(self.right_bottom_h_layout)
+
+        self.all_layout.addLayout(self.left_layout)
+        self.all_layout.addWidget(self.splitter)
+        self.all_layout.addLayout(self.right_layout)
         self.widget.setLayout(self.all_layout)
         self.file_check()
         self.pre_generate()
@@ -103,42 +126,42 @@ class MainForm(QMainWindow):
                                                   "data_301": {"data": [], "data_time": ""},
                                                   "data_400": {"data": [], "data_time": ""},
                                                   "data_302": {"data": [], "data_time": ""}}})
-            if os.path.exists(f"pray_history/{each_dir}/100.pickle"):
-                data_100 = pickle.load(open(f"pray_history/{each_dir}/100.pickle", "rb"))
+            if os.path.exists(f"pray_history/{each_dir}/original_data/100.pickle"):
+                data_100 = pickle.load(open(f"pray_history/{each_dir}/original_data/100.pickle", "rb"))
                 data_time_100 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/100.pickle"))))
+                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/original_data/100.pickle"))))
                 self.all_data_list[each_dir]["data_100"]["data"] = data_100
                 self.loaded_pray_list.append("新手祈愿")
                 self.pray_100 = data_100
                 self.all_data_list[each_dir]["data_100"]["data_time"] = data_time_100
-            if os.path.exists(f"pray_history/{each_dir}/200.pickle"):
-                data_200 = pickle.load(open(f"pray_history/{each_dir}/200.pickle", "rb"))
+            if os.path.exists(f"pray_history/{each_dir}/original_data/200.pickle"):
+                data_200 = pickle.load(open(f"pray_history/{each_dir}/original_data/200.pickle", "rb"))
                 data_time_200 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/200.pickle"))))
+                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/original_data/200.pickle"))))
                 self.all_data_list[each_dir]["data_200"]["data"] = data_200
                 self.loaded_pray_list.append("常驻祈愿")
                 self.pray_200 = data_200
                 self.all_data_list[each_dir]["data_200"]["data_time"] = data_time_200
-            if os.path.exists(f"pray_history/{each_dir}/301.pickle"):
-                data_301 = pickle.load(open(f"pray_history/{each_dir}/301.pickle", "rb"))
+            if os.path.exists(f"pray_history/{each_dir}/original_data/301.pickle"):
+                data_301 = pickle.load(open(f"pray_history/{each_dir}/original_data/301.pickle", "rb"))
                 data_time_301 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/301.pickle"))))
+                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/original_data/301.pickle"))))
                 self.all_data_list[each_dir]["data_301"]["data"] = data_301
                 self.loaded_pray_list.append("角色祈愿")
                 self.pray_301 = data_301
                 self.all_data_list[each_dir]["data_301"]["data_time"] = data_time_301
-            if os.path.exists(f"pray_history/{each_dir}/400.pickle"):
-                data_400 = pickle.load(open(f"pray_history/{each_dir}/400.pickle", "rb"))
+            if os.path.exists(f"pray_history/{each_dir}/original_data/400.pickle"):
+                data_400 = pickle.load(open(f"pray_history/{each_dir}/original_data/400.pickle", "rb"))
                 data_time_400 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/400.pickle"))))
+                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/original_data/400.pickle"))))
                 self.all_data_list[each_dir]["data_400"]["data"] = data_400
                 self.loaded_pray_list.append("角色祈愿-2")
                 self.pray_400 = data_400
                 self.all_data_list[each_dir]["data_400"]["data_time"] = data_time_400
-            if os.path.exists(f"pray_history/{each_dir}/302.pickle"):
-                data_302 = pickle.load(open(f"pray_history/{each_dir}/302.pickle", "rb"))
+            if os.path.exists(f"pray_history/{each_dir}/original_data/302.pickle"):
+                data_302 = pickle.load(open(f"pray_history/{each_dir}/original_data/302.pickle", "rb"))
                 data_time_302 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/302.pickle"))))
+                                              time.localtime((os.path.getmtime(f"pray_history/{each_dir}/original_data/302.pickle"))))
                 self.all_data_list[each_dir]["data_302"]["data"] = data_302
                 self.loaded_pray_list.append("武器祈愿")
                 self.pray_302 = data_302
@@ -146,7 +169,7 @@ class MainForm(QMainWindow):
         # Pre: 多UID支持预备
         if self.all_data_list:
             self.target_uid = list(self.all_data_list.keys())[0]
-            self.current_uid_label.setText(f"UID: {self.target_uid}")
+            self.left_current_uid_label.setText(f"UID: {self.target_uid}")
 
     def file_check(self):
         if not os.path.exists("assets"):
@@ -157,92 +180,104 @@ class MainForm(QMainWindow):
             sys.exit()
         if not os.path.exists("pray_history"):
             os.mkdir("pray_history")
+        if not os.path.exists("export"):
+            os.mkdir("export")
 
     def debug_code(self):
         pass
 
     # UI Part
     def initUI(self):
-        # Top Layout
-        self.list_label.setFont(QFont("Microsoft YaHei", 11))
-        self.refresh_btn.setFixedWidth(90)
-        self.export_btn.setFixedWidth(90)
-        self.settings_btn.setFixedWidth(90)
-        self.settings_btn.setEnabled(False)  # Locked
+        # Left - Top Layout
+        self.left_list_label.setFont(QFont("Microsoft YaHei", 11))
+        self.left_open_export_dir_btn.setFixedWidth(90)
+        self.left_refresh_btn.setFixedWidth(90)
+        self.left_settings_btn.setFixedWidth(90)
+        self.left_settings_btn.setEnabled(False)  # Locked
 
-        self.refresh_btn.clicked.connect(self.refreshData)
-        # Pray List
-        self.pray_list.setColumnCount(3)
-        self.pray_list.setHorizontalHeaderLabels(["类型", "名称", "时间"])
-        self.pray_list.setColumnWidth(0, 60)
-        self.pray_list.setColumnWidth(1, 180)
-        self.pray_list.setColumnWidth(2, 230)
-        self.pray_list.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.pray_list.setShowGrid(False)
-        self.pray_list.verticalHeader().setHidden(True)
-        self.pray_list.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
-        self.pray_list.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.pray_list.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        # Pray Mode Layout
-        self.pray_mode_100_btn.clicked.connect(self.pray_list_100_change)
-        self.pray_mode_200_btn.clicked.connect(self.pray_list_200_change)
-        self.pray_mode_301_btn.clicked.connect(self.pray_list_301_change)
-        self.pray_mode_400_btn.clicked.connect(self.pray_list_400_change)
-        self.pray_mode_302_btn.clicked.connect(self.pray_list_302_change)
+        self.left_open_export_dir_btn.clicked.connect(lambda x: os.startfile("export"))
+        self.left_refresh_btn.clicked.connect(self.refreshData)
+        # Left - Pray List
+        self.left_pray_list.setFixedWidth(500)
+        self.left_pray_list.setColumnCount(3)
+        self.left_pray_list.setHorizontalHeaderLabels(["类型", "名称", "时间"])
+        self.left_pray_list.setColumnWidth(0, 60)
+        self.left_pray_list.setColumnWidth(1, 180)
+        self.left_pray_list.setColumnWidth(2, 230)
+        self.left_pray_list.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.left_pray_list.setShowGrid(False)
+        self.left_pray_list.verticalHeader().setHidden(True)
+        self.left_pray_list.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
+        self.left_pray_list.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.left_pray_list.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        # Left - Pray Mode Layout
+        self.left_pray_mode_100_btn.clicked.connect(self.left_pray_list_100_change)
+        self.left_pray_mode_200_btn.clicked.connect(self.left_pray_list_200_change)
+        self.left_pray_mode_301_btn.clicked.connect(self.left_pray_list_301_change)
+        self.left_pray_mode_400_btn.clicked.connect(self.left_pray_list_400_change)
+        self.left_pray_mode_302_btn.clicked.connect(self.left_pray_list_302_change)
+        # Splitter
+        self.splitter.setFrameShape(QFrame.Shape.VLine)
+        # Right - Top Layout
+        self.right_label.setFont(QFont("Microsoft YaHei", 11))
+        self.right_top_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        # Right - Analysis Layout
+        self.right_analysis_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # Right - Bottom Layout
+        self.right_bottom_h_layout.setAlignment(Qt.AlignmentFlag.AlignBottom)
 
     def allBtnStatusChange(self, is_enabled: bool):
-        self.pray_mode_100_btn.setEnabled(is_enabled)
-        self.pray_mode_200_btn.setEnabled(is_enabled)
-        self.pray_mode_301_btn.setEnabled(is_enabled)
-        self.pray_mode_400_btn.setEnabled(is_enabled)
-        self.pray_mode_302_btn.setEnabled(is_enabled)
-        self.refresh_btn.setEnabled(is_enabled)
-        self.export_btn.setEnabled(is_enabled)
+        self.left_pray_mode_100_btn.setEnabled(is_enabled)
+        self.left_pray_mode_200_btn.setEnabled(is_enabled)
+        self.left_pray_mode_301_btn.setEnabled(is_enabled)
+        self.left_pray_mode_400_btn.setEnabled(is_enabled)
+        self.left_pray_mode_302_btn.setEnabled(is_enabled)
+        self.left_refresh_btn.setEnabled(is_enabled)
         # Locked
-        # self.settings_btn.setEnabled(is_enabled)
+        # self.left_settings_btn.setEnabled(is_enabled)
 
     # Pray Mode Part
-    def pray_list_100_change(self):
+    def left_pray_list_100_change(self):
         if "新手祈愿" in self.loaded_pray_list:
             self.refreshList("新手祈愿")
-            self.status_label.setText("状态: 已读取新手祈愿")
-            self.update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_100']['data_time']}")
+            self.right_status_label.setText("状态: 已读取新手祈愿")
+            self.left_update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_100']['data_time']}")
         else:
             QMessageBox.warning(self, "警告", "未找到新手祈愿记录，请更新数据后重试\n也有可能没抽过")
             return
 
-    def pray_list_200_change(self):
+    def left_pray_list_200_change(self):
         if "常驻祈愿" in self.loaded_pray_list:
             self.refreshList("常驻祈愿")
-            self.status_label.setText("状态: 已读取常驻祈愿")
-            self.update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_200']['data_time']}")
+            self.right_status_label.setText("状态: 已读取常驻祈愿")
+            self.left_update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_200']['data_time']}")
         else:
             QMessageBox.warning(self, "警告", "未找到常驻祈愿记录，请更新数据后重试\n也有可能没抽过")
             return
 
-    def pray_list_301_change(self):
+    def left_pray_list_301_change(self):
         if "角色祈愿" in self.loaded_pray_list:
             self.refreshList("角色活动祈愿")
-            self.status_label.setText("状态: 已读取角色祈愿")
-            self.update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_301']['data_time']}")
+            self.right_status_label.setText("状态: 已读取角色祈愿")
+            self.left_update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_301']['data_time']}")
         else:
             QMessageBox.warning(self, "警告", "未找到角色祈愿记录，请更新数据后重试\n也有可能没抽过")
             return
 
-    def pray_list_400_change(self):
+    def left_pray_list_400_change(self):
         if "角色祈愿-2" in self.loaded_pray_list:
             self.refreshList("角色活动祈愿-2")
-            self.status_label.setText("状态: 已读取角色祈愿-2")
-            self.update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_400']['data_time']}")
+            self.right_status_label.setText("状态: 已读取角色祈愿-2")
+            self.left_update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_400']['data_time']}")
         else:
             QMessageBox.warning(self, "警告", "未找到角色祈愿-2记录，请更新数据后重试\n也有可能没抽过")
             return
 
-    def pray_list_302_change(self):
+    def left_pray_list_302_change(self):
         if "武器祈愿" in self.loaded_pray_list:
             self.refreshList("武器祈愿")
-            self.status_label.setText("状态: 已读取武器祈愿")
-            self.update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_302']['data_time']}")
+            self.right_status_label.setText("状态: 已读取武器祈愿")
+            self.left_update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_302']['data_time']}")
         else:
             QMessageBox.warning(self, "警告", "未找到武器祈愿记录，请更新数据后重试\n也有可能没抽过")
             return
@@ -261,32 +296,33 @@ class MainForm(QMainWindow):
             return
         global gachaUrl
         gachaUrl = open("requestUrl.txt", 'r').read()
-        self.pray_list_thread_execute()
+        self.left_pray_list_thread_execute()
 
     # Pray List Thread
-    def pray_list_thread_execute(self):
+    def left_pray_list_thread_execute(self):
         self.allBtnStatusChange(False)
         self.get_pray_list_thread.start()
-        self.get_pray_list_thread.trigger.connect(self.status_label_change)
+        self.get_pray_list_thread.trigger.connect(self.right_status_label_change)
 
     def status_label_change(self, msg):
-        self.status_label.setText(f"状态: {msg}")
+        self.right_status_label.setText(f"状态: {msg}")
         if msg == "全部列表读取完毕":
-            self.list_label.setText("祈愿列表")
+            self.left_list_label.setText("祈愿列表")
             self.clearList()
             self.pre_generate()
             self.allBtnStatusChange(True)
 
     # Pray List Part
     def clearList(self):
-        row = self.pray_list.rowCount()
+        row = self.left_pray_list.rowCount()
         for i in range(row):
-            self.pray_list.removeRow(0)
+            self.left_pray_list.removeRow(0)
 
     def refreshList(self, pray_mode):
         self.clearList()
         data_list = []
-        self.list_label.setText(f"祈愿列表 - {pray_mode}")
+        self.left_list_label.setText(f"祈愿列表 - {pray_mode}")
+        self.right_label.setText(f"分析 - {pray_mode}")
         if gachaType[pray_mode] == "100":
             data_list = self.pray_100
         if gachaType[pray_mode] == "200":
@@ -305,37 +341,37 @@ class MainForm(QMainWindow):
             selected_color = gachaItemLevelColor[4]
         elif name in result_list.weapon_5_list or name in result_list.character_5_list:
             selected_color = gachaItemLevelColor[5]
-            self.pray_list.item(row, 0).setForeground(QBrush(QColor(0, 0, 0)))
-            self.pray_list.item(row, 1).setForeground(QBrush(QColor(0, 0, 0)))
-            self.pray_list.item(row, 2).setForeground(QBrush(QColor(0, 0, 0)))
+            self.left_pray_list.item(row, 0).setForeground(QBrush(QColor(0, 0, 0)))
+            self.left_pray_list.item(row, 1).setForeground(QBrush(QColor(0, 0, 0)))
+            self.left_pray_list.item(row, 2).setForeground(QBrush(QColor(0, 0, 0)))
         else:
             return
-        self.pray_list.item(row, 0).setBackground(QBrush(selected_color))
-        self.pray_list.item(row, 1).setBackground(QBrush(selected_color))
-        self.pray_list.item(row, 2).setBackground(QBrush(selected_color))
+        self.left_pray_list.item(row, 0).setBackground(QBrush(selected_color))
+        self.left_pray_list.item(row, 1).setBackground(QBrush(selected_color))
+        self.left_pray_list.item(row, 2).setBackground(QBrush(selected_color))
 
     def addRow(self, typ, name, t):
-        row = self.pray_list.rowCount()
-        self.pray_list.setRowCount(row + 1)
+        row = self.left_pray_list.rowCount()
+        self.left_pray_list.setRowCount(row + 1)
         item = QtWidgets.QTableWidgetItem()
-        self.pray_list.setItem(row, 0, item)
-        self.pray_list.item(row, 0).setText(typ)
+        self.left_pray_list.setItem(row, 0, item)
+        self.left_pray_list.item(row, 0).setText(typ)
         item = QtWidgets.QTableWidgetItem()
-        self.pray_list.setItem(row, 1, item)
-        self.pray_list.item(row, 1).setText(name)
+        self.left_pray_list.setItem(row, 1, item)
+        self.left_pray_list.item(row, 1).setText(name)
         item = QtWidgets.QTableWidgetItem()
-        self.pray_list.setItem(row, 2, item)
-        self.pray_list.item(row, 2).setText(t)
+        self.left_pray_list.setItem(row, 2, item)
+        self.left_pray_list.item(row, 2).setText(t)
         self.setColor(name, row)
-        self.pray_list.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
-        self.pray_list.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.left_pray_list.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.left_pray_list.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
 
 
-class PrayListThread(QThread):
+class LeftPrayListThread(QThread):
     trigger = pyqtSignal(str)
 
     def __init__(self, parent=None):
-        super(PrayListThread, self).__init__(parent)
+        super(LeftPrayListThread, self).__init__(parent)
         self.uid = ""
 
     def run(self):
@@ -364,8 +400,10 @@ class PrayListThread(QThread):
                         break
                     tmp = rep["data"]["list"]
                     for i in tmp:
-                        each_data = {"gacha_type": i["gacha_type"], "count": "1", "time": i["time"], "name": i['name'], "item_type": i["item_type"],
-                                     "rank_type": i["rank_type"], "id": i["id"], "uigf_gacha_type": uigfGachaType[i["gacha_type"]]}
+                        each_data = {"gacha_type": i["gacha_type"], "count": "1", "time": i["time"], "name": i['name'],
+                                     "item_type": i["item_type"],
+                                     "rank_type": i["rank_type"], "id": i["id"],
+                                     "uigf_gacha_type": uigfGachaType[i["gacha_type"]]}
                         proceed_data.append([i['item_type'], i['name'], i['time']])
                         export_data_list.append(each_data)
                     self.usleep(500)
@@ -380,17 +418,23 @@ class PrayListThread(QThread):
             self.trigger.emit(f"{key}读取完毕")
             if not os.path.exists(f"pray_history/{self.uid}"):
                 os.mkdir(f"pray_history/{self.uid}")
-            with open(f'pray_history/{self.uid}/{gachaTarget}.pickle', 'wb') as f:
+            if not os.path.exists(f"pray_history/{self.uid}/original_data"):
+                os.mkdir(f"pray_history/{self.uid}/original_data")
+            if not os.path.exists(f"pray_history/{self.uid}/export"):
+                os.mkdir(f"pray_history/{self.uid}/export")
+            with open(f'pray_history/{self.uid}/original_data/{gachaTarget}.pickle', 'wb') as f:
                 pickle.dump(proceed_data, f)
         export_data["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         export_data["list"] = export_data_list
-        open(f"pray_history/{self.uid}/export_data.json", "w", encoding="utf-8").write(json.dumps(export_data, indent=2, sort_keys=True, ensure_ascii=False))
+        open(f"pray_history/{self.uid}/export/{self.uid}_export_data.json", "w", encoding="utf-8").write(
+            json.dumps(export_data, indent=2, sort_keys=True, ensure_ascii=False))
         self.trigger.emit("全部列表读取完毕")
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setWindowIcon(QtGui.QIcon(os.path.join(basedir, 'assets/icon.ico')))
-    demo = MainForm()
-    demo.show()
+    app.setStyleSheet(qdarkstyle.load_stylesheet())
+    start = MainForm()
+    start.show()
     sys.exit(app.exec())
