@@ -97,7 +97,9 @@ class MainForm(QMainWindow):
 
         self.left_bottom_h_layout = QHBoxLayout(self)
         self.left_update_time_label = QLabel("数据时间: 未知")
+        self.left_status_label = QLabel("状态: 无")
         self.left_bottom_h_layout.addWidget(self.left_update_time_label)
+        self.left_bottom_h_layout.addWidget(self.left_status_label)
         self.left_layout.addLayout(self.left_bottom_h_layout)
 
         # UI Splitter
@@ -112,13 +114,8 @@ class MainForm(QMainWindow):
         self.right_analysis_label = QLabel("暂不可用")
         self.right_analysis_layout.addWidget(self.right_analysis_label, 0, 0)
 
-        self.right_bottom_h_layout = QHBoxLayout(self)
-        self.right_status_label = QLabel("状态: 无")
-        self.right_bottom_h_layout.addWidget(self.right_status_label)
-
         self.right_layout.addLayout(self.right_top_layout)
         self.right_layout.addLayout(self.right_analysis_layout)
-        self.right_layout.addLayout(self.right_bottom_h_layout)
 
         self.all_layout.addLayout(self.left_layout)
         self.all_layout.addWidget(self.splitter)
@@ -215,12 +212,13 @@ class MainForm(QMainWindow):
         self.left_open_export_dir_btn.clicked.connect(lambda x: os.startfile("export"))
         self.left_refresh_btn.clicked.connect(self.refreshData)
         # All - Left - Pray List
-        self.left_pray_list.setFixedWidth(500)
-        self.left_pray_list.setColumnCount(3)
-        self.left_pray_list.setHorizontalHeaderLabels(["类型", "名称", "时间"])
+        self.left_pray_list.setFixedWidth(560)
+        self.left_pray_list.setColumnCount(4)
+        self.left_pray_list.setHorizontalHeaderLabels(["序号", "类型", "名称", "时间"])
         self.left_pray_list.setColumnWidth(0, 60)
-        self.left_pray_list.setColumnWidth(1, 180)
-        self.left_pray_list.setColumnWidth(2, 230)
+        self.left_pray_list.setColumnWidth(1, 60)
+        self.left_pray_list.setColumnWidth(2, 180)
+        self.left_pray_list.setColumnWidth(3, 230)
         self.left_pray_list.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.left_pray_list.setShowGrid(False)
         self.left_pray_list.verticalHeader().setHidden(True)
@@ -240,8 +238,6 @@ class MainForm(QMainWindow):
         self.right_top_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         # All - Right - Analysis Layout
         self.right_analysis_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # All - Right - Bottom Layout
-        self.right_bottom_h_layout.setAlignment(Qt.AlignmentFlag.AlignBottom)
 
     def allBtnStatusChange(self, is_enabled: bool):
         self.left_pray_mode_100_btn.setEnabled(is_enabled)
@@ -257,7 +253,7 @@ class MainForm(QMainWindow):
     def left_pray_list_100_change(self):
         if "新手祈愿" in self.loaded_pray_list:
             self.refreshList("新手祈愿")
-            self.right_status_label.setText("状态: 已读取新手祈愿")
+            self.left_status_label.setText("状态: 已读取新手祈愿")
             self.left_update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_100']['data_time']}")
         else:
             QMessageBox.warning(self, "警告", "未找到新手祈愿记录，请更新数据后重试\n也有可能没抽过")
@@ -266,7 +262,7 @@ class MainForm(QMainWindow):
     def left_pray_list_200_change(self):
         if "常驻祈愿" in self.loaded_pray_list:
             self.refreshList("常驻祈愿")
-            self.right_status_label.setText("状态: 已读取常驻祈愿")
+            self.left_status_label.setText("状态: 已读取常驻祈愿")
             self.left_update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_200']['data_time']}")
         else:
             QMessageBox.warning(self, "警告", "未找到常驻祈愿记录，请更新数据后重试\n也有可能没抽过")
@@ -275,7 +271,7 @@ class MainForm(QMainWindow):
     def left_pray_list_301_change(self):
         if "角色祈愿" in self.loaded_pray_list:
             self.refreshList("角色活动祈愿")
-            self.right_status_label.setText("状态: 已读取角色祈愿")
+            self.left_status_label.setText("状态: 已读取角色祈愿")
             self.left_update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_301']['data_time']}")
         else:
             QMessageBox.warning(self, "警告", "未找到角色祈愿记录，请更新数据后重试\n也有可能没抽过")
@@ -284,7 +280,7 @@ class MainForm(QMainWindow):
     def left_pray_list_400_change(self):
         if "角色祈愿-2" in self.loaded_pray_list:
             self.refreshList("角色活动祈愿-2")
-            self.right_status_label.setText("状态: 已读取角色祈愿-2")
+            self.left_status_label.setText("状态: 已读取角色祈愿-2")
             self.left_update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_400']['data_time']}")
         else:
             QMessageBox.warning(self, "警告", "未找到角色祈愿-2记录，请更新数据后重试\n也有可能没抽过")
@@ -293,7 +289,7 @@ class MainForm(QMainWindow):
     def left_pray_list_302_change(self):
         if "武器祈愿" in self.loaded_pray_list:
             self.refreshList("武器祈愿")
-            self.right_status_label.setText("状态: 已读取武器祈愿")
+            self.left_status_label.setText("状态: 已读取武器祈愿")
             self.left_update_time_label.setText(f"数据时间: {self.all_data_list[self.target_uid]['data_302']['data_time']}")
         else:
             QMessageBox.warning(self, "警告", "未找到武器祈愿记录，请更新数据后重试\n也有可能没抽过")
@@ -319,10 +315,10 @@ class MainForm(QMainWindow):
     def left_pray_list_thread_execute(self):
         self.allBtnStatusChange(False)
         self.get_pray_list_thread.start()
-        self.get_pray_list_thread.trigger.connect(self.right_status_label_change)
+        self.get_pray_list_thread.trigger.connect(self.left_status_label_change)
 
-    def right_status_label_change(self, msg):
-        self.right_status_label.setText(f"状态: {msg}")
+    def left_status_label_change(self, msg):
+        self.left_status_label.setText(f"状态: {msg}")
         if msg == "全部列表读取完毕":
             self.left_list_label.setText("祈愿列表")
             self.clearList()
@@ -351,7 +347,7 @@ class MainForm(QMainWindow):
         if gachaType[pray_mode] == "302":
             data_list = self.pray_302
         for i in data_list:
-            self.addRow(i[0], i[1], i[2])
+            self.addRow(len(data_list), i[0], i[1], i[2])
 
     def setColor(self, name, row):
         if name in result_list.weapon_4_list or name in result_list.character_4_list:
@@ -361,24 +357,29 @@ class MainForm(QMainWindow):
             self.left_pray_list.item(row, 0).setForeground(QBrush(QColor(0, 0, 0)))
             self.left_pray_list.item(row, 1).setForeground(QBrush(QColor(0, 0, 0)))
             self.left_pray_list.item(row, 2).setForeground(QBrush(QColor(0, 0, 0)))
+            self.left_pray_list.item(row, 3).setForeground(QBrush(QColor(0, 0, 0)))
         else:
             return
         self.left_pray_list.item(row, 0).setBackground(QBrush(selected_color))
         self.left_pray_list.item(row, 1).setBackground(QBrush(selected_color))
         self.left_pray_list.item(row, 2).setBackground(QBrush(selected_color))
+        self.left_pray_list.item(row, 3).setBackground(QBrush(selected_color))
 
-    def addRow(self, typ, name, t):
+    def addRow(self, data_length, typ, name, t):
         row = self.left_pray_list.rowCount()
         self.left_pray_list.setRowCount(row + 1)
         item = QtWidgets.QTableWidgetItem()
         self.left_pray_list.setItem(row, 0, item)
-        self.left_pray_list.item(row, 0).setText(typ)
+        self.left_pray_list.item(row, 0).setText(str(data_length - row))
         item = QtWidgets.QTableWidgetItem()
         self.left_pray_list.setItem(row, 1, item)
-        self.left_pray_list.item(row, 1).setText(name)
+        self.left_pray_list.item(row, 1).setText(typ)
         item = QtWidgets.QTableWidgetItem()
         self.left_pray_list.setItem(row, 2, item)
-        self.left_pray_list.item(row, 2).setText(t)
+        self.left_pray_list.item(row, 2).setText(name)
+        item = QtWidgets.QTableWidgetItem()
+        self.left_pray_list.setItem(row, 3, item)
+        self.left_pray_list.item(row, 3).setText(t)
         self.setColor(name, row)
         self.left_pray_list.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.left_pray_list.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
