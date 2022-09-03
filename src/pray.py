@@ -7,7 +7,7 @@ import sys
 import time
 import qdarkstyle
 import requests
-from PyQt6 import QtCore, QtWidgets, QtGui, QtSvg
+from PyQt6 import QtCore, QtWidgets, QtGui
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont, QBrush, QColor
 from PyQt6.QtSvgWidgets import QSvgWidget
@@ -15,6 +15,7 @@ from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPu
     QMessageBox, QAbstractItemView, QHeaderView, QLabel, QGridLayout, QFrame
 
 from modules import result_list
+from modules import about_widget
 
 gachaUrl = ""
 gachaType = {"新手祈愿": "100", "常驻祈愿": "200", "角色活动祈愿": "301", "角色活动祈愿-2": "400", "武器祈愿": "302"}
@@ -42,6 +43,9 @@ class MainForm(QMainWindow):
         self.setWindowTitle("Genshin Pray Export")
         self.setFixedSize(1200, 600)
 
+        # Child Windows
+        self.about_window = about_widget.About()
+
         # Pray List Init
         self.loaded_pray_list = []
         self.pray_100, self.pray_200, self.pray_301, self.pray_400, self.pray_302 = None, None, None, None, None
@@ -61,8 +65,12 @@ class MainForm(QMainWindow):
         # UI UID
         self.uid_user_image = QSvgWidget("assets/user.svg")
         self.uid_current_uid_label = QLabel("未知")
+        self.uid_settings_btn = QPushButton("设置")
+        self.uid_about_btn = QPushButton("关于")
         self.uid_h_layout.addWidget(self.uid_user_image)
         self.uid_h_layout.addWidget(self.uid_current_uid_label)
+        self.uid_h_layout.addWidget(self.uid_settings_btn)
+        self.uid_h_layout.addWidget(self.uid_about_btn)
         self.uid_splitter = QFrame(self)
         self.base_layout.addLayout(self.uid_h_layout)
         self.base_layout.addWidget(self.uid_splitter)
@@ -72,11 +80,9 @@ class MainForm(QMainWindow):
         self.left_list_label = QLabel("祈愿记录")
         self.left_open_export_dir_btn = QPushButton("打开导出目录")
         self.left_refresh_btn = QPushButton("更新数据")
-        self.left_settings_btn = QPushButton("设置")
         self.left_top_layout.addWidget(self.left_list_label)
         self.left_top_layout.addWidget(self.left_open_export_dir_btn)
         self.left_top_layout.addWidget(self.left_refresh_btn)
-        self.left_top_layout.addWidget(self.left_settings_btn)
         self.left_layout.addLayout(self.left_top_layout)
 
         self.left_pray_list = QTableWidget(self)
@@ -196,16 +202,18 @@ class MainForm(QMainWindow):
     def initUI(self):
         # UID - Image
         self.uid_user_image.setFixedSize(30, 30)
-        # UID - Label
+        # UID
         self.uid_current_uid_label.setFont(QFont("Microsoft YaHei", 13))
+        self.uid_settings_btn.setFixedWidth(90)
+        self.uid_about_btn.setFixedWidth(90)
+
+        self.uid_about_btn.clicked.connect(lambda: self.about_window.show())
         # UID - Splitter
         self.uid_splitter.setFrameShape(QFrame.Shape.HLine)
         # All - Left - Top Layout
         self.left_list_label.setFont(QFont("Microsoft YaHei", 11))
         self.left_open_export_dir_btn.setFixedWidth(90)
         self.left_refresh_btn.setFixedWidth(90)
-        self.left_settings_btn.setFixedWidth(90)
-        self.left_settings_btn.setEnabled(False)  # Locked
 
         self.left_open_export_dir_btn.clicked.connect(lambda: os.startfile(f"pray_history\\{self.target_uid}\\export\\"))
         self.left_refresh_btn.clicked.connect(self.refreshData)
@@ -245,8 +253,7 @@ class MainForm(QMainWindow):
         self.left_pray_mode_400_btn.setEnabled(is_enabled)
         self.left_pray_mode_302_btn.setEnabled(is_enabled)
         self.left_refresh_btn.setEnabled(is_enabled)
-        # Locked
-        # self.left_settings_btn.setEnabled(is_enabled)
+        self.uid_settings_btn.setEnabled(is_enabled)
 
     # Pray Mode Part
     def left_pray_list_100_change(self):

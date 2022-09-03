@@ -1,0 +1,13 @@
+PyQt6
+Copyright (c) Riverbank Computing Limited
+Homepage (Under GPL-3.0): https://www.riverbankcomputing.com/software/pyqt
+
+requests
+Copyright (c) Kenneth Reitz
+Github: https://github.com/psf/requests
+License (Under Apache-2.0): https://raw.githubusercontent.com/psf/requests/main/LICENSE
+
+qdarkstyle
+Copyright (c) 2013-2019 Colin Duquesnoy
+Github: https://github.com/ColinDuquesnoy/QDarkStyleSheet
+License (Under MIT): https://raw.githubusercontent.com/ColinDuquesnoy/QDarkStyleSheet/master/LICENSE.rst
