@@ -237,7 +237,7 @@ class MainForm(QMainWindow):
         self.left_open_export_dir_btn.setFixedWidth(90)
         self.left_refresh_btn.setFixedWidth(90)
 
-        self.left_open_export_dir_btn.clicked.connect(lambda: os.startfile(f"pray_history\\{self.target_uid}\\export\\"))
+        self.left_open_export_dir_btn.clicked.connect(self.left_open_export_dir)
         self.left_refresh_btn.clicked.connect(self.refreshData)
         # All - Left - Pray List
         self.left_pray_list.setFixedWidth(600)
@@ -282,6 +282,13 @@ class MainForm(QMainWindow):
         self.left_pray_mode_302_btn.setEnabled(is_enabled)
         self.left_refresh_btn.setEnabled(is_enabled)
         self.uid_settings_btn.setEnabled(is_enabled)
+
+    # Left Function Part
+    def left_open_export_dir(self):
+        if self.target_uid:
+            os.startfile(f"pray_history\\{self.target_uid}\\export\\")
+        else:
+            QMessageBox.critical(self, "错误", "未找到数据，请先更新数据")
 
     # Pray Mode Part
     def left_pray_list_100_change(self):
@@ -464,7 +471,9 @@ class LeftPrayListThread(QThread):
                 try:
                     target_url = target_url.replace(f"page={old_page}", f"page={page}").replace(f"end_id={old_end_id}",
                                                                                                 f"end_id={end_id}")
+                    rep_start_time = time.time()
                     rep = requests.get(target_url).json()
+                    rep_end_time = time.time()
                     if rep["data"] is None:
                         break
                     tmp = rep["data"]["list"]
@@ -480,7 +489,7 @@ class LeftPrayListThread(QThread):
                     old_end_id = end_id
                     page += 1
                     if type(page) == int:
-                        self.trigger.emit(f"正在读取第{str(page - 1)}页记录 - {key}")
+                        self.trigger.emit(f"正在读取第{str(page - 1)}页记录 - {key} - 耗时{round(rep_end_time - rep_start_time, 2)}s")
                     end_id = rep["data"]["list"][-1]["id"]
                 except IndexError or TypeError:
                     break

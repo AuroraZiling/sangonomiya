@@ -38,10 +38,13 @@ pip install pyinstaller
 pyinstaller pray.spec
 ```
 
-## 存疑 / Issues
+## 已知Bug
 
 1. 关于角色活动祈愿和角色活动祈愿-2的区别
    > 由于作者没抽过角色活动祈愿-2的卡池，导致无法测试
 
 2. 关于`qdarkstyle`的Warning:
    >No QCoreApplication instance found. Application patches not applied. You have to call load_stylesheet function after instantiation of QApplication to take effect.
+
+3. **[严重]** 关于代理服务器无法恢复至默认的问题
+   > 更新数据后，有可能出现代理服务器为消除的情况，导致无法正常上网
