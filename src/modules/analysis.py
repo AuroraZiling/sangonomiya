@@ -1,5 +1,3 @@
-# result_list.py - 所有四星/五星角色(无埃洛伊/旅行者)和三星/四星/五星武器(仅祈愿出)列表
-
 character_5_list = ["提纳里", "钟离", "宵宫", "可莉", "枫原万叶", "荒泷一斗", "夜兰", "魈", "神里绫华", "神里绫人",
                     "温迪", "八重神子", "甘雨", "申鹤", "优菈", "阿贝多", "胡桃", "达达利亚", "珊瑚宫心海", "雷电将军",
                     "七七", "刻晴", "迪卢克", "莫娜", "琴"]
@@ -15,3 +13,25 @@ weapon_4_list = ['笛剑', '祭礼剑', '匣里龙吟', '西风剑', '暗巷闪�
                  '祭礼残章', '昭心', '暗巷的酒与诗', '流浪乐章', '西风长枪', '断浪长鳍', '匣里灭辰', '千岩长枪']
 weapon_3_list = ['冷刃', '飞天御剑', '黎明神剑', '以理服人', '沐浴龙血的剑', '铁影阔剑', '神射手之誓', '鸦羽弓', '弹弓',
                  '魔导诸论', '讨龙英杰谭', '翡玉法球', '甲级宝珏', '白缨枪', '黑缨枪', '钺矛']
+
+
+class Analysis:
+    def __init__(self, given_data=None):
+        if given_data is None:
+            given_data = []
+        self.given_data = given_data
+        self.list_5, self.list_4 = [], []
+        for each in range(len(self.given_data)):
+            if self.given_data[each][1] in character_5_list or self.given_data[each][1] in weapon_5_list:
+                self.list_5.append(self.given_data[each][1] + f"[{each}]")
+            elif self.given_data[each][1] in character_4_list or self.given_data[each][1] in weapon_4_list:
+                self.list_4.append(self.given_data[each][1] + f"[{each}]")
+
+    def get_5(self):
+        return self.list_5, len(self.list_5)
+
+    def get_4(self):
+        return self.list_4, len(self.list_4)
+
+    def get_3(self):
+        return len(self.given_data) - len(self.list_5) - len(self.list_4)

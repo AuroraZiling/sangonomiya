@@ -12,10 +12,10 @@ from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont, QBrush, QColor
 from PyQt6.QtSvgWidgets import QSvgWidget
 from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
-    QMessageBox, QAbstractItemView, QHeaderView, QLabel, QGridLayout, QFrame
+    QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit
 
-from modules import result_list
 from modules import about_widget
+from modules import analysis
 
 gachaUrl = ""
 gachaType = {"新手祈愿": "100", "常驻祈愿": "200", "角色活动祈愿": "301", "角色活动祈愿-2": "400", "武器祈愿": "302"}
@@ -116,9 +116,31 @@ class MainForm(QMainWindow):
         self.right_label = QLabel("分析")
         self.right_top_layout.addWidget(self.right_label)
 
-        self.right_analysis_layout = QGridLayout(self)
-        self.right_analysis_label = QLabel("暂不可用")
-        self.right_analysis_layout.addWidget(self.right_analysis_label, 0, 0)
+        self.right_analysis_layout = QVBoxLayout(self)
+
+        self.right_analysis_basic_label = QLabel("基本数据")
+        self.right_analysis_basic_total_label = QLabel("祈愿数: 未知")
+        self.right_analysis_basic_5_label = QLabel("5星数量: 未知")
+        self.right_analysis_basic_5_list_textEdit = QTextEdit()
+        self.right_analysis_basic_4_label = QLabel("4星数量: 未知")
+        self.right_analysis_basic_4_list_textEdit = QTextEdit()
+        self.right_analysis_basic_3_label = QLabel("3星数量: 未知")
+        self.right_analysis_layout.addWidget(self.right_analysis_basic_label)
+        self.right_analysis_layout.addWidget(self.right_analysis_basic_total_label)
+        self.right_analysis_layout.addWidget(self.right_analysis_basic_5_label)
+        self.right_analysis_layout.addWidget(self.right_analysis_basic_5_list_textEdit)
+        self.right_analysis_layout.addWidget(self.right_analysis_basic_4_label)
+        self.right_analysis_layout.addWidget(self.right_analysis_basic_4_list_textEdit)
+        self.right_analysis_layout.addWidget(self.right_analysis_basic_3_label)
+
+        self.right_analysis_right_label = QLabel("保底数据")
+        self.right_analysis_right_next_label = QLabel("距离下一次保底: 暂未开放")
+        self.right_analysis_right_small_label = QLabel("小保底: 暂未开放")
+        self.right_analysis_right_big_label = QLabel("大保底: 暂未开放")
+        self.right_analysis_layout.addWidget(self.right_analysis_right_label)
+        self.right_analysis_layout.addWidget(self.right_analysis_right_next_label)
+        self.right_analysis_layout.addWidget(self.right_analysis_right_small_label)
+        self.right_analysis_layout.addWidget(self.right_analysis_right_big_label)
 
         self.right_layout.addLayout(self.right_top_layout)
         self.right_layout.addLayout(self.right_analysis_layout)
@@ -211,7 +233,7 @@ class MainForm(QMainWindow):
         # UID - Splitter
         self.uid_splitter.setFrameShape(QFrame.Shape.HLine)
         # All - Left - Top Layout
-        self.left_list_label.setFont(QFont("Microsoft YaHei", 11))
+        self.left_list_label.setFont(QFont("Microsoft YaHei", 13))
         self.left_open_export_dir_btn.setFixedWidth(90)
         self.left_refresh_btn.setFixedWidth(90)
 
@@ -241,10 +263,16 @@ class MainForm(QMainWindow):
         # All - Splitter
         self.splitter.setFrameShape(QFrame.Shape.VLine)
         # All - Right - Top Layout
-        self.right_label.setFont(QFont("Microsoft YaHei", 11))
+        self.right_label.setFont(QFont("Microsoft YaHei", 13))
         self.right_top_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         # All - Right - Analysis Layout
-        self.right_analysis_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.right_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.right_analysis_basic_label.setFont(QFont("Microsoft YaHei", 11))
+        self.right_analysis_right_label.setFont(QFont("Microsoft YaHei", 11))
+        self.right_analysis_basic_5_list_textEdit.setFixedHeight(90)
+        self.right_analysis_basic_5_list_textEdit.setReadOnly(True)
+        self.right_analysis_basic_4_list_textEdit.setFixedHeight(90)
+        self.right_analysis_basic_4_list_textEdit.setReadOnly(True)
 
     def allBtnStatusChange(self, is_enabled: bool):
         self.left_pray_mode_100_btn.setEnabled(is_enabled)
@@ -338,6 +366,7 @@ class MainForm(QMainWindow):
             self.left_pray_list.removeRow(0)
 
     def refreshList(self, pray_mode):
+        # Left
         self.clearList()
         data_list = []
         self.left_list_label.setText(f"祈愿列表 - {pray_mode}")
@@ -363,11 +392,19 @@ class MainForm(QMainWindow):
                         self.left_pray_list.item(i, 4).setText(f"十连-{10-i+pos}")
                     pos += 9
                 pos += 1
+        # Right
+        analyser = analysis.Analysis(data_list)
+        self.right_analysis_basic_total_label.setText(f"祈愿数: {len(data_list)}")
+        self.right_analysis_basic_5_label.setText(f"5星数量: {analyser.get_5()[1]}")
+        self.right_analysis_basic_5_list_textEdit.setText(','.join(analyser.get_5()[0]))
+        self.right_analysis_basic_4_label.setText(f"4星数量: {analyser.get_4()[1]}")
+        self.right_analysis_basic_4_list_textEdit.setText(','.join(analyser.get_4()[0]))
+        self.right_analysis_basic_3_label.setText(f"3星数量: {analyser.get_3()}")
 
     def setColor(self, name, row):
-        if name in result_list.weapon_4_list or name in result_list.character_4_list:
+        if name in analysis.weapon_4_list or name in analysis.character_4_list:
             selected_color = gachaItemLevelColor[4]
-        elif name in result_list.weapon_5_list or name in result_list.character_5_list:
+        elif name in analysis.weapon_5_list or name in analysis.character_5_list:
             selected_color = gachaItemLevelColor[5]
             for each_item in range(5):
                 self.left_pray_list.item(row, each_item).setForeground(QBrush(QColor(0, 0, 0)))
