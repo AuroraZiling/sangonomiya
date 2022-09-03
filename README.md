@@ -27,6 +27,17 @@
 - [ ] 可更新 *不需要卸载重装*
 - [ ] 基础的数据分析
 
+## 打包 / Build
+
+需要安装`pyinstaller`
+```commandline
+pip install pyinstaller
+```
+
+```commandline
+pyinstaller pray.spec
+```
+
 ## 存疑 / Issues
 
 1. 关于角色活动祈愿和角色活动祈愿-2的区别

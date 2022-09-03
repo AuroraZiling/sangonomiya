@@ -7,9 +7,10 @@ import sys
 import time
 import qdarkstyle
 import requests
-from PyQt6 import QtCore, QtWidgets, QtGui
+from PyQt6 import QtCore, QtWidgets, QtGui, QtSvg
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont, QBrush, QColor
+from PyQt6.QtSvgWidgets import QSvgWidget
 from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
     QMessageBox, QAbstractItemView, QHeaderView, QLabel, QGridLayout, QFrame
 
@@ -51,9 +52,20 @@ class MainForm(QMainWindow):
         # UI Design
         self.widget = QWidget()
         self.setCentralWidget(self.widget)
+        self.base_layout = QVBoxLayout(self)
+        self.uid_h_layout = QHBoxLayout(self)
         self.all_layout = QHBoxLayout(self)
         self.left_layout = QVBoxLayout(self)
         self.right_layout = QVBoxLayout(self)
+
+        # UI UID
+        self.uid_user_image = QSvgWidget("assets/user.svg")
+        self.uid_current_uid_label = QLabel("未知")
+        self.uid_h_layout.addWidget(self.uid_user_image)
+        self.uid_h_layout.addWidget(self.uid_current_uid_label)
+        self.uid_splitter = QFrame(self)
+        self.base_layout.addLayout(self.uid_h_layout)
+        self.base_layout.addWidget(self.uid_splitter)
 
         # UI Left
         self.left_top_layout = QHBoxLayout(self)
@@ -84,9 +96,7 @@ class MainForm(QMainWindow):
         self.left_layout.addLayout(self.left_pray_mode_h_layout)
 
         self.left_bottom_h_layout = QHBoxLayout(self)
-        self.left_current_uid_label = QLabel("UID: 未知")
         self.left_update_time_label = QLabel("数据时间: 未知")
-        self.left_bottom_h_layout.addWidget(self.left_current_uid_label)
         self.left_bottom_h_layout.addWidget(self.left_update_time_label)
         self.left_layout.addLayout(self.left_bottom_h_layout)
 
@@ -113,7 +123,8 @@ class MainForm(QMainWindow):
         self.all_layout.addLayout(self.left_layout)
         self.all_layout.addWidget(self.splitter)
         self.all_layout.addLayout(self.right_layout)
-        self.widget.setLayout(self.all_layout)
+        self.base_layout.addLayout(self.all_layout)
+        self.widget.setLayout(self.base_layout)
         self.file_check()
         self.pre_generate()
         self.initUI()
@@ -169,7 +180,7 @@ class MainForm(QMainWindow):
         # Pre: 多UID支持预备
         if self.all_data_list:
             self.target_uid = list(self.all_data_list.keys())[0]
-            self.left_current_uid_label.setText(f"UID: {self.target_uid}")
+            self.uid_current_uid_label.setText(f"{self.target_uid}")
 
     def file_check(self):
         if not os.path.exists("assets"):
@@ -188,7 +199,13 @@ class MainForm(QMainWindow):
 
     # UI Part
     def initUI(self):
-        # Left - Top Layout
+        # UID - Image
+        self.uid_user_image.setFixedSize(30, 30)
+        # UID - Label
+        self.uid_current_uid_label.setFont(QFont("Microsoft YaHei", 13))
+        # UID - Splitter
+        self.uid_splitter.setFrameShape(QFrame.Shape.HLine)
+        # All - Left - Top Layout
         self.left_list_label.setFont(QFont("Microsoft YaHei", 11))
         self.left_open_export_dir_btn.setFixedWidth(90)
         self.left_refresh_btn.setFixedWidth(90)
@@ -197,7 +214,7 @@ class MainForm(QMainWindow):
 
         self.left_open_export_dir_btn.clicked.connect(lambda x: os.startfile("export"))
         self.left_refresh_btn.clicked.connect(self.refreshData)
-        # Left - Pray List
+        # All - Left - Pray List
         self.left_pray_list.setFixedWidth(500)
         self.left_pray_list.setColumnCount(3)
         self.left_pray_list.setHorizontalHeaderLabels(["类型", "名称", "时间"])
@@ -210,20 +227,20 @@ class MainForm(QMainWindow):
         self.left_pray_list.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
         self.left_pray_list.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.left_pray_list.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        # Left - Pray Mode Layout
+        # All - Left - Pray Mode Layout
         self.left_pray_mode_100_btn.clicked.connect(self.left_pray_list_100_change)
         self.left_pray_mode_200_btn.clicked.connect(self.left_pray_list_200_change)
         self.left_pray_mode_301_btn.clicked.connect(self.left_pray_list_301_change)
         self.left_pray_mode_400_btn.clicked.connect(self.left_pray_list_400_change)
         self.left_pray_mode_302_btn.clicked.connect(self.left_pray_list_302_change)
-        # Splitter
+        # All - Splitter
         self.splitter.setFrameShape(QFrame.Shape.VLine)
-        # Right - Top Layout
+        # All - Right - Top Layout
         self.right_label.setFont(QFont("Microsoft YaHei", 11))
         self.right_top_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        # Right - Analysis Layout
+        # All - Right - Analysis Layout
         self.right_analysis_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # Right - Bottom Layout
+        # All - Right - Bottom Layout
         self.right_bottom_h_layout.setAlignment(Qt.AlignmentFlag.AlignBottom)
 
     def allBtnStatusChange(self, is_enabled: bool):
@@ -304,7 +321,7 @@ class MainForm(QMainWindow):
         self.get_pray_list_thread.start()
         self.get_pray_list_thread.trigger.connect(self.right_status_label_change)
 
-    def status_label_change(self, msg):
+    def right_status_label_change(self, msg):
         self.right_status_label.setText(f"状态: {msg}")
         if msg == "全部列表读取完毕":
             self.left_list_label.setText("祈愿列表")
