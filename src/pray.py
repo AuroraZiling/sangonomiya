@@ -188,8 +188,6 @@ class MainForm(QMainWindow):
             sys.exit()
         if not os.path.exists("pray_history"):
             os.mkdir("pray_history")
-        if not os.path.exists("export"):
-            os.mkdir("export")
 
     def debug_code(self):
         pass
@@ -209,16 +207,17 @@ class MainForm(QMainWindow):
         self.left_settings_btn.setFixedWidth(90)
         self.left_settings_btn.setEnabled(False)  # Locked
 
-        self.left_open_export_dir_btn.clicked.connect(lambda x: os.startfile("export"))
+        self.left_open_export_dir_btn.clicked.connect(lambda: os.startfile(f"pray_history\\{self.target_uid}\\export\\"))
         self.left_refresh_btn.clicked.connect(self.refreshData)
         # All - Left - Pray List
-        self.left_pray_list.setFixedWidth(560)
-        self.left_pray_list.setColumnCount(4)
-        self.left_pray_list.setHorizontalHeaderLabels(["序号", "类型", "名称", "时间"])
-        self.left_pray_list.setColumnWidth(0, 60)
+        self.left_pray_list.setFixedWidth(600)
+        self.left_pray_list.setColumnCount(5)
+        self.left_pray_list.setHorizontalHeaderLabels(["序号", "类型", "名称", "时间", "模式"])
+        self.left_pray_list.setColumnWidth(0, 55)
         self.left_pray_list.setColumnWidth(1, 60)
         self.left_pray_list.setColumnWidth(2, 180)
         self.left_pray_list.setColumnWidth(3, 230)
+        self.left_pray_list.setColumnWidth(4, 50)
         self.left_pray_list.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.left_pray_list.setShowGrid(False)
         self.left_pray_list.verticalHeader().setHidden(True)
@@ -347,25 +346,30 @@ class MainForm(QMainWindow):
         if gachaType[pray_mode] == "302":
             data_list = self.pray_302
         for i in data_list:
-            self.addRow(len(data_list), i[0], i[1], i[2])
+            self.addRow(len(data_list), i[0], i[1], i[2], "单抽")
+        if len(data_list) >= 10:
+            pos = 0
+            time_tmp = [i[2] for i in data_list]
+            while pos < len(data_list) - 9:
+                if time_tmp[pos] == time_tmp[pos+1]:
+                    for i in range(pos, pos+10):
+                        self.left_pray_list.item(i, 4).setText(f"十连-{10-i+pos}")
+                    pos += 9
+                pos += 1
 
     def setColor(self, name, row):
         if name in result_list.weapon_4_list or name in result_list.character_4_list:
             selected_color = gachaItemLevelColor[4]
         elif name in result_list.weapon_5_list or name in result_list.character_5_list:
             selected_color = gachaItemLevelColor[5]
-            self.left_pray_list.item(row, 0).setForeground(QBrush(QColor(0, 0, 0)))
-            self.left_pray_list.item(row, 1).setForeground(QBrush(QColor(0, 0, 0)))
-            self.left_pray_list.item(row, 2).setForeground(QBrush(QColor(0, 0, 0)))
-            self.left_pray_list.item(row, 3).setForeground(QBrush(QColor(0, 0, 0)))
+            for each_item in range(5):
+                self.left_pray_list.item(row, each_item).setForeground(QBrush(QColor(0, 0, 0)))
         else:
             return
-        self.left_pray_list.item(row, 0).setBackground(QBrush(selected_color))
-        self.left_pray_list.item(row, 1).setBackground(QBrush(selected_color))
-        self.left_pray_list.item(row, 2).setBackground(QBrush(selected_color))
-        self.left_pray_list.item(row, 3).setBackground(QBrush(selected_color))
+        for each_item in range(5):
+            self.left_pray_list.item(row, each_item).setBackground(QBrush(selected_color))
 
-    def addRow(self, data_length, typ, name, t):
+    def addRow(self, data_length, typ, name, t, gacha_mode):
         row = self.left_pray_list.rowCount()
         self.left_pray_list.setRowCount(row + 1)
         item = QtWidgets.QTableWidgetItem()
@@ -380,6 +384,9 @@ class MainForm(QMainWindow):
         item = QtWidgets.QTableWidgetItem()
         self.left_pray_list.setItem(row, 3, item)
         self.left_pray_list.item(row, 3).setText(t)
+        item = QtWidgets.QTableWidgetItem()
+        self.left_pray_list.setItem(row, 4, item)
+        self.left_pray_list.item(row, 4).setText(gacha_mode)
         self.setColor(name, row)
         self.left_pray_list.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.left_pray_list.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
