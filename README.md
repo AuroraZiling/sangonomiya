@@ -8,7 +8,12 @@
 
 注：均为自释放压缩包
 
-### Release 2 (推荐)
+### Release 3 (推荐)
+[阿里云盘: 下载/Download](https://www.aliyundrive.com/s/CPhESipXJHp)
+
+[蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/iApgh0aysecj) *密码: 0000*
+
+### Release 2
 [阿里云盘: 下载/Download](https://www.aliyundrive.com/s/rzJhKpizZ6Z)
 
 [蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/iKiEs0am4v6j) *密码: 0000*
