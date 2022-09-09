@@ -23,9 +23,9 @@ class Analysis:
         self.list_5, self.list_4 = [], []
         for each in range(len(self.given_data)):
             if self.given_data[each][1] in character_5_list or self.given_data[each][1] in weapon_5_list:
-                self.list_5.append(self.given_data[each][1] + f"[{each}]")
+                self.list_5.append(self.given_data[each][1] + f"[{len(given_data)-each}]")
             elif self.given_data[each][1] in character_4_list or self.given_data[each][1] in weapon_4_list:
-                self.list_4.append(self.given_data[each][1] + f"[{each}]")
+                self.list_4.append(self.given_data[each][1] + f"[{len(given_data)-each}]")
 
     def get_5(self):
         return self.list_5, len(self.list_5)
