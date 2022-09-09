@@ -41,7 +41,7 @@ class MainForm(QMainWindow):
         self.target_uid = ""
         self.all_data_list = {}
         self.setWindowTitle("Genshin Pray Export")
-        self.setFixedSize(1200, 600)
+        self.setFixedSize(1200, 700)
 
         # Child Windows
         self.about_window = about_widget.About()
@@ -92,12 +92,13 @@ class MainForm(QMainWindow):
         self.left_pray_mode_100_btn = QPushButton("新手祈愿")
         self.left_pray_mode_200_btn = QPushButton("常驻祈愿")
         self.left_pray_mode_301_btn = QPushButton("角色祈愿")
-        self.left_pray_mode_400_btn = QPushButton("角色祈愿-2")
+        # 疑似无用
+        # self.left_pray_mode_400_btn = QPushButton("角色祈愿-2")
         self.left_pray_mode_302_btn = QPushButton("武器祈愿")
         self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_100_btn)
         self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_200_btn)
         self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_301_btn)
-        self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_400_btn)
+        # self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_400_btn)
         self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_302_btn)
         self.left_layout.addLayout(self.left_pray_mode_h_layout)
 
@@ -134,16 +135,13 @@ class MainForm(QMainWindow):
         self.right_analysis_layout.addWidget(self.right_analysis_basic_3_label)
 
         self.right_analysis_right_label = QLabel("保底数据")
-        self.right_analysis_right_next_label = QLabel("距离下一次保底: 暂未开放")
-        self.right_analysis_right_small_label = QLabel("小保底: 暂未开放")
-        self.right_analysis_right_big_label = QLabel("大保底: 暂未开放")
+        self.right_analysis_right_guarantee_label = QLabel("暂无")
         self.right_analysis_layout.addWidget(self.right_analysis_right_label)
-        self.right_analysis_layout.addWidget(self.right_analysis_right_next_label)
-        self.right_analysis_layout.addWidget(self.right_analysis_right_small_label)
-        self.right_analysis_layout.addWidget(self.right_analysis_right_big_label)
+        self.right_analysis_layout.addWidget(self.right_analysis_right_guarantee_label)
 
         self.right_layout.addLayout(self.right_top_layout)
         self.right_layout.addLayout(self.right_analysis_layout)
+        self.right_layout.addStretch(1)
 
         self.all_layout.addLayout(self.left_layout)
         self.all_layout.addWidget(self.splitter)
@@ -258,7 +256,7 @@ class MainForm(QMainWindow):
         self.left_pray_mode_100_btn.clicked.connect(self.left_pray_list_100_change)
         self.left_pray_mode_200_btn.clicked.connect(self.left_pray_list_200_change)
         self.left_pray_mode_301_btn.clicked.connect(self.left_pray_list_301_change)
-        self.left_pray_mode_400_btn.clicked.connect(self.left_pray_list_400_change)
+        # self.left_pray_mode_400_btn.clicked.connect(self.left_pray_list_400_change)
         self.left_pray_mode_302_btn.clicked.connect(self.left_pray_list_302_change)
         # All - Splitter
         self.splitter.setFrameShape(QFrame.Shape.VLine)
@@ -400,13 +398,14 @@ class MainForm(QMainWindow):
                     pos += 9
                 pos += 1
         # Right
-        analyser = analysis.Analysis(data_list)
+        analyser = analysis.Analysis(data_list, gachaType[pray_mode])
         self.right_analysis_basic_total_label.setText(f"祈愿数: {len(data_list)}")
         self.right_analysis_basic_5_label.setText(f"5星数量: {analyser.get_5()[1]}")
         self.right_analysis_basic_5_list_textEdit.setText(','.join(analyser.get_5()[0]))
         self.right_analysis_basic_4_label.setText(f"4星数量: {analyser.get_4()[1]}")
         self.right_analysis_basic_4_list_textEdit.setText(','.join(analyser.get_4()[0]))
         self.right_analysis_basic_3_label.setText(f"3星数量: {analyser.get_3()}")
+        self.right_analysis_right_guarantee_label.setText(analyser.guarantee())
 
     def setColor(self, name, row):
         if name in analysis.weapon_4_list or name in analysis.character_4_list:

@@ -11,7 +11,7 @@ class About(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("关于 / About")
-        self.setFixedSize(600, 500)
+        self.setFixedSize(490, 500)
 
         # File About
         self.about_json = json.loads(open("config.json", "r", encoding="utf-8").read())["about"]

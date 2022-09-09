@@ -1,3 +1,4 @@
+character_5_w_list = ["七七", "刻晴", "迪卢克", "莫娜", "琴"]
 character_5_list = ["提纳里", "钟离", "宵宫", "可莉", "枫原万叶", "荒泷一斗", "夜兰", "魈", "神里绫华", "神里绫人",
                     "温迪", "八重神子", "甘雨", "申鹤", "优菈", "阿贝多", "胡桃", "达达利亚", "珊瑚宫心海", "雷电将军",
                     "七七", "刻晴", "迪卢克", "莫娜", "琴"]
@@ -16,11 +17,13 @@ weapon_3_list = ['冷刃', '飞天御剑', '黎明神剑', '以理服人', '沐�
 
 
 class Analysis:
-    def __init__(self, given_data=None):
+    def __init__(self, given_data=None, pray_mode=None):
         if given_data is None:
             given_data = []
         self.given_data = given_data
+        self.pray_mode = pray_mode
         self.list_5, self.list_4 = [], []
+        self.given_data_length = len(given_data)
         for each in range(len(self.given_data)):
             if self.given_data[each][1] in character_5_list or self.given_data[each][1] in weapon_5_list:
                 self.list_5.append(self.given_data[each][1] + f"[{len(given_data)-each}]")
@@ -35,3 +38,17 @@ class Analysis:
 
     def get_3(self):
         return len(self.given_data) - len(self.list_5) - len(self.list_4)
+
+    def guarantee(self):
+        if self.pray_mode == "301" and len(self.list_5):
+            guarantee_model = ""
+            guarantee_data = self.get_5()
+            nearest_data = [i.replace(']', '') for i in guarantee_data[0][0].split("[")]
+            if nearest_data[0] in character_5_w_list:
+                guarantee_model += "情况: 小保底歪了/直接进入大保底"
+                guarantee_model += f"\n最近一次在第{nearest_data[1]}抽得到{nearest_data[0]}"
+                guarantee_model += f", 意味着将在{int(nearest_data[1])+90}抽之前必出当期UP"
+                guarantee_model += f"\n当前已经{self.given_data_length}/{int(nearest_data[1])+90}抽, 还差{int(nearest_data[1])+90-self.given_data_length}抽"
+                guarantee_model += f"\n预计最多需要{int(nearest_data[1])+90-self.given_data_length}个纠缠之缘, 约等于{(int(nearest_data[1])+90-self.given_data_length)*160}原石"
+            return guarantee_model
+        return "暂未支持除了角色活动祈愿之外的分析"
