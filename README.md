@@ -8,7 +8,12 @@
 
 注：均为自释放压缩包
 
-### Release 3 (推荐)
+### Release 4 (推荐)
+[阿里云盘: 下载/Download](https://www.aliyundrive.com/s/irQ2FkMH22H)
+
+[蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/inxVL0bfagwf) *密码:0000*
+
+### Release 3
 [阿里云盘: 下载/Download](https://www.aliyundrive.com/s/CPhESipXJHp)
 
 [蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/iApgh0aysecj) *密码: 0000*
@@ -27,10 +32,10 @@
 
 - [x] 支持彩色列表
 - [x] 支持导出 (符合[统一可交换祈愿记录标准](https://github.com/DGP-Studio/Snap.Genshin/wiki/StandardFormat))
-- [ ] 列表显示数据增多 (比如是否属于十连/单抽等)
+- [x] 列表显示数据增多 (比如是否属于十连/单抽等)
 - [ ] 多UID支持
 - [ ] 可更新 *不需要卸载重装*
-- [ ] 基础的数据分析
+- [x] 基础的数据分析
 
 ## 打包 / Build
 
@@ -45,11 +50,8 @@ pyinstaller pray.spec
 
 ## 已知Bug
 
-1. 关于角色活动祈愿和角色活动祈愿-2的区别
-   > 由于作者没抽过角色活动祈愿-2的卡池，导致无法测试
-
-2. 关于`qdarkstyle`的Warning:
+1. 关于`qdarkstyle`的Warning:
    >No QCoreApplication instance found. Application patches not applied. You have to call load_stylesheet function after instantiation of QApplication to take effect.
 
-3. **[严重]** 关于代理服务器无法恢复至默认的问题
+2. **[严重]** 关于代理服务器无法恢复至默认的问题
    > 更新数据后，有可能出现代理服务器为消除的情况，导致无法正常上网

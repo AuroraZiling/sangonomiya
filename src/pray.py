@@ -41,7 +41,7 @@ class MainForm(QMainWindow):
         self.target_uid = ""
         self.all_data_list = {}
         self.setWindowTitle("Genshin Pray Export")
-        self.setFixedSize(1200, 700)
+        self.setFixedSize(1300, 700)
 
         # Child Windows
         self.about_window = about_widget.About()
@@ -212,6 +212,9 @@ class MainForm(QMainWindow):
         if not os.path.exists("modules"):
             QMessageBox.critical(self, "错误", "未找到必要模块，请检查目录(modules)是否存在")
             sys.exit()
+        if not os.path.exists("modules/about"):
+            QMessageBox.critical(self, "错误", "未找到必要模块，请检查目录(modules)是否存在")
+            sys.exit()
         if not os.path.exists("pray_history"):
             os.mkdir("pray_history")
 
@@ -276,7 +279,7 @@ class MainForm(QMainWindow):
         self.left_pray_mode_100_btn.setEnabled(is_enabled)
         self.left_pray_mode_200_btn.setEnabled(is_enabled)
         self.left_pray_mode_301_btn.setEnabled(is_enabled)
-        self.left_pray_mode_400_btn.setEnabled(is_enabled)
+        # self.left_pray_mode_400_btn.setEnabled(is_enabled)
         self.left_pray_mode_302_btn.setEnabled(is_enabled)
         self.left_refresh_btn.setEnabled(is_enabled)
         self.uid_settings_btn.setEnabled(is_enabled)
