@@ -1,5 +1,8 @@
 {
-  "about": {
-    "version": "Release 4"
-  }
+    "about": {
+        "version": "Release 5 Dev 1"
+    },
+    "settings": {
+        "hide_new": true
+    }
 }

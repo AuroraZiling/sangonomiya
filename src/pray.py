@@ -16,6 +16,7 @@ from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPu
 
 from modules import about_widget
 from modules import analysis
+from modules import settings_widget
 
 gachaUrl = ""
 gachaType = {"新手祈愿": "100", "常驻祈愿": "200", "角色活动祈愿": "301", "角色活动祈愿-2": "400", "武器祈愿": "302"}
@@ -25,6 +26,7 @@ gachaItemLevelColor = {4: QColor(132, 112, 255), 5: QColor(255, 185, 15)}
 export_data = {"info": {"uid": "", "lang": "zh-cn", "export_time": ""}, "list": []}
 
 basedir = os.path.dirname(__file__)
+hide_new = json.loads(open("config.json", "r", encoding="utf-8").read())["settings"]["hide_new"]
 
 try:
     from ctypes import windll  # Only Windows.
@@ -45,6 +47,7 @@ class MainForm(QMainWindow):
 
         # Child Windows
         self.about_window = about_widget.About()
+        self.settings_window = settings_widget.Settings()
 
         # Pray List Init
         self.loaded_pray_list = []
@@ -89,13 +92,14 @@ class MainForm(QMainWindow):
         self.left_layout.addWidget(self.left_pray_list)
 
         self.left_pray_mode_h_layout = QHBoxLayout(self)
-        self.left_pray_mode_100_btn = QPushButton("新手祈愿")
+        if not hide_new:
+            self.left_pray_mode_100_btn = QPushButton("新手祈愿")
+            self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_100_btn)
         self.left_pray_mode_200_btn = QPushButton("常驻祈愿")
         self.left_pray_mode_301_btn = QPushButton("角色祈愿")
         # 疑似无用
         # self.left_pray_mode_400_btn = QPushButton("角色祈愿-2")
         self.left_pray_mode_302_btn = QPushButton("武器祈愿")
-        self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_100_btn)
         self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_200_btn)
         self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_301_btn)
         # self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_400_btn)
@@ -160,7 +164,7 @@ class MainForm(QMainWindow):
                                                   "data_301": {"data": [], "data_time": ""},
                                                   "data_400": {"data": [], "data_time": ""},
                                                   "data_302": {"data": [], "data_time": ""}}})
-            if os.path.exists(f"pray_history/{each_dir}/original_data/100.pickle"):
+            if os.path.exists(f"pray_history/{each_dir}/original_data/100.pickle") and not hide_new:
                 data_100 = pickle.load(open(f"pray_history/{each_dir}/original_data/100.pickle", "rb"))
                 data_time_100 = time.strftime("%Y-%m-%d %H:%M:%S",
                                               time.localtime((os.path.getmtime(f"pray_history/{each_dir}/original_data/100.pickle"))))
@@ -230,6 +234,7 @@ class MainForm(QMainWindow):
         self.uid_settings_btn.setFixedWidth(90)
         self.uid_about_btn.setFixedWidth(90)
 
+        self.uid_settings_btn.clicked.connect(lambda: self.settings_window.show())
         self.uid_about_btn.clicked.connect(lambda: self.about_window.show())
         # UID - Splitter
         self.uid_splitter.setFrameShape(QFrame.Shape.HLine)
@@ -256,7 +261,8 @@ class MainForm(QMainWindow):
         self.left_pray_list.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.left_pray_list.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         # All - Left - Pray Mode Layout
-        self.left_pray_mode_100_btn.clicked.connect(self.left_pray_list_100_change)
+        if not hide_new:
+            self.left_pray_mode_100_btn.clicked.connect(self.left_pray_list_100_change)
         self.left_pray_mode_200_btn.clicked.connect(self.left_pray_list_200_change)
         self.left_pray_mode_301_btn.clicked.connect(self.left_pray_list_301_change)
         # self.left_pray_mode_400_btn.clicked.connect(self.left_pray_list_400_change)
@@ -276,7 +282,8 @@ class MainForm(QMainWindow):
         self.right_analysis_basic_4_list_textEdit.setReadOnly(True)
 
     def allBtnStatusChange(self, is_enabled: bool):
-        self.left_pray_mode_100_btn.setEnabled(is_enabled)
+        if not hide_new:
+            self.left_pray_mode_100_btn.setEnabled(is_enabled)
         self.left_pray_mode_200_btn.setEnabled(is_enabled)
         self.left_pray_mode_301_btn.setEnabled(is_enabled)
         # self.left_pray_mode_400_btn.setEnabled(is_enabled)
@@ -293,6 +300,8 @@ class MainForm(QMainWindow):
 
     # Pray Mode Part
     def left_pray_list_100_change(self):
+        if hide_new:
+            return
         if "新手祈愿" in self.loaded_pray_list:
             self.refreshList("新手祈愿")
             self.left_status_label.setText("状态: 已读取新手祈愿")
@@ -379,7 +388,7 @@ class MainForm(QMainWindow):
         data_list = []
         self.left_list_label.setText(f"祈愿列表 - {pray_mode}")
         self.right_label.setText(f"分析 - {pray_mode}")
-        if gachaType[pray_mode] == "100":
+        if gachaType[pray_mode] == "100" and not hide_new:
             data_list = self.pray_100
         if gachaType[pray_mode] == "200":
             data_list = self.pray_200
@@ -455,6 +464,8 @@ class LeftPrayListThread(QThread):
     def run(self):
         export_data_list = []
         for key in gachaType.keys():
+            if hide_new and key == "100":
+                continue
             global gachaTarget
             gachaTarget = gachaType[key]
             data, proceed_data = [], []
