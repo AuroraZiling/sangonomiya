@@ -1,6 +1,8 @@
-# genshin-pray-export
+# Genshin Pray Export
 
-**原神祈愿记录导出**
+**原神祈愿记录导出工具**
+
+![](https://img.shields.io/badge/Language-Python-blue.svg?style=flat-square)
 
 *原理(浅)讲解: [原神3.0 祈愿/抽卡记录导出工具原理讲解](https://www.bilibili.com/video/BV1cY4y1u758)*
 
@@ -35,9 +37,12 @@
 - [x] 列表显示数据增多 (比如是否属于十连/单抽等)
 - [ ] 多UID支持
 - [ ] 可更新 *不需要卸载重装*
+- [ ] 真正的文件校验
+- [ ] 图表导出数据
 - [x] 基础的数据分析
+- [ ] 预测
 
-## 打包 / Build
+## 打包 / Usage
 
 需要安装`pyinstaller`
 ```commandline
@@ -48,10 +53,23 @@ pip install pyinstaller
 pyinstaller pray.spec
 ```
 
+## 更新日志 / Changelog
+
+[Change Log](https://github.com/AuroraZiling/genshin-pray-export/releases)
+
 ## 已知Bug
 
 1. 关于`qdarkstyle`的Warning:
    >No QCoreApplication instance found. Application patches not applied. You have to call load_stylesheet function after instantiation of QApplication to take effect.
 
-2. **[严重]** 关于代理服务器无法恢复至默认的问题
-   > 更新数据后，有可能出现代理服务器为消除的情况，导致无法正常上网
+## 维护者 / Maintainer
+
+[@AuroraZiling](https://github.com/auroraziling)
+
+## 贡献 / Contributing
+
+欢迎提出 [Issue](https://github.com/AuroraZiling/genshin-pray-export/issues) 或 [Pull Request](https://github.com/AuroraZiling/genshin-pray-export/pulls)
+
+## 许可证 / License
+
+[GNU General Public License v3.0](https://github.com/AuroraZiling/genshin-pray-export/blob/main/LICENSE)
