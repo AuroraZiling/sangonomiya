@@ -1,9 +1,6 @@
 import json
 import winreg
 
-from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QTextEdit, QLabel, QFrame, QRadioButton, \
     QMessageBox
 
@@ -34,7 +31,7 @@ class Settings(QWidget):
         self.hide_new_h_layout = QHBoxLayout(self)
         self.label_hide_new = QLabel("停用新手祈愿读取")
         self.widget_hide_new = QRadioButton(self)
-        self.label_hide_new_description = QLabel("更新数据以及显示数据时，将忽略新手祈愿")
+        self.label_hide_new_description = QLabel("更新数据以及显示数据时，将忽略新手祈愿 (重启后生效)")
         self.hide_new_h_layout.addWidget(self.label_hide_new)
         self.hide_new_h_layout.addWidget(self.widget_hide_new)
         self.base_layout.addLayout(self.hide_new_h_layout)

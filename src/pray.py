@@ -12,7 +12,7 @@ from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont, QBrush, QColor
 from PyQt6.QtSvgWidgets import QSvgWidget
 from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
-    QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit
+    QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit, QTableWidgetItem
 
 from modules import about_widget
 from modules import analysis
@@ -51,7 +51,7 @@ class MainForm(QMainWindow):
 
         # Pray List Init
         self.loaded_pray_list = []
-        self.pray_100, self.pray_200, self.pray_301, self.pray_400, self.pray_302 = None, None, None, None, None
+        self.pray_list = {"100": None, "200": None, "301": None, "400": None, "302": None}
 
         # Multi-process
         self.get_pray_list_thread = LeftPrayListThread()
@@ -170,7 +170,7 @@ class MainForm(QMainWindow):
                                               time.localtime((os.path.getmtime(f"pray_history/{each_dir}/original_data/100.pickle"))))
                 self.all_data_list[each_dir]["data_100"]["data"] = data_100
                 self.loaded_pray_list.append("新手祈愿")
-                self.pray_100 = data_100
+                self.pray_list["100"] = data_100
                 self.all_data_list[each_dir]["data_100"]["data_time"] = data_time_100
             if os.path.exists(f"pray_history/{each_dir}/original_data/200.pickle"):
                 data_200 = pickle.load(open(f"pray_history/{each_dir}/original_data/200.pickle", "rb"))
@@ -178,7 +178,7 @@ class MainForm(QMainWindow):
                                               time.localtime((os.path.getmtime(f"pray_history/{each_dir}/original_data/200.pickle"))))
                 self.all_data_list[each_dir]["data_200"]["data"] = data_200
                 self.loaded_pray_list.append("常驻祈愿")
-                self.pray_200 = data_200
+                self.pray_list["200"] = data_200
                 self.all_data_list[each_dir]["data_200"]["data_time"] = data_time_200
             if os.path.exists(f"pray_history/{each_dir}/original_data/301.pickle"):
                 data_301 = pickle.load(open(f"pray_history/{each_dir}/original_data/301.pickle", "rb"))
@@ -186,7 +186,7 @@ class MainForm(QMainWindow):
                                               time.localtime((os.path.getmtime(f"pray_history/{each_dir}/original_data/301.pickle"))))
                 self.all_data_list[each_dir]["data_301"]["data"] = data_301
                 self.loaded_pray_list.append("角色祈愿")
-                self.pray_301 = data_301
+                self.pray_list["301"] = data_301
                 self.all_data_list[each_dir]["data_301"]["data_time"] = data_time_301
             if os.path.exists(f"pray_history/{each_dir}/original_data/400.pickle"):
                 data_400 = pickle.load(open(f"pray_history/{each_dir}/original_data/400.pickle", "rb"))
@@ -194,7 +194,7 @@ class MainForm(QMainWindow):
                                               time.localtime((os.path.getmtime(f"pray_history/{each_dir}/original_data/400.pickle"))))
                 self.all_data_list[each_dir]["data_400"]["data"] = data_400
                 self.loaded_pray_list.append("角色祈愿-2")
-                self.pray_400 = data_400
+                self.pray_list["400"] = data_400
                 self.all_data_list[each_dir]["data_400"]["data_time"] = data_time_400
             if os.path.exists(f"pray_history/{each_dir}/original_data/302.pickle"):
                 data_302 = pickle.load(open(f"pray_history/{each_dir}/original_data/302.pickle", "rb"))
@@ -202,7 +202,7 @@ class MainForm(QMainWindow):
                                               time.localtime((os.path.getmtime(f"pray_history/{each_dir}/original_data/302.pickle"))))
                 self.all_data_list[each_dir]["data_302"]["data"] = data_302
                 self.loaded_pray_list.append("武器祈愿")
-                self.pray_302 = data_302
+                self.pray_list["302"] = data_302
                 self.all_data_list[each_dir]["data_302"]["data_time"] = data_time_302
         # Pre: 多UID支持预备
         if self.all_data_list:
@@ -221,6 +221,9 @@ class MainForm(QMainWindow):
             sys.exit()
         if not os.path.exists("pray_history"):
             os.mkdir("pray_history")
+        if not os.path.exists("config.json"):
+            QMessageBox.critical(self, "错误", "未找到配置文件")
+            sys.exit()
 
     def debug_code(self):
         pass
@@ -348,10 +351,12 @@ class MainForm(QMainWindow):
 
     # Data Update Part
     def refreshData(self):
+        global hide_new
         if not os.path.exists("interact"):
             open("interact", 'w')
         if os.path.exists("requestUrl.txt"):
             os.remove("requestUrl.txt")
+        hide_new = json.loads(open("config.json", 'r').read())["settings"]["hide_new"]
         time.sleep(0.5)
         ex_module = subprocess.Popen("modules/GenshinProxyServer.exe")
         ex_module.wait()
@@ -368,7 +373,8 @@ class MainForm(QMainWindow):
         self.get_pray_list_thread.start()
         self.get_pray_list_thread.trigger.connect(self.left_status_label_change)
 
-    def left_status_label_change(self, msg):
+    # Pray List Part
+    def left_status_label_change(self, msg: str):  # 用于更改左侧列表下方的状态
         self.left_status_label.setText(f"状态: {msg}")
         if msg == "全部列表读取完毕":
             self.left_list_label.setText("祈愿列表")
@@ -376,40 +382,31 @@ class MainForm(QMainWindow):
             self.pre_generate()
             self.allBtnStatusChange(True)
 
-    # Pray List Part
-    def clearList(self):
-        row = self.left_pray_list.rowCount()
-        for i in range(row):
-            self.left_pray_list.removeRow(0)
+    def clearList(self):  # 清空左侧列表
+        [self.left_pray_list.removeRow(0) for _ in range(self.left_pray_list.rowCount())]
 
-    def refreshList(self, pray_mode):
-        # Left
+    def refreshList(self, pray_mode: str):  # 刷新左侧列表(清空左侧列表->重新生成)
+        # 清空列表
         self.clearList()
-        data_list = []
+        # 重新生成
         self.left_list_label.setText(f"祈愿列表 - {pray_mode}")
         self.right_label.setText(f"分析 - {pray_mode}")
         if gachaType[pray_mode] == "100" and not hide_new:
-            data_list = self.pray_100
-        if gachaType[pray_mode] == "200":
-            data_list = self.pray_200
-        if gachaType[pray_mode] == "301":
-            data_list = self.pray_301
-        if gachaType[pray_mode] == "400":
-            data_list = self.pray_400
-        if gachaType[pray_mode] == "302":
-            data_list = self.pray_302
+            data_list = self.pray_list["100"]
+        else:
+            data_list = self.pray_list[gachaType[pray_mode]]
         for i in data_list:
             self.addRow(len(data_list), i[0], i[1], i[2], "单抽")
         if len(data_list) >= 10:
-            pos = 0
             time_tmp = [i[2] for i in data_list]
+            pos = 0
             while pos < len(data_list) - 9:
-                if time_tmp[pos] == time_tmp[pos+1]:
-                    for i in range(pos, pos+10):
-                        self.left_pray_list.item(i, 4).setText(f"十连-{10-i+pos}")
+                if time_tmp[pos] == time_tmp[pos + 1]:
+                    for i in range(pos, pos + 10):
+                        self.left_pray_list.item(i, 4).setText(f"十连-{10 - i + pos}")
                     pos += 9
                 pos += 1
-        # Right
+        # 重新生成右侧分析
         analyser = analysis.Analysis(data_list, gachaType[pray_mode])
         self.right_analysis_basic_total_label.setText(f"祈愿数: {len(data_list)}")
         self.right_analysis_basic_5_label.setText(f"5星数量: {analyser.get_5()[1]}")
@@ -419,7 +416,7 @@ class MainForm(QMainWindow):
         self.right_analysis_basic_3_label.setText(f"3星数量: {analyser.get_3()}")
         self.right_analysis_right_guarantee_label.setText(analyser.guarantee())
 
-    def setColor(self, name, row):
+    def setColor(self, name: str, row: int):  # 设置某一列的颜色
         if name in analysis.weapon_4_list or name in analysis.character_4_list:
             selected_color = gachaItemLevelColor[4]
         elif name in analysis.weapon_5_list or name in analysis.character_5_list:
@@ -431,23 +428,18 @@ class MainForm(QMainWindow):
         for each_item in range(5):
             self.left_pray_list.item(row, each_item).setBackground(QBrush(selected_color))
 
-    def addRow(self, data_length, typ, name, t, gacha_mode):
+    def addRow(self, data_length, typ, name, t, gacha_mode):  # 添加一行
         row = self.left_pray_list.rowCount()
         self.left_pray_list.setRowCount(row + 1)
-        item = QtWidgets.QTableWidgetItem()
-        self.left_pray_list.setItem(row, 0, item)
+        self.left_pray_list.setItem(row, 0, QTableWidgetItem())
         self.left_pray_list.item(row, 0).setText(str(data_length - row))
-        item = QtWidgets.QTableWidgetItem()
-        self.left_pray_list.setItem(row, 1, item)
+        self.left_pray_list.setItem(row, 1, QTableWidgetItem())
         self.left_pray_list.item(row, 1).setText(typ)
-        item = QtWidgets.QTableWidgetItem()
-        self.left_pray_list.setItem(row, 2, item)
+        self.left_pray_list.setItem(row, 2, QTableWidgetItem())
         self.left_pray_list.item(row, 2).setText(name)
-        item = QtWidgets.QTableWidgetItem()
-        self.left_pray_list.setItem(row, 3, item)
+        self.left_pray_list.setItem(row, 3, QTableWidgetItem())
         self.left_pray_list.item(row, 3).setText(t)
-        item = QtWidgets.QTableWidgetItem()
-        self.left_pray_list.setItem(row, 4, item)
+        self.left_pray_list.setItem(row, 4, QTableWidgetItem())
         self.left_pray_list.item(row, 4).setText(gacha_mode)
         self.setColor(name, row)
         self.left_pray_list.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
@@ -464,14 +456,13 @@ class LeftPrayListThread(QThread):
     def run(self):
         export_data_list = []
         for key in gachaType.keys():
-            if hide_new and key == "100":
+            if (hide_new and key == "新手祈愿") or key == "角色活动祈愿-2":
                 continue
             global gachaTarget
             gachaTarget = gachaType[key]
             data, proceed_data = [], []
             page, old_page, old_end_id, end_id = 1, 1, 0, 0
-            url = gachaUrl
-            url = url.split('&')
+            url = gachaUrl.split('&')
             url[-4] = f"gacha_type={gachaTarget}"
             target_url = '&'.join(url)
             rep = requests.get(target_url).json()
@@ -497,9 +488,8 @@ class LeftPrayListThread(QThread):
                                      "uigf_gacha_type": uigfGachaType[i["gacha_type"]]}
                         proceed_data.append([i['item_type'], i['name'], i['time']])
                         export_data_list.append(each_data)
-                    self.usleep(500)
-                    old_page = page
-                    old_end_id = end_id
+                    self.usleep(400)  # 防止API检测到频繁请求而拒止
+                    old_page, old_end_id = page, end_id
                     page += 1
                     if type(page) == int:
                         self.trigger.emit(f"正在读取第{str(page - 1)}页记录 - {key} - 耗时{round(rep_end_time - rep_start_time, 2)}s")
@@ -507,12 +497,8 @@ class LeftPrayListThread(QThread):
                 except IndexError or TypeError:
                     break
             self.trigger.emit(f"{key}读取完毕")
-            if not os.path.exists(f"pray_history/{self.uid}"):
-                os.mkdir(f"pray_history/{self.uid}")
-            if not os.path.exists(f"pray_history/{self.uid}/original_data"):
-                os.mkdir(f"pray_history/{self.uid}/original_data")
-            if not os.path.exists(f"pray_history/{self.uid}/export"):
-                os.mkdir(f"pray_history/{self.uid}/export")
+            for each_path in [f"pray_history/{self.uid}", f"pray_history/{self.uid}/original_data", f"pray_history/{self.uid}/export"]:
+                os.mkdir(each_path) if not os.path.exists(each_path) else None
             with open(f'pray_history/{self.uid}/original_data/{gachaTarget}.pickle', 'wb') as f:
                 pickle.dump(proceed_data, f)
         export_data["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
