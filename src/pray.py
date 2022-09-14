@@ -7,7 +7,7 @@ import sys
 import time
 import qdarkstyle
 import requests
-from PyQt6 import QtCore, QtWidgets, QtGui
+from PyQt6 import QtCore, QtGui
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont, QBrush, QColor
 from PyQt6.QtSvgWidgets import QSvgWidget
@@ -152,6 +152,8 @@ class MainForm(QMainWindow):
         self.all_layout.addLayout(self.right_layout)
         self.base_layout.addLayout(self.all_layout)
         self.widget.setLayout(self.base_layout)
+
+        # Functions
         self.file_check()
         self.pre_generate()
         self.initUI()
