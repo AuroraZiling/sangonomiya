@@ -10,6 +10,8 @@
 
 注：均为自释放压缩包
 
+*由于目前未实现更新功能，每个Release的发布内容将会尽可能多*
+
 ### Release 4 (推荐)
 [阿里云盘: 下载/Download](https://www.aliyundrive.com/s/irQ2FkMH22H)
 
@@ -63,6 +65,8 @@ pyinstaller pray.spec
 
 1. 关于`qdarkstyle`的Warning:
    >No QCoreApplication instance found. Application patches not applied. You have to call load_stylesheet function after instantiation of QApplication to take effect.
+2. 武器祈愿效果未知:
+   >暂时无法测试，因为没原石抽
 
 ## 维护者 / Maintainer
 

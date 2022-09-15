@@ -9,7 +9,7 @@ import qdarkstyle
 import requests
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
-from PyQt6.QtGui import QFont, QBrush, QColor
+from PyQt6.QtGui import QFont, QBrush, QColor, QFontDatabase
 from PyQt6.QtSvgWidgets import QSvgWidget
 from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
     QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit, QTableWidgetItem
@@ -44,6 +44,7 @@ class MainForm(QMainWindow):
         self.all_data_list = {}
         self.setWindowTitle("Genshin Pray Export")
         self.setFixedSize(1300, 700)
+        self.global_font = "Microsoft YaHei"
 
         # Child Windows
         self.about_window = about_widget.About()
@@ -139,8 +140,10 @@ class MainForm(QMainWindow):
         self.right_analysis_layout.addWidget(self.right_analysis_basic_3_label)
 
         self.right_analysis_right_label = QLabel("保底数据")
+        self.right_analysis_right_weapon_alert_label = QLabel("注意: 无法做到针对神铸的分析")
         self.right_analysis_right_guarantee_label = QLabel("暂无")
         self.right_analysis_layout.addWidget(self.right_analysis_right_label)
+        self.right_analysis_layout.addWidget(self.right_analysis_right_weapon_alert_label)
         self.right_analysis_layout.addWidget(self.right_analysis_right_guarantee_label)
 
         self.right_layout.addLayout(self.right_top_layout)
@@ -232,10 +235,13 @@ class MainForm(QMainWindow):
 
     # UI Part
     def initUI(self):
+        # Font
+        if os.path.exists("assets/font.ttf"):
+            self.global_font = QFontDatabase.applicationFontFamilies(QFontDatabase.addApplicationFont("assets/font.ttf"))
         # UID - Image
         self.uid_user_image.setFixedSize(30, 30)
         # UID
-        self.uid_current_uid_label.setFont(QFont("Microsoft YaHei", 13))
+        self.uid_current_uid_label.setFont(QFont(self.global_font, 13))
         self.uid_settings_btn.setFixedWidth(90)
         self.uid_about_btn.setFixedWidth(90)
 
@@ -244,7 +250,7 @@ class MainForm(QMainWindow):
         # UID - Splitter
         self.uid_splitter.setFrameShape(QFrame.Shape.HLine)
         # All - Left - Top Layout
-        self.left_list_label.setFont(QFont("Microsoft YaHei", 13))
+        self.left_list_label.setFont(QFont(self.global_font, 14))
         self.left_open_export_dir_btn.setFixedWidth(90)
         self.left_refresh_btn.setFixedWidth(90)
 
@@ -275,16 +281,18 @@ class MainForm(QMainWindow):
         # All - Splitter
         self.splitter.setFrameShape(QFrame.Shape.VLine)
         # All - Right - Top Layout
-        self.right_label.setFont(QFont("Microsoft YaHei", 13))
+        self.right_label.setFont(QFont(self.global_font, 14))
         self.right_top_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         # All - Right - Analysis Layout
         self.right_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.right_analysis_basic_label.setFont(QFont("Microsoft YaHei", 11))
-        self.right_analysis_right_label.setFont(QFont("Microsoft YaHei", 11))
+        self.right_analysis_basic_label.setFont(QFont(self.global_font, 12))
+        self.right_analysis_right_label.setFont(QFont(self.global_font, 12))
         self.right_analysis_basic_5_list_textEdit.setFixedHeight(90)
         self.right_analysis_basic_5_list_textEdit.setReadOnly(True)
         self.right_analysis_basic_4_list_textEdit.setFixedHeight(90)
         self.right_analysis_basic_4_list_textEdit.setReadOnly(True)
+        self.right_analysis_right_weapon_alert_label.hide()
+        self.right_analysis_right_weapon_alert_label.setStyleSheet("background-color: gray; border-radius: 10px; padding: 5px;")
 
     def allBtnStatusChange(self, is_enabled: bool):
         if not hide_new:
@@ -305,6 +313,7 @@ class MainForm(QMainWindow):
 
     # Pray Mode Part
     def left_pray_list_100_change(self):
+        self.right_analysis_right_weapon_alert_label.hide()
         if hide_new:
             return
         if "新手祈愿" in self.loaded_pray_list:
@@ -316,6 +325,7 @@ class MainForm(QMainWindow):
             return
 
     def left_pray_list_200_change(self):
+        self.right_analysis_right_weapon_alert_label.hide()
         if "常驻祈愿" in self.loaded_pray_list:
             self.refreshList("常驻祈愿")
             self.left_status_label.setText("状态: 已读取常驻祈愿")
@@ -325,6 +335,7 @@ class MainForm(QMainWindow):
             return
 
     def left_pray_list_301_change(self):
+        self.right_analysis_right_weapon_alert_label.hide()
         if "角色祈愿" in self.loaded_pray_list:
             self.refreshList("角色活动祈愿")
             self.left_status_label.setText("状态: 已读取角色祈愿")
@@ -334,6 +345,7 @@ class MainForm(QMainWindow):
             return
 
     def left_pray_list_400_change(self):
+        self.right_analysis_right_weapon_alert_label.hide()
         if "角色祈愿-2" in self.loaded_pray_list:
             self.refreshList("角色活动祈愿-2")
             self.left_status_label.setText("状态: 已读取角色祈愿-2")
@@ -343,6 +355,7 @@ class MainForm(QMainWindow):
             return
 
     def left_pray_list_302_change(self):
+        self.right_analysis_right_weapon_alert_label.show()
         if "武器祈愿" in self.loaded_pray_list:
             self.refreshList("武器祈愿")
             self.left_status_label.setText("状态: 已读取武器祈愿")
@@ -410,12 +423,18 @@ class MainForm(QMainWindow):
                 pos += 1
         # 重新生成右侧分析
         analyser = analysis.Analysis(data_list, gachaType[pray_mode])
+        try:
+            percent_5 = round(analyser.get_5()[1]/len(data_list)*100, 2)
+            percent_4 = round(analyser.get_4()[1]/len(data_list)*100, 2)
+            percent_3 = round(analyser.get_3()/len(data_list)*100, 2)
+        except ZeroDivisionError:
+            percent_3, percent_4, percent_5 = "0.0", "0.0", "0.0"
         self.right_analysis_basic_total_label.setText(f"祈愿数: {len(data_list)}")
-        self.right_analysis_basic_5_label.setText(f"5星数量: {analyser.get_5()[1]}")
+        self.right_analysis_basic_5_label.setText(f"5星数量: {analyser.get_5()[1]} ({percent_5}%)")
         self.right_analysis_basic_5_list_textEdit.setText(','.join(analyser.get_5()[0]))
-        self.right_analysis_basic_4_label.setText(f"4星数量: {analyser.get_4()[1]}")
+        self.right_analysis_basic_4_label.setText(f"4星数量: {analyser.get_4()[1]} ({percent_4}%)")
         self.right_analysis_basic_4_list_textEdit.setText(','.join(analyser.get_4()[0]))
-        self.right_analysis_basic_3_label.setText(f"3星数量: {analyser.get_3()}")
+        self.right_analysis_basic_3_label.setText(f"3星数量: {analyser.get_3()} ({percent_3}%)")
         self.right_analysis_right_guarantee_label.setText(analyser.guarantee())
 
     def setColor(self, name: str, row: int):  # 设置某一列的颜色

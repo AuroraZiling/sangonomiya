@@ -5,6 +5,7 @@ character_5_list = ["提纳里", "钟离", "宵宫", "可莉", "枫原万叶", "
 character_4_list = ["柯莱", "鹿野院平藏", "久岐忍", "云堇", "五郎", "托马", "九条裟罗", "罗莎莉亚", "早柚", "雷泽",
                     "凝光", "菲谢尔", "班尼特", "烟绯", "重云", "芭芭拉", "迪奥娜", "砂糖", "诺艾尔", "凯亚", "辛焱",
                     "香菱", "北斗", "行秋", "安柏", "丽莎"]
+weapon_5_w_list = ["天空之翼", "天空之卷", "天空之脊", "天空之傲", "风鹰剑", "四风原典", "和璞鸢", "狼的末路", "天空之刃"]
 weapon_5_list = ['雾切之回光', '斫峰之刃', '苍古自由之誓', '天空之刃', '磐岩结绿', '波乱月白经津', '风鹰剑',
                  '松籁响起之时', '天空之傲', '无工之剑', '狼的末路', '赤角石溃杵', '冬极白星', '天空之翼', '猎人之径',
                  '阿莫斯之弓', '终末嗟叹之诗', '飞雷之弦振', '若水', '神乐之真意', '不灭月华', '四风原典', '天空之卷',
@@ -61,4 +62,25 @@ class Analysis:
                 guarantee_model += f"\n大保底: 当前已经{self.given_data_length}/{int(nearest_data[1]) + 180}抽, 还差{int(nearest_data[1]) + 180 - self.given_data_length}抽"
                 guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 180 - self.given_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 180 - self.given_data_length) * 160}原石"
             return guarantee_model
-        return "暂未支持除了角色活动祈愿之外的分析"
+        elif self.pray_mode == "302":
+            if not len(self.list_5):
+                return "暂未出现5星武器"
+            guarantee_model = ""
+            guarantee_data = self.get_5()
+            nearest_data = [i.replace(']', '') for i in guarantee_data[0][0].split("[")]
+            if nearest_data[0] in weapon_5_w_list:
+                guarantee_model += "情况: 小保底歪了/直接进入大保底"
+                guarantee_model += f"\n最近一次在第{nearest_data[1]}抽得到{nearest_data[0]}"
+                guarantee_model += f", 意味着将在第{int(nearest_data[1]) + 80}抽之前必出当期UP"
+                guarantee_model += f"\n当前已经{self.given_data_length}/{int(nearest_data[1]) + 80}抽, 还差{int(nearest_data[1]) + 80 - self.given_data_length}抽"
+                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 80 - self.given_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 80 - self.given_data_length) * 160}原石"
+            else:
+                guarantee_model += "情况: 保底重置"
+                guarantee_model += f"\n最近一次在第{nearest_data[1]}抽得到{nearest_data[0]}"
+                guarantee_model += f", 意味着将在第{int(nearest_data[1]) + 80}抽之前有50%的概率出当期UP，在第{int(nearest_data[1]) + 160}抽之前必出当期UP"
+                guarantee_model += f"\n小保底: 当前已经{self.given_data_length}/{int(nearest_data[1]) + 80}抽, 还差{int(nearest_data[1]) + 80 - self.given_data_length}抽"
+                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 80 - self.given_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 80 - self.given_data_length) * 160}原石"
+                guarantee_model += f"\n大保底: 当前已经{self.given_data_length}/{int(nearest_data[1]) + 160}抽, 还差{int(nearest_data[1]) + 160 - self.given_data_length}抽"
+                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 160 - self.given_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 160 - self.given_data_length) * 160}原石"
+            return guarantee_model
+        return "暂未支持除了角色活动祈愿/武器祈愿之外的分析"
