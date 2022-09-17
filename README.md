@@ -38,14 +38,15 @@
 - [x] 支持导出 (符合[统一可交换祈愿记录标准](https://github.com/DGP-Studio/Snap.Genshin/wiki/StandardFormat))
 - [x] 列表显示数据增多 (比如是否属于十连/单抽等)
 - [x] 基础的数据分析
-- [ ] 多UID支持
-- [ ] 可更新 *不需要卸载重装*
-- [ ] 真正的文件校验
+- [x] 公告显示 **已实装R5D4**
 - [ ] 图表导出数据 **预计在Release 5实现**
-- [ ] 当期UP池显示
-- [ ] 攻略跳转
-- [ ] 公告显示 **预计在Release 5实现**
-- [ ] 米游社信息显示 **短期内不考虑**
+- [ ] 工具箱 *卡池历史记录等* **预计在Release 5实现**
+- [ ] 当期UP池显示 **预计在Release 5实现**
+- [ ] 多UID支持 **仅计划内**
+- [ ] 可更新 *不需要卸载重装* **仅计划内**
+- [ ] 真正的文件校验 **仅计划内**
+- [ ] 攻略跳转 **仅计划内**
+- [ ] 米游社信息显示 **仅计划内**
 
 ## 打包 / Usage
 
@@ -68,6 +69,8 @@ pyinstaller pray.spec
    >No QCoreApplication instance found. Application patches not applied. You have to call load_stylesheet function after instantiation of QApplication to take effect.
 2. 武器祈愿效果未知:
    >暂时无法测试，因为没原石抽
+3. [R5D4测试版] 公告内部链接无法跳转
+   >因为公告内部链接是用`<a href="javascript:;">`实现的，无法跳转
 
 ## 维护者 / Maintainer
 
