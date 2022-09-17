@@ -17,6 +17,7 @@ from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPu
 from modules import about_widget
 from modules import analysis
 from modules import settings_widget
+from modules import announce_widget
 
 gachaUrl = ""
 gachaType = {"新手祈愿": "100", "常驻祈愿": "200", "角色活动祈愿": "301", "角色活动祈愿-2": "400", "武器祈愿": "302"}
@@ -47,6 +48,7 @@ class MainForm(QMainWindow):
         self.global_font = "Microsoft YaHei"
 
         # Child Windows
+        self.announce_window = announce_widget.Announce()
         self.about_window = about_widget.About()
         self.settings_window = settings_widget.Settings()
 
@@ -69,10 +71,13 @@ class MainForm(QMainWindow):
         # UI UID
         self.uid_user_image = QSvgWidget("assets/user.svg")
         self.uid_current_uid_label = QLabel("未知")
+        self.uid_announce_btn = QPushButton("游戏公告")
         self.uid_settings_btn = QPushButton("设置")
         self.uid_about_btn = QPushButton("关于")
         self.uid_h_layout.addWidget(self.uid_user_image)
         self.uid_h_layout.addWidget(self.uid_current_uid_label)
+        self.uid_h_layout.addWidget(self.uid_announce_btn)
+        self.uid_h_layout.addStretch()
         self.uid_h_layout.addWidget(self.uid_settings_btn)
         self.uid_h_layout.addWidget(self.uid_about_btn)
         self.uid_splitter = QFrame(self)
@@ -224,6 +229,8 @@ class MainForm(QMainWindow):
         if not os.path.exists("modules/about"):
             QMessageBox.critical(self, "错误", "未找到必要模块，请检查目录(modules)是否存在")
             sys.exit()
+        if not os.path.exists("cache"):
+            os.mkdir("cache")
         if not os.path.exists("pray_history"):
             os.mkdir("pray_history")
         if not os.path.exists("config.json"):
@@ -242,9 +249,11 @@ class MainForm(QMainWindow):
         self.uid_user_image.setFixedSize(30, 30)
         # UID
         self.uid_current_uid_label.setFont(QFont(self.global_font, 13))
+        self.uid_announce_btn.setFixedWidth(70)
         self.uid_settings_btn.setFixedWidth(90)
         self.uid_about_btn.setFixedWidth(90)
 
+        self.uid_announce_btn.clicked.connect(lambda: self.announce_window.show())
         self.uid_settings_btn.clicked.connect(lambda: self.settings_window.show())
         self.uid_about_btn.clicked.connect(lambda: self.about_window.show())
         # UID - Splitter
