@@ -1,0 +1,49 @@
+site_name: Genshin Pray Export
+repo_url: https://github.com/AuroraZiling/genshin-pray-export
+repo_name: AuroraZiling/genshin-pray-export
+edit_uri: ""
+theme:
+  name: material
+  language: zh
+  palette:
+    primary: blue
+  font:
+    text: Roboto
+  icon:
+    repo: fontawesome/brands/git-alt
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+  plugins:
+    - search
+    - git-revision-date
+    - git-revision-date-localized
+markdown_extensions:
+  - pymdownx.details
+  - pymdownx.superfences
+  - admonition
+
+nav:
+    - 主页: index.md
+    - 下载:
+        - 正式版: download/release.md
+        - 预览版: download/development.md
+    - 目标:
+        - 可行: goals/capability.md
+        - 计划内: goals/planning.md
+    - 构建:
+        - 构建: build/index.md
+    - 开发日志:
+        - Release 5: dev_logs/r5.md
+        - Release 4: dev_logs/r4.md
+        - Release 3: dev_logs/r3.md
+        - Release 2: dev_logs/r2.md
+        - Release 1: dev_logs/r1.md
+    - 关于:
+        - 关于: about/index.md

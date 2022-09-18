@@ -7,7 +7,6 @@
 /Pipfile
 /Pipfile.lock
 /src/test_delete/
-/docs/
 /src/cache/
 /src/announce.json
 /src/test.py
