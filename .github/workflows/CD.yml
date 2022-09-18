@@ -16,8 +16,9 @@ jobs:
           key: ${{ github.ref }}
           path: .cache
       - run: pip install mkdocs-material
-      - run: cd docs
-      - run: mkdocs build
+      - run: |
+          mkdocs build
+        working-directory: ./docs
       - name: Deploy
         uses: crazy-max/ghaction-github-pages@v3
         with:
