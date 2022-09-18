@@ -22,6 +22,7 @@ jobs:
       - name: Deploy
         uses: crazy-max/ghaction-github-pages@v3
         with:
+          working-directory: ./docs
           target_branch: build
           build_dir: site
         env:
