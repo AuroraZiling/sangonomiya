@@ -47,3 +47,7 @@ nav:
         - Release 1: dev_logs/r1.md
     - 关于:
         - 关于: about/index.md
+    - 参考:
+        - 库: references/libs.md
+        - 文章: references/articles.md
+        - Repo: references/repos.md
