@@ -65,12 +65,10 @@ pyinstaller pray.spec
 
 ## 已知Bug
 
-1. 关于`qdarkstyle`的Warning:
+1. [无影响]关于`qdarkstyle`的Warning:
    >No QCoreApplication instance found. Application patches not applied. You have to call load_stylesheet function after instantiation of QApplication to take effect.
 2. 武器祈愿效果未知:
    >暂时无法测试，因为没原石抽
-3. [R5D4测试版] 公告内部链接无法跳转
-   >因为公告内部链接是用`<a href="javascript:;">`实现的，无法跳转
 
 ## 维护者 / Maintainer
 

@@ -25,6 +25,7 @@ html_model = '''
 </html>
 '''
 
+
 class Announce(QWidget):
     def __init__(self):
         super(Announce, self).__init__()
@@ -62,15 +63,18 @@ class Announce(QWidget):
     def initUI(self):
         # Font
         if os.path.exists("assets/font.ttf"):
-            self.global_font = QFontDatabase.applicationFontFamilies(QFontDatabase.addApplicationFont("assets/font.ttf"))
+            self.global_font = QFontDatabase.applicationFontFamilies(
+                QFontDatabase.addApplicationFont("assets/font.ttf"))
         # Sidebar
         self.side_bar.setFixedWidth(350)
         self.side_bar.minimumSizeHint()
         self.get_icon_list()
         for each in range(self.source["total"]):
             if not os.path.exists(f"cache/{self.icon_list[each].split('/')[-1]}"):
-                open(f"cache/{self.icon_list[each].split('/')[-1]}", "wb").write(requests.get(self.icon_list[each]).content)
-            self.side_bar.addItem(QListWidgetItem(QIcon(f"cache/{self.icon_list[each].split('/')[-1]}"), self.source["list"][each]["subtitle"]))
+                open(f"cache/{self.icon_list[each].split('/')[-1]}", "wb").write(
+                    requests.get(self.icon_list[each]).content)
+            self.side_bar.addItem(QListWidgetItem(QIcon(f"cache/{self.icon_list[each].split('/')[-1]}"),
+                                                  self.source["list"][each]["subtitle"]))
             self.side_bar.item(each).setSizeHint(QtCore.QSize(300, 30))
             self.side_bar.item(each).setFont(QFont("Microsoft YaHei", 10))
         self.side_bar.itemClicked.connect(self.update_content)
@@ -97,7 +101,8 @@ class Announce(QWidget):
             self.content.setFixedHeight(210)
         announce_id = self.source['list'][self.side_bar.currentRow()]['ann_id']
         if not os.path.exists(f"cache/{announce_id}.jpg"):
-            open(f"cache/{announce_id}.jpg", "wb").write(requests.get(self.source["list"][self.side_bar.currentRow()]["banner"]).content)
+            open(f"cache/{announce_id}.jpg", "wb").write(
+                requests.get(self.source["list"][self.side_bar.currentRow()]["banner"]).content)
         self.banner.setPixmap(QPixmap(f"cache/{announce_id}.jpg"))
         self.html_generator(self.source["list"][self.side_bar.currentRow()]["content"])
 
@@ -110,5 +115,6 @@ class Announce(QWidget):
         content = content.replace('''&lt;t class="t_lc"&gt;''', "")
         content = content.replace('''&lt;t class="t_gl"&gt;''', "")
         content = content.replace('''&lt;/t&gt;''', "")
+        content = content.replace('''javascript:miHoYoGameJSSDK.openInWebview(\'''', "")
+        content = content.replace("')", "")
         self.content.setHtml(html_model.replace("{content}", content))
-

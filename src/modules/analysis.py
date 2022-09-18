@@ -41,10 +41,10 @@ class Analysis:
         return len(self.given_data) - len(self.list_5) - len(self.list_4)
 
     def guarantee(self):
+        guarantee_model = ""
         if self.pray_mode == "301":
             if not len(self.list_5):
                 return "暂未出现5星角色"
-            guarantee_model = ""
             guarantee_data = self.get_5()
             nearest_data = [i.replace(']', '') for i in guarantee_data[0][0].split("[")]
             if nearest_data[0] in character_5_w_list:
@@ -65,7 +65,6 @@ class Analysis:
         elif self.pray_mode == "302":
             if not len(self.list_5):
                 return "暂未出现5星武器"
-            guarantee_model = ""
             guarantee_data = self.get_5()
             nearest_data = [i.replace(']', '') for i in guarantee_data[0][0].split("[")]
             if nearest_data[0] in weapon_5_w_list:
@@ -83,4 +82,15 @@ class Analysis:
                 guarantee_model += f"\n大保底: 当前已经{self.given_data_length}/{int(nearest_data[1]) + 160}抽, 还差{int(nearest_data[1]) + 160 - self.given_data_length}抽"
                 guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 160 - self.given_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 160 - self.given_data_length) * 160}原石"
             return guarantee_model
-        return "暂未支持除了角色活动祈愿/武器祈愿之外的分析"
+        elif self.pray_mode == "200":
+            if not len(self.list_5):
+                return "暂未出现5星"
+            guarantee_data = self.get_5()
+            nearest_data = [i.replace(']', '') for i in guarantee_data[0][0].split("[")]
+            if nearest_data[0] in weapon_5_list or nearest_data[0] in character_5_list:
+                guarantee_model += f"最近一次在第{nearest_data[1]}抽得到{nearest_data[0]}"
+                guarantee_model += f", 意味着将在第{int(nearest_data[1]) + 90}抽之前必出当期UP"
+                guarantee_model += f"\n当前已经{self.given_data_length}/{int(nearest_data[1]) + 90}抽, 还差{int(nearest_data[1]) + 90 - self.given_data_length}抽"
+                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 90 - self.given_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 90 - self.given_data_length) * 160}原石"
+            return guarantee_model
+        return "暂未支持新手祈愿分析"
