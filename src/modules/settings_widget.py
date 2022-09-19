@@ -1,8 +1,7 @@
 import json
 import winreg
 
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QTextEdit, QLabel, QFrame, QRadioButton, \
-    QMessageBox
+from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel, QRadioButton, QMessageBox
 
 
 class Settings(QWidget):

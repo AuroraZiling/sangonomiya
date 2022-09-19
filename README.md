@@ -39,6 +39,7 @@
 - [x] 列表显示数据增多 (比如是否属于十连/单抽等)
 - [x] 基础的数据分析
 - [x] 公告显示 **已实装R5D4**
+- [ ] 重构代码(往API方向) **预计在Release 5实现**
 - [ ] 图表导出数据 **预计在Release 5实现**
 - [ ] 工具箱 *卡池历史记录等* **预计在Release 5实现**
 - [ ] 当期UP池显示 **预计在Release 5实现**
@@ -62,6 +63,13 @@ pyinstaller pray.spec
 ## 更新日志 / Changelog
 
 [Change Log](https://github.com/AuroraZiling/genshin-pray-export/releases)
+
+## 使用须知 / Notice
+
+1. 在清除代理设置时，会操作注册表
+> 有关键值:
+> HKEY_CURRENT_USER/Software/Microsoft/Windows/CurrentVersion/Internet Settings -> ProxyEnable
+> HKEY_CURRENT_USER/Software/Microsoft/Windows/CurrentVersion/Internet Settings -> ProxyServer
 
 ## 已知Bug
 
