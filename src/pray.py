@@ -14,14 +14,12 @@ from PyQt6.QtSvgWidgets import QSvgWidget
 from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
     QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit, QTableWidgetItem
 
-from modules import about_widget
-from modules import analysis
-from modules import settings_widget
-from modules import announce_widget
+from modules.sub_widgets import about_widget, announce_widget, settings_widget
+from modules.analysis import analysis
 
 gachaUrl = ""
-gachaType = {"新手祈愿": "100", "常驻祈愿": "200", "角色活动祈愿": "301", "角色活动祈愿-2": "400", "武器祈愿": "302"}
-uigfGachaType = {"100": "100", "200": "200", "301": "301", "400": "301", "302": "302"}
+GACHATYPE = {"新手祈愿": "100", "常驻祈愿": "200", "角色活动祈愿": "301", "角色活动祈愿-2": "400", "武器祈愿": "302"}
+UIGF_GACHATYPE = {"100": "100", "200": "200", "301": "301", "400": "301", "302": "302"}
 gachaTarget = ""
 gachaItemLevelColor = {4: QColor(132, 112, 255), 5: QColor(255, 185, 15)}
 export_data = {"info": {"uid": "", "lang": "zh-cn", "export_time": ""}, "list": []}
@@ -31,7 +29,6 @@ hide_new = json.loads(open("config.json", "r", encoding="utf-8").read())["settin
 
 try:
     from ctypes import windll  # Only Windows.
-
     myAppId = 'AuroraZiling.GPE.GPE.1'
     windll.shell32.SetCurrentProcessExplicitAppUserModelID(myAppId)
 except ImportError:
@@ -415,10 +412,10 @@ class MainForm(QMainWindow):
         # 重新生成
         self.left_list_label.setText(f"祈愿列表 - {pray_mode}")
         self.right_label.setText(f"分析 - {pray_mode}")
-        if gachaType[pray_mode] == "100" and not hide_new:
+        if GACHATYPE[pray_mode] == "100" and not hide_new:
             data_list = self.pray_list["100"]
         else:
-            data_list = self.pray_list[gachaType[pray_mode]]
+            data_list = self.pray_list[GACHATYPE[pray_mode]]
         for i in data_list:
             self.addRow(len(data_list), i[0], i[1], i[2], "单抽")
         if len(data_list) >= 10:
@@ -431,7 +428,7 @@ class MainForm(QMainWindow):
                     pos += 9
                 pos += 1
         # 重新生成右侧分析
-        analyser = analysis.Analysis(data_list, gachaType[pray_mode])
+        analyser = analysis.Analysis(data_list, GACHATYPE[pray_mode])
         try:
             percent_5 = round(analyser.get_5()[1]/len(data_list)*100, 2)
             percent_4 = round(analyser.get_4()[1]/len(data_list)*100, 2)
@@ -485,11 +482,11 @@ class LeftPrayListThread(QThread):
 
     def run(self):
         export_data_list = []
-        for key in gachaType.keys():
+        for key in GACHATYPE.keys():
             if (hide_new and key == "新手祈愿") or key == "角色活动祈愿-2":
                 continue
             global gachaTarget
-            gachaTarget = gachaType[key]
+            gachaTarget = GACHATYPE[key]
             data, proceed_data = [], []
             page, old_page, old_end_id, end_id = 1, 1, 0, 0
             url = gachaUrl.split('&')
@@ -515,7 +512,7 @@ class LeftPrayListThread(QThread):
                         each_data = {"gacha_type": i["gacha_type"], "count": "1", "time": i["time"], "name": i['name'],
                                      "item_type": i["item_type"],
                                      "rank_type": i["rank_type"], "id": i["id"],
-                                     "uigf_gacha_type": uigfGachaType[i["gacha_type"]]}
+                                     "uigf_gacha_type": UIGF_GACHATYPE[i["gacha_type"]]}
                         proceed_data.append([i['item_type'], i['name'], i['time']])
                         export_data_list.append(each_data)
                     self.usleep(400)  # 防止API检测到频繁请求而拒止
