@@ -1,0 +1,26 @@
+{
+  "path": [
+    ["assets", "create", "directory"],
+    ["assets/font.ttf", "error", "file"],
+    ["assets/icon.ico", "error", "file"],
+    ["assets/user.svg", "error", "file"],
+    ["cache", "create", "directory"],
+    ["modules", "error", "directory"],
+    ["modules/about", "error", "directory"],
+    ["modules/about/license", "error", "file"],
+    ["modules/about/open_source", "error", "file"],
+    ["modules/analysis", "error", "directory"],
+    ["modules/analysis/analysis.py", "error", "file"],
+    ["modules/file_verification", "error", "directory"],
+    ["modules/file_verification/verification.py", "error", "file"],
+    ["modules/file_verification/verify_queue.json", "error", "file"],
+    ["modules/sub_widgets", "error", "directory"],
+    ["modules/sub_widgets/about_widget.py", "error", "file"],
+    ["modules/sub_widgets/announce_widget.py", "error", "file"],
+    ["modules/sub_widgets/settings_widget.py", "error", "file"],
+    ["modules/GenshinProxyServer.exe", "error", "file"],
+    ["pray_history", "create", "directory"],
+    ["config.json", "error", "file"],
+    ["interact", "create", "file"]
+  ]
+}
