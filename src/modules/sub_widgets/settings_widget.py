@@ -1,4 +1,5 @@
 import json
+import os
 import winreg
 
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel, QRadioButton, QMessageBox
@@ -8,7 +9,7 @@ class Settings(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("设置 / Settings")
-        self.setFixedSize(490, 150)
+        self.setFixedSize(490, 200)
 
         # File About
         self.about_json = json.loads(open("config.json", "r", encoding="utf-8").read())["about"]
@@ -36,6 +37,16 @@ class Settings(QWidget):
         self.base_layout.addLayout(self.hide_new_h_layout)
         self.base_layout.addWidget(self.label_hide_new_description)
 
+        # Delete Cache
+        self.delete_cache_h_layout = QHBoxLayout(self)
+        self.label_delete_cache_h_layout = QLabel("清除公告图片缓存")
+        self.widget_delete_cache = QPushButton("清除")
+        self.label_delete_cache_description = QLabel("清除后，打开公告时将重新下载图片")
+        self.delete_cache_h_layout.addWidget(self.label_delete_cache_h_layout)
+        self.delete_cache_h_layout.addWidget(self.widget_delete_cache)
+        self.base_layout.addLayout(self.delete_cache_h_layout)
+        self.base_layout.addWidget(self.label_delete_cache_description)
+
         self.setLayout(self.base_layout)
         self.initUI()
 
@@ -55,6 +66,13 @@ class Settings(QWidget):
 
         self.widget_hide_new.clicked.connect(self.hide_new)
 
+        # Delete Cache
+        self.widget_delete_cache.setFixedWidth(100)
+        self.label_delete_cache_description.setFixedHeight(30)
+        self.label_delete_cache_description.setStyleSheet("background-color: gray; border-radius: 10px; padding: 5px;")
+
+        self.widget_delete_cache.clicked.connect(self.delete_cache)
+
     def reset_proxy(self):
         try:
             winreg.SetValueEx(winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", 0, winreg.KEY_WRITE), "ProxyEnable", 0, winreg.REG_DWORD, 0)
@@ -68,3 +86,9 @@ class Settings(QWidget):
         config = json.loads(open("config.json", 'r', encoding='utf-8').read())
         config["settings"]["hide_new"] = self.widget_hide_new.isChecked()
         open("config.json", 'w', encoding='utf-8').write(json.dumps(config, indent=4, ensure_ascii=False))
+
+    def delete_cache(self):
+        for each_file in os.listdir("./cache"):
+            os.remove("./cache/" + each_file)
+        QMessageBox.information(self, "提示", "缓存清除成功", QMessageBox.StandardButton.Ok)
+
