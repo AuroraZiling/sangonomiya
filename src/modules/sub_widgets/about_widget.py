@@ -51,7 +51,7 @@ class About(QWidget):
         self.github_repo_btn.setFixedWidth(100)
         self.content_textEdit.setReadOnly(True)
         self.content_textEdit.setFont(QFont("Microsoft YaHei", 10))
-        self.content_textEdit.setText(open("modules/about/license", "r", encoding="utf-8").read())
+        self.content_textEdit.setText(open("modules/sub_widgets/about/license", "r", encoding="utf-8").read())
 
         self.github_repo_btn.clicked.connect(self.general_open_github_repo)
         self.content_license_btn.clicked.connect(self.load_license)
@@ -62,7 +62,7 @@ class About(QWidget):
         webbrowser.open("https://github.com/AuroraZiling/genshin-pray-export")
 
     def load_license(self):
-        self.content_textEdit.setText(open("modules/about/license", "r", encoding="utf-8").read())
+        self.content_textEdit.setText(open("modules/sub_widgets/about/license", "r", encoding="utf-8").read())
 
     def load_open_source(self):
-        self.content_textEdit.setText(open("modules/about/open_source", "r", encoding="utf-8").read())
+        self.content_textEdit.setText(open("modules/sub_widgets/about/open_source", "r", encoding="utf-8").read())

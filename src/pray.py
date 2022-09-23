@@ -202,7 +202,7 @@ class MainForm(QMainWindow):
                                               time.localtime((os.path.getmtime(
                                                   f"pray_history/{each_dir}/original_data/301.pickle"))))
                 self.all_data_list[each_dir]["data_301"]["data"] = data_301
-                self.loaded_pray_list.append("角色祈愿")
+                self.loaded_pray_list.append("角色活动祈愿")
                 self.pray_list["301"] = data_301
                 self.all_data_list[each_dir]["data_301"]["data_time"] = data_time_301
             if os.path.exists(f"pray_history/{each_dir}/original_data/400.pickle"):
@@ -211,7 +211,7 @@ class MainForm(QMainWindow):
                                               time.localtime((os.path.getmtime(
                                                   f"pray_history/{each_dir}/original_data/400.pickle"))))
                 self.all_data_list[each_dir]["data_400"]["data"] = data_400
-                self.loaded_pray_list.append("角色祈愿-2")
+                self.loaded_pray_list.append("角色活动祈愿-2")
                 self.pray_list["400"] = data_400
                 self.all_data_list[each_dir]["data_400"]["data_time"] = data_time_400
             if os.path.exists(f"pray_history/{each_dir}/original_data/302.pickle"):
@@ -280,11 +280,11 @@ class MainForm(QMainWindow):
         self.left_pray_list.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         # All - Left - Pray Mode Layout
         if not hide_new:
-            self.left_pray_mode_100_btn.clicked.connect(self.left_pray_list_100_change)
-        self.left_pray_mode_200_btn.clicked.connect(self.left_pray_list_200_change)
-        self.left_pray_mode_301_btn.clicked.connect(self.left_pray_list_301_change)
-        # self.left_pray_mode_400_btn.clicked.connect(self.left_pray_list_400_change)
-        self.left_pray_mode_302_btn.clicked.connect(self.left_pray_list_302_change)
+            self.left_pray_mode_100_btn.clicked.connect(lambda: self.left_pray_list_btn_change("新手祈愿"))
+        self.left_pray_mode_200_btn.clicked.connect(lambda: self.left_pray_list_btn_change("常驻祈愿"))
+        self.left_pray_mode_301_btn.clicked.connect(lambda: self.left_pray_list_btn_change("角色活动祈愿"))
+        # self.left_pray_mode_400_btn.clicked.connect(lambda: self.left_pray_list_btn_change("角色活动祈愿-2"))
+        self.left_pray_mode_302_btn.clicked.connect(lambda: self.left_pray_list_btn_change("武器祈愿"))
         # All - Splitter
         self.splitter.setFrameShape(QFrame.Shape.VLine)
         # All - Right - Top Layout
@@ -320,61 +320,21 @@ class MainForm(QMainWindow):
             QMessageBox.critical(self, "错误", "未找到数据，请先更新数据")
 
     # Pray Mode Part
-    def left_pray_list_100_change(self):
-        self.right_analysis_right_weapon_alert_label.hide()
-        if hide_new:
-            return
-        if "新手祈愿" in self.loaded_pray_list:
-            self.refreshList("新手祈愿")
-            self.left_status_label.setText("状态: 已读取新手祈愿")
-            self.left_update_time_label.setText(
-                f"数据时间: {self.all_data_list[self.target_uid]['data_100']['data_time']}")
+    def left_pray_list_btn_change(self, btn_type):
+        if btn_type == "武器祈愿":
+            self.right_analysis_right_weapon_alert_label.show()
         else:
-            QMessageBox.warning(self, "警告", "未找到新手祈愿记录，请更新数据后重试\n也有可能没抽过")
+            self.right_analysis_right_weapon_alert_label.hide()
+        if btn_type == "新手祈愿" and hide_new:
             return
-
-    def left_pray_list_200_change(self):
-        self.right_analysis_right_weapon_alert_label.hide()
-        if "常驻祈愿" in self.loaded_pray_list:
-            self.refreshList("常驻祈愿")
-            self.left_status_label.setText("状态: 已读取常驻祈愿")
+        if btn_type in self.loaded_pray_list:
+            print(btn_type)
+            self.refreshList(btn_type)
+            self.left_status_label.setText(f"状态: 已读取{btn_type}")
             self.left_update_time_label.setText(
-                f"数据时间: {self.all_data_list[self.target_uid]['data_200']['data_time']}")
+                f"数据时间: {self.all_data_list[self.target_uid][f'data_{GACHATYPE[btn_type]}']['data_time']}")
         else:
-            QMessageBox.warning(self, "警告", "未找到常驻祈愿记录，请更新数据后重试\n也有可能没抽过")
-            return
-
-    def left_pray_list_301_change(self):
-        self.right_analysis_right_weapon_alert_label.hide()
-        if "角色祈愿" in self.loaded_pray_list:
-            self.refreshList("角色活动祈愿")
-            self.left_status_label.setText("状态: 已读取角色祈愿")
-            self.left_update_time_label.setText(
-                f"数据时间: {self.all_data_list[self.target_uid]['data_301']['data_time']}")
-        else:
-            QMessageBox.warning(self, "警告", "未找到角色祈愿记录，请更新数据后重试\n也有可能没抽过")
-            return
-
-    def left_pray_list_400_change(self):
-        self.right_analysis_right_weapon_alert_label.hide()
-        if "角色祈愿-2" in self.loaded_pray_list:
-            self.refreshList("角色活动祈愿-2")
-            self.left_status_label.setText("状态: 已读取角色祈愿-2")
-            self.left_update_time_label.setText(
-                f"数据时间: {self.all_data_list[self.target_uid]['data_400']['data_time']}")
-        else:
-            QMessageBox.warning(self, "警告", "未找到角色祈愿-2记录，请更新数据后重试\n也有可能没抽过")
-            return
-
-    def left_pray_list_302_change(self):
-        self.right_analysis_right_weapon_alert_label.show()
-        if "武器祈愿" in self.loaded_pray_list:
-            self.refreshList("武器祈愿")
-            self.left_status_label.setText("状态: 已读取武器祈愿")
-            self.left_update_time_label.setText(
-                f"数据时间: {self.all_data_list[self.target_uid]['data_302']['data_time']}")
-        else:
-            QMessageBox.warning(self, "警告", "未找到武器祈愿记录，请更新数据后重试\n也有可能没抽过")
+            QMessageBox.warning(self, "警告", f"未找到{btn_type}记录，请更新数据后重试\n也有可能没抽过")
             return
 
     # Data Update Part
