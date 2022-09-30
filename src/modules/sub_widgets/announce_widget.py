@@ -69,8 +69,8 @@ class Announce(QWidget):
             if not os.path.exists(f"cache/{self.icon_list[each].split('/')[-1]}"):
                 open(f"cache/{self.icon_list[each].split('/')[-1]}", "wb").write(
                     requests.get(self.icon_list[each]).content)
-            self.side_bar.addItem(QListWidgetItem(QIcon(f"cache/{self.icon_list[each].split('/')[-1]}"),
-                                                  self.source["list"][each]["subtitle"]))
+            subtitle = self.source["list"][each]["subtitle"].replace("<br>", "")
+            self.side_bar.addItem(QListWidgetItem(QIcon(f"cache/{self.icon_list[each].split('/')[-1]}"), subtitle))
             self.side_bar.item(each).setSizeHint(QtCore.QSize(300, 30))
             self.side_bar.item(each).setFont(QFont("Microsoft YaHei", 10))
         self.side_bar.itemClicked.connect(self.update_content)
@@ -92,18 +92,30 @@ class Announce(QWidget):
         # Banner
         self.banner.setFixedSize(674, 236)
         self.content.setFixedHeight(300)
+        announce_id = self.source['list'][self.side_bar.currentRow()]['ann_id']
+        if not self.source["list"][self.side_bar.currentRow()]["banner"]:
+            self.banner.hide()
+            self.content.setFixedHeight(550)
+        else:
+            self.banner.show()
+            self.content.setFixedHeight(300)
         if "祈愿" in self.side_bar.currentItem().text():
             self.banner.setFixedSize(674, 326)
             self.content.setFixedHeight(210)
-        announce_id = self.source['list'][self.side_bar.currentRow()]['ann_id']
         if not os.path.exists(f"cache/{announce_id}.jpg"):
-            open(f"cache/{announce_id}.jpg", "wb").write(
-                requests.get(self.source["list"][self.side_bar.currentRow()]["banner"]).content)
+            try:
+                open(f"cache/{announce_id}.jpg", "wb").write(
+                    requests.get(self.source["list"][self.side_bar.currentRow()]["banner"]).content)
+            except requests.exceptions.MissingSchema:
+                pass
         self.banner.setPixmap(QPixmap(f"cache/{announce_id}.jpg"))
         self.html_generator(self.source["list"][self.side_bar.currentRow()]["content"])
 
     def html_generator(self, content):
+        # 这个地方最好用正则，但是我不会捏！这里的大坑，以后再来填吧！
+        content = content.replace("<img src=", "<img width=645 src=")
         content = content.replace("0.1rem", "1rem")
+        content = content.replace("0.10rem", "1rem")
         content = content.replace("0.12rem", "1rem")
         content = content.replace("line-height: 2", "line-height: 1.5")
         content = content.replace("min-height: 1.5em;", "min-height: 1em;")

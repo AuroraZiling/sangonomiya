@@ -4,11 +4,17 @@
 
 ![](https://img.shields.io/badge/Language-Python-blue.svg?style=flat-square)
 
+**文档: [GPE Documents](https://auroraziling.github.io/genshin-pray-export/)**
+
 *原理(浅)讲解: [原神3.0 祈愿/抽卡记录导出工具原理讲解](https://www.bilibili.com/video/BV1cY4y1u758)*
 
 ## 下载 / Download
 
 注：均为自释放压缩包
+
+*最近开了VIP，短期内不需要密码了*
+
+*历史版本见上文提到的文档*
 
 *由于目前未实现更新功能，每个Release的发布内容将会尽可能多*
 
@@ -17,37 +23,13 @@
 
 [蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/inxVL0bfagwf) *密码:0000*
 
-### Release 3
-[阿里云盘: 下载/Download](https://www.aliyundrive.com/s/CPhESipXJHp)
+## 已实现功能 / Implemented Features
 
-[蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/iApgh0aysecj) *密码: 0000*
-
-### Release 2
-[阿里云盘: 下载/Download](https://www.aliyundrive.com/s/rzJhKpizZ6Z)
-
-[蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/iKiEs0am4v6j) *密码: 0000*
-
-### Release 1
-[阿里云盘: 下载/Download](https://www.aliyundrive.com/s/rmi1YWstzXv)
-
-[蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/iF7b30am4qkd) *密码: 0000*
-
-## 目标 / Goals
-
-- [x] 支持彩色列表
-- [x] 支持导出 (符合[统一可交换祈愿记录标准](https://github.com/DGP-Studio/Snap.Genshin/wiki/StandardFormat))
+- [x] 彩色列表
+- [x] JSON导出 (符合[统一可交换祈愿记录标准](https://github.com/DGP-Studio/Snap.Genshin/wiki/StandardFormat))
 - [x] 列表显示数据增多 (比如是否属于十连/单抽等)
 - [x] 基础的数据分析
-- [x] 公告显示 **已实装R5D4**
-- [ ] 重构代码(往API方向) **预计在Release 5实现**
-- [ ] 图表导出数据 **预计在Release 5实现**
-- [ ] 工具箱 *卡池历史记录等* **预计在Release 5实现**
-- [ ] 当期UP池显示 **预计在Release 5实现**
-- [ ] 多UID支持 **仅计划内**
-- [ ] 可更新 *不需要卸载重装* **仅计划内**
-- [ ] 真正的文件校验 **仅计划内**
-- [ ] 攻略跳转 **仅计划内**
-- [ ] 米游社信息显示 **仅计划内**
+- [x] 公告显示
 
 ## 打包 / Usage
 
