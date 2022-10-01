@@ -37,6 +37,8 @@ nav:
     - 目标:
         - 可行: goals/capability.md
         - 计划内: goals/planning.md
+    - API:
+        - 基本信息API: api_doc/information.md
     - 构建:
         - 构建: build/index.md
     - 开发日志:
@@ -51,3 +53,4 @@ nav:
         - 库: references/libs.md
         - 文章: references/articles.md
         - Repo: references/repos.md
+        - 关于UIGF: references/uigf.md
