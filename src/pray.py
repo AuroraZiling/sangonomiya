@@ -14,7 +14,8 @@ from PyQt6.QtSvgWidgets import QSvgWidget
 from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
     QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit, QTableWidgetItem
 
-from modules.sub_widgets import about_widget, announce_widget, settings_widget
+from modules.api import information
+from modules.sub_widgets import about_widget, announce_widget, settings_widget, toolbox_widget
 from modules.analysis import analysis
 from modules.file_verification import verification
 
@@ -53,6 +54,9 @@ class MainForm(QMainWindow):
         # Multi-process
         self.get_pray_list_thread = LeftPrayListThread()
 
+        # API
+        self.api_information = information.Information()
+
         # UI Design
         self.widget = QWidget()
         self.setCentralWidget(self.widget)
@@ -66,12 +70,16 @@ class MainForm(QMainWindow):
         self.uid_user_image = QSvgWidget("assets/user.svg")
         self.uid_current_uid_label = QLabel("未知")
         self.uid_announce_btn = QPushButton("游戏公告")
+        self.uid_up_character_label = QLabel("当期UP: 未知")
+        self.uid_toolbox_btn = QPushButton("工具箱")
         self.uid_settings_btn = QPushButton("设置")
         self.uid_about_btn = QPushButton("关于")
         self.uid_h_layout.addWidget(self.uid_user_image)
         self.uid_h_layout.addWidget(self.uid_current_uid_label)
         self.uid_h_layout.addWidget(self.uid_announce_btn)
+        self.uid_h_layout.addWidget(self.uid_up_character_label)
         self.uid_h_layout.addStretch()
+        self.uid_h_layout.addWidget(self.uid_toolbox_btn)
         self.uid_h_layout.addWidget(self.uid_settings_btn)
         self.uid_h_layout.addWidget(self.uid_about_btn)
         self.uid_splitter = QFrame(self)
@@ -166,6 +174,7 @@ class MainForm(QMainWindow):
 
         # Child Windows
         self.announce_window = announce_widget.Announce()
+        self.toolbox_window = toolbox_widget.Toolbox()
         self.about_window = about_widget.About()
         self.settings_window = settings_widget.Settings()
 
@@ -248,10 +257,13 @@ class MainForm(QMainWindow):
         # UID
         self.uid_current_uid_label.setFont(QFont(self.global_font, 13))
         self.uid_announce_btn.setFixedWidth(70)
+        self.uid_up_character_label.setText(f"当期UP: {'、'.join(self.api_information.get_up_character())}")
+        self.uid_toolbox_btn.setFixedWidth(90)
         self.uid_settings_btn.setFixedWidth(90)
         self.uid_about_btn.setFixedWidth(90)
 
         self.uid_announce_btn.clicked.connect(lambda: self.announce_window.show())
+        self.uid_toolbox_btn.clicked.connect(lambda: self.toolbox_window.show())
         self.uid_settings_btn.clicked.connect(lambda: self.settings_window.show())
         self.uid_about_btn.clicked.connect(lambda: self.about_window.show())
         # UID - Splitter
@@ -328,7 +340,6 @@ class MainForm(QMainWindow):
         if btn_type == "新手祈愿" and hide_new:
             return
         if btn_type in self.loaded_pray_list:
-            print(btn_type)
             self.refreshList(btn_type)
             self.left_status_label.setText(f"状态: 已读取{btn_type}")
             self.left_update_time_label.setText(
