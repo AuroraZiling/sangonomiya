@@ -11,8 +11,18 @@ class Information:
 
     def get_up_character(self, with_color=False):
         announce_list = self.announce_data["list"]
-        up_list = []
+        up_list, color_list = [], []
         for announce in announce_list:
             if "概率UP！" in announce["title"] and "神铸赋形" not in announce["title"]:
+                up_list.append(announce["title"].split("：")[1].split("概率UP！")[0])
+                color_list.append(
+                    up_character_color[announce["title"].split("：")[1].split("概率UP！")[0].split("(")[1][0]])
+        return up_list if not with_color else (up_list, color_list)
+
+    def get_up_weapon(self):
+        announce_list = self.announce_data["list"]
+        up_list = []
+        for announce in announce_list:
+            if "概率UP！" in announce["title"] and "神铸赋形" in announce["title"]:
                 up_list.append(announce["title"].split("：")[1].split("概率UP！")[0])
         return up_list

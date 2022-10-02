@@ -1,3 +1,5 @@
+<input type="checkbox" disabled="true"/> UIGF.W 导出支持
+
 <input type="checkbox" disabled="true"/> 多UID支持
 
 <input type="checkbox" disabled="true"/> 可更新 **不需要卸载重装**

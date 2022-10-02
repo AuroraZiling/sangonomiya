@@ -2,7 +2,15 @@ import json
 import os
 import winreg
 
+from PyQt6 import QtGui
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel, QRadioButton, QMessageBox
+
+
+def get_dir_size(dir_path):
+    size = 0
+    for root, dirs, files in os.walk(dir_path):
+        size += sum([os.path.getsize(os.path.join(root, name)) for name in files])
+    return size
 
 
 class Settings(QWidget):
@@ -39,10 +47,10 @@ class Settings(QWidget):
 
         # Delete Cache
         self.delete_cache_h_layout = QHBoxLayout(self)
-        self.label_delete_cache_h_layout = QLabel("清除公告图片缓存")
+        self.label_delete_cache = QLabel("清除公告图片缓存")
         self.widget_delete_cache = QPushButton("清除")
         self.label_delete_cache_description = QLabel("清除后，打开公告时将重新下载图片")
-        self.delete_cache_h_layout.addWidget(self.label_delete_cache_h_layout)
+        self.delete_cache_h_layout.addWidget(self.label_delete_cache)
         self.delete_cache_h_layout.addWidget(self.widget_delete_cache)
         self.base_layout.addLayout(self.delete_cache_h_layout)
         self.base_layout.addWidget(self.label_delete_cache_description)
@@ -67,6 +75,8 @@ class Settings(QWidget):
         self.widget_hide_new.clicked.connect(self.hide_new)
 
         # Delete Cache
+        self.label_delete_cache.setText("清除公告图片缓存 ({} MB)".format(round(get_dir_size("cache") / 1024 / 1024, 2)))
+
         self.widget_delete_cache.setFixedWidth(100)
         self.label_delete_cache_description.setFixedHeight(30)
         self.label_delete_cache_description.setStyleSheet("background-color: gray; border-radius: 10px; padding: 5px;")
@@ -75,8 +85,12 @@ class Settings(QWidget):
 
     def reset_proxy(self):
         try:
-            winreg.SetValueEx(winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", 0, winreg.KEY_WRITE), "ProxyEnable", 0, winreg.REG_DWORD, 0)
-            winreg.SetValueEx(winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", 0, winreg.KEY_WRITE), "ProxyServer", 0, winreg.REG_SZ, "")
+            winreg.SetValueEx(winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                                             "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", 0,
+                                             winreg.KEY_WRITE), "ProxyEnable", 0, winreg.REG_DWORD, 0)
+            winreg.SetValueEx(winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                                             "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", 0,
+                                             winreg.KEY_WRITE), "ProxyServer", 0, winreg.REG_SZ, "")
             QMessageBox.information(self, "提示", "重置代理成功", QMessageBox.StandardButton.Ok)
         except Exception as e:
             QMessageBox.warning(self, "错误", "重置代理失败", QMessageBox.StandardButton.Ok)
@@ -91,4 +105,7 @@ class Settings(QWidget):
         for each_file in os.listdir("./cache"):
             os.remove("./cache/" + each_file)
         QMessageBox.information(self, "提示", "缓存清除成功", QMessageBox.StandardButton.Ok)
+        self.label_delete_cache.setText("清除公告图片缓存 ({} MB)".format(round(get_dir_size("cache") / 1024 / 1024, 2)))
 
+    def showEvent(self, a0: QtGui.QShowEvent) -> None:
+        self.label_delete_cache.setText("清除公告图片缓存 ({} MB)".format(round(get_dir_size("cache") / 1024 / 1024, 2)))

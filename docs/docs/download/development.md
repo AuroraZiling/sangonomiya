@@ -1,3 +1,5 @@
-*由于目前暂未出现稳定的预览版，所以暂不开放*
+**注意: 预览版不稳定，可能出现各种Bug**
 
-*如有需要体验最新预览版的用户，请在Github仓库自行构建使用*
+*不定期更新*
+
+[蓝奏云: Development](https://auroraziling.lanzouv.com/b02jocyeb)
