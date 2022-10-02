@@ -1,11 +1,5 @@
-import json
-import os.path
-
-import requests
-from PyQt6 import QtCore
-from PyQt6.QtGui import QFont, QPixmap, QFontDatabase, QIcon
 from PyQt6.QtWebEngineWidgets import QWebEngineView
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QListWidget, QListWidgetItem
+from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QListWidget
 
 html_model = '''
 <!DOCTYPE html>

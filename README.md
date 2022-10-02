@@ -58,8 +58,8 @@ pyinstaller pray.spec
 
 1. [无影响]关于`qdarkstyle`的Warning:
    >No QCoreApplication instance found. Application patches not applied. You have to call load_stylesheet function after instantiation of QApplication to take effect.
-2. 武器祈愿效果未知:
-   >暂时无法测试，因为没原石抽
+2. 占用空间过大(约150MB~320MB):
+   >蓝奏云不好传，原因竟是内置浏览器
 
 ## 维护者 / Maintainer
 

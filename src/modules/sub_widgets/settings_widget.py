@@ -75,7 +75,8 @@ class Settings(QWidget):
         self.widget_hide_new.clicked.connect(self.hide_new)
 
         # Delete Cache
-        self.label_delete_cache.setText("清除公告图片缓存 ({} MB)".format(round(get_dir_size("cache") / 1024 / 1024, 2)))
+        self.label_delete_cache.setText(
+            "清除公告图片缓存 ({} MB)".format(round(get_dir_size("cache") / 1024 / 1024, 2)))
 
         self.widget_delete_cache.setFixedWidth(100)
         self.label_delete_cache_description.setFixedHeight(30)
@@ -105,7 +106,9 @@ class Settings(QWidget):
         for each_file in os.listdir("./cache"):
             os.remove("./cache/" + each_file)
         QMessageBox.information(self, "提示", "缓存清除成功", QMessageBox.StandardButton.Ok)
-        self.label_delete_cache.setText("清除公告图片缓存 ({} MB)".format(round(get_dir_size("cache") / 1024 / 1024, 2)))
+        self.label_delete_cache.setText(
+            "清除公告图片缓存 ({} MB)".format(round(get_dir_size("cache") / 1024 / 1024, 2)))
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
-        self.label_delete_cache.setText("清除公告图片缓存 ({} MB)".format(round(get_dir_size("cache") / 1024 / 1024, 2)))
+        self.label_delete_cache.setText(
+            "清除公告图片缓存 ({} MB)".format(round(get_dir_size("cache") / 1024 / 1024, 2)))

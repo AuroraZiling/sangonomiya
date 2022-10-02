@@ -1,18 +1,18 @@
 # -*- coding:utf-8 -*-
 import json
 import os
-import pickle
-import subprocess
-import sys
-import time
-import qdarkstyle
-import requests
+from pickle import load, dump
+from subprocess import Popen
+from sys import exit, argv
+from time import sleep, strftime, localtime, time
+from requests import get
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont, QBrush, QColor, QFontDatabase
 from PyQt6.QtSvgWidgets import QSvgWidget
 from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
     QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit, QTableWidgetItem
+import qdarkstyle
 
 from modules.api import information
 from modules.sub_widgets import about_widget, announce_widget, settings_widget, toolbox_widget
@@ -190,46 +190,46 @@ class MainForm(QMainWindow):
                                                   "data_400": {"data": [], "data_time": ""},
                                                   "data_302": {"data": [], "data_time": ""}}})
             if os.path.exists(f"pray_history/{each_dir}/original_data/100.pickle") and not hide_new:
-                data_100 = pickle.load(open(f"pray_history/{each_dir}/original_data/100.pickle", "rb"))
-                data_time_100 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                              time.localtime((os.path.getmtime(
-                                                  f"pray_history/{each_dir}/original_data/100.pickle"))))
+                data_100 = load(open(f"pray_history/{each_dir}/original_data/100.pickle", "rb"))
+                data_time_100 = strftime("%Y-%m-%d %H:%M:%S",
+                                         localtime((os.path.getmtime(
+                                             f"pray_history/{each_dir}/original_data/100.pickle"))))
                 self.all_data_list[each_dir]["data_100"]["data"] = data_100
                 self.loaded_pray_list.append("新手祈愿")
                 self.pray_list["100"] = data_100
                 self.all_data_list[each_dir]["data_100"]["data_time"] = data_time_100
             if os.path.exists(f"pray_history/{each_dir}/original_data/200.pickle"):
-                data_200 = pickle.load(open(f"pray_history/{each_dir}/original_data/200.pickle", "rb"))
-                data_time_200 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                              time.localtime((os.path.getmtime(
-                                                  f"pray_history/{each_dir}/original_data/200.pickle"))))
+                data_200 = load(open(f"pray_history/{each_dir}/original_data/200.pickle", "rb"))
+                data_time_200 = strftime("%Y-%m-%d %H:%M:%S",
+                                         localtime((os.path.getmtime(
+                                             f"pray_history/{each_dir}/original_data/200.pickle"))))
                 self.all_data_list[each_dir]["data_200"]["data"] = data_200
                 self.loaded_pray_list.append("常驻祈愿")
                 self.pray_list["200"] = data_200
                 self.all_data_list[each_dir]["data_200"]["data_time"] = data_time_200
             if os.path.exists(f"pray_history/{each_dir}/original_data/301.pickle"):
-                data_301 = pickle.load(open(f"pray_history/{each_dir}/original_data/301.pickle", "rb"))
-                data_time_301 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                              time.localtime((os.path.getmtime(
-                                                  f"pray_history/{each_dir}/original_data/301.pickle"))))
+                data_301 = load(open(f"pray_history/{each_dir}/original_data/301.pickle", "rb"))
+                data_time_301 = strftime("%Y-%m-%d %H:%M:%S",
+                                         localtime((os.path.getmtime(
+                                             f"pray_history/{each_dir}/original_data/301.pickle"))))
                 self.all_data_list[each_dir]["data_301"]["data"] = data_301
                 self.loaded_pray_list.append("角色活动祈愿")
                 self.pray_list["301"] = data_301
                 self.all_data_list[each_dir]["data_301"]["data_time"] = data_time_301
             if os.path.exists(f"pray_history/{each_dir}/original_data/400.pickle"):
-                data_400 = pickle.load(open(f"pray_history/{each_dir}/original_data/400.pickle", "rb"))
-                data_time_400 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                              time.localtime((os.path.getmtime(
-                                                  f"pray_history/{each_dir}/original_data/400.pickle"))))
+                data_400 = load(open(f"pray_history/{each_dir}/original_data/400.pickle", "rb"))
+                data_time_400 = strftime("%Y-%m-%d %H:%M:%S",
+                                         localtime((os.path.getmtime(
+                                             f"pray_history/{each_dir}/original_data/400.pickle"))))
                 self.all_data_list[each_dir]["data_400"]["data"] = data_400
                 self.loaded_pray_list.append("角色活动祈愿-2")
                 self.pray_list["400"] = data_400
                 self.all_data_list[each_dir]["data_400"]["data_time"] = data_time_400
             if os.path.exists(f"pray_history/{each_dir}/original_data/302.pickle"):
-                data_302 = pickle.load(open(f"pray_history/{each_dir}/original_data/302.pickle", "rb"))
-                data_time_302 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                              time.localtime((os.path.getmtime(
-                                                  f"pray_history/{each_dir}/original_data/302.pickle"))))
+                data_302 = load(open(f"pray_history/{each_dir}/original_data/302.pickle", "rb"))
+                data_time_302 = strftime("%Y-%m-%d %H:%M:%S",
+                                         localtime((os.path.getmtime(
+                                             f"pray_history/{each_dir}/original_data/302.pickle"))))
                 self.all_data_list[each_dir]["data_302"]["data"] = data_302
                 self.loaded_pray_list.append("武器祈愿")
                 self.pray_list["302"] = data_302
@@ -243,7 +243,7 @@ class MainForm(QMainWindow):
         result = self.file_verification.exist()
         if not result[1]:
             QMessageBox.critical(self, "文件检查", f"发现文件不完整:\n{result[0]}", QMessageBox.StandardButton.Ok)
-            sys.exit()
+            exit()
 
     def debug_code(self):
         pass
@@ -359,8 +359,8 @@ class MainForm(QMainWindow):
         if os.path.exists("requestUrl.txt"):
             os.remove("requestUrl.txt")
         hide_new = json.loads(open("config.json", 'r').read())["settings"]["hide_new"]
-        time.sleep(0.5)
-        ex_module = subprocess.Popen("modules/GenshinProxyServer.exe")
+        sleep(0.5)
+        ex_module = Popen("modules/GenshinProxyServer.exe")
         ex_module.wait()
         if not os.path.exists("requestUrl.txt"):
             QMessageBox.information(self, "提示", "代理服务器已被人为关闭")
@@ -473,7 +473,7 @@ class LeftPrayListThread(QThread):
             url = gachaUrl.split('&')
             url[-4] = f"gacha_type={gachaTarget}"
             target_url = '&'.join(url)
-            rep = requests.get(target_url).json()
+            rep = get(target_url).json()
             try:
                 self.uid = rep['data']["list"][0]['uid']
                 export_data['info']['uid'] = self.uid
@@ -483,9 +483,9 @@ class LeftPrayListThread(QThread):
                 try:
                     target_url = target_url.replace(f"page={old_page}", f"page={page}").replace(f"end_id={old_end_id}",
                                                                                                 f"end_id={end_id}")
-                    rep_start_time = time.time()
-                    rep = requests.get(target_url).json()
-                    rep_end_time = time.time()
+                    rep_start_time = time()
+                    rep = get(target_url).json()
+                    rep_end_time = time()
                     if rep["data"] is None:
                         break
                     tmp = rep["data"]["list"]
@@ -510,8 +510,8 @@ class LeftPrayListThread(QThread):
                               f"pray_history/{self.uid}/export"]:
                 os.mkdir(each_path) if not os.path.exists(each_path) else None
             with open(f'pray_history/{self.uid}/original_data/{gachaTarget}.pickle', 'wb') as f:
-                pickle.dump(proceed_data, f)
-        export_data["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                dump(proceed_data, f)
+        export_data["info"]["export_time"] = strftime("%Y-%m-%d %H:%M:%S", localtime())
         export_data["list"] = export_data_list
         open(f"pray_history/{self.uid}/export/{self.uid}_export_data.json", "w", encoding="utf-8").write(
             json.dumps(export_data, indent=2, sort_keys=True, ensure_ascii=False))
@@ -519,9 +519,9 @@ class LeftPrayListThread(QThread):
 
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
+    app = QApplication(argv)
     app.setWindowIcon(QtGui.QIcon(os.path.join(basedir, 'assets/icon.ico')))
     app.setStyleSheet(qdarkstyle.load_stylesheet())
     start = MainForm()
     start.show()
-    sys.exit(app.exec())
+    exit(app.exec())
