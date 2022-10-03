@@ -1,11 +1,10 @@
 import importlib
 import inspect
-
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QFontDatabase
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QListWidget, QLabel, QFrame
 
-from src.modules.api.pluginManager import PluginManager
+from ..api.pluginManager import PluginManager
 
 html_model = '''
 <!DOCTYPE html>

@@ -1,8 +1,8 @@
 character_5_w_list = ["七七", "刻晴", "迪卢克", "莫娜", "琴"]
-character_5_list = ["提纳里", "钟离", "宵宫", "可莉", "枫原万叶", "荒泷一斗", "夜兰", "魈", "神里绫华", "神里绫人",
+character_5_list = ["赛诺", "提纳里", "钟离", "宵宫", "可莉", "枫原万叶", "荒泷一斗", "夜兰", "魈", "神里绫华", "神里绫人",
                     "温迪", "八重神子", "甘雨", "申鹤", "优菈", "阿贝多", "胡桃", "达达利亚", "珊瑚宫心海", "雷电将军",
                     "七七", "刻晴", "迪卢克", "莫娜", "琴"]
-character_4_list = ["柯莱", "鹿野院平藏", "久岐忍", "云堇", "五郎", "托马", "九条裟罗", "罗莎莉亚", "早柚", "雷泽",
+character_4_list = ["坎蒂丝", "柯莱", "鹿野院平藏", "久岐忍", "云堇", "五郎", "托马", "九条裟罗", "罗莎莉亚", "早柚", "雷泽",
                     "凝光", "菲谢尔", "班尼特", "烟绯", "重云", "芭芭拉", "迪奥娜", "砂糖", "诺艾尔", "凯亚", "辛焱",
                     "香菱", "北斗", "行秋", "安柏", "丽莎"]
 weapon_5_w_list = ["天空之翼", "天空之卷", "天空之脊", "天空之傲", "风鹰剑", "四风原典", "和璞鸢", "狼的末路", "天空之刃"]
@@ -18,79 +18,97 @@ weapon_3_list = ['冷刃', '飞天御剑', '黎明神剑', '以理服人', '沐�
 
 
 class Analysis:
-    def __init__(self, given_data=None, pray_mode=None):
+    def __init__(self, target_uid, given_data=None):
         if given_data is None:
-            given_data = []
+            given_data = {}
         self.given_data = given_data
-        self.pray_mode = pray_mode
-        self.list_5, self.list_4 = [], []
-        self.given_data_length = len(given_data)
-        for each in range(len(self.given_data)):
-            if self.given_data[each][1] in character_5_list or self.given_data[each][1] in weapon_5_list:
-                self.list_5.append(self.given_data[each][1] + f"[{len(given_data) - each}]")
-            elif self.given_data[each][1] in character_4_list or self.given_data[each][1] in weapon_4_list:
-                self.list_4.append(self.given_data[each][1] + f"[{len(given_data) - each}]")
+        self.target_uid = target_uid
+        self.ori_data_list, self.data_list, self.length_list = {}, {}, {}
+        self.ori_data_list[target_uid] = {"100": [], "200": [], "301": [], "400": [], "302": []}
+        self.ori_data_list[target_uid]["100"] = self.given_data[target_uid]["data_100"]["data"]
+        self.ori_data_list[target_uid]["200"] = self.given_data[target_uid]["data_200"]["data"]
+        self.ori_data_list[target_uid]["301"] = self.given_data[target_uid]["data_301"]["data"]
+        self.ori_data_list[target_uid]["400"] = self.given_data[target_uid]["data_400"]["data"]
+        self.ori_data_list[target_uid]["302"] = self.given_data[target_uid]["data_302"]["data"]
+        self.length_list[target_uid] = {"100": 0, "200": 0, "301": 0, "400": 0, "302": 0}
+        self.length_list[target_uid]["100"] = len(self.given_data[target_uid]["data_100"]["data"])
+        self.length_list[target_uid]["200"] = len(self.given_data[target_uid]["data_200"]["data"])
+        self.length_list[target_uid]["301"] = len(self.given_data[target_uid]["data_301"]["data"])
+        self.length_list[target_uid]["400"] = len(self.given_data[target_uid]["data_400"]["data"])
+        self.length_list[target_uid]["302"] = len(self.given_data[target_uid]["data_302"]["data"])
+        self.data_list[target_uid] = {}
+        for each in self.ori_data_list[target_uid].keys():
+            tmp_list_5, tmp_list_4 = [], []
+            self.data_list[target_uid][each] = {}
+            for each_data_pos in range(len(self.ori_data_list[target_uid][each])):
+                each_data = self.ori_data_list[target_uid][each][each_data_pos]
+                if each_data[1] in character_5_list or each_data[1] in weapon_5_list:
+                    tmp_list_5.append(each_data[1] + f"[{self.length_list[target_uid][each] - each_data_pos}]")
+                elif each_data[1] in character_4_list or each_data[1] in weapon_4_list:
+                    tmp_list_4.append(each_data[1] + f"[{self.length_list[target_uid][each] - each_data_pos}]")
+            self.data_list[target_uid][each] = {"5": tmp_list_5, "4": tmp_list_4}
 
-    def get_5(self):
-        return self.list_5, len(self.list_5)
+    def get_5(self, pray_mode):
+        return self.data_list[self.target_uid][pray_mode]["5"], len(self.data_list[self.target_uid][pray_mode]["5"])
 
-    def get_4(self):
-        return self.list_4, len(self.list_4)
+    def get_4(self, pray_mode):
+        return self.data_list[self.target_uid][pray_mode]["4"], len(self.data_list[self.target_uid][pray_mode]["4"])
 
-    def get_3(self):
-        return len(self.given_data) - len(self.list_5) - len(self.list_4)
+    def get_3(self, pray_mode):
+        return len(self.ori_data_list[self.target_uid][pray_mode]) - self.get_5(pray_mode)[-1] - self.get_4(pray_mode)[-1]
 
-    def guarantee(self):
+    def guarantee(self, pray_mode):
         guarantee_model = ""
-        if self.pray_mode == "301":
-            if not len(self.list_5):
+        current_data_length = self.length_list[self.target_uid][pray_mode]
+        if pray_mode == "301":
+            if not current_data_length:
                 return "暂未出现5星角色"
-            guarantee_data = self.get_5()
+            guarantee_data = self.get_5(pray_mode)
             nearest_data = [i.replace(']', '') for i in guarantee_data[0][0].split("[")]
             if nearest_data[0] in character_5_w_list:
                 guarantee_model += "情况: 小保底歪了/直接进入大保底"
                 guarantee_model += f"\n最近一次在第{nearest_data[1]}抽得到{nearest_data[0]}"
                 guarantee_model += f", 意味着将在第{int(nearest_data[1]) + 90}抽之前必出当期UP"
-                guarantee_model += f"\n当前已经{self.given_data_length}/{int(nearest_data[1]) + 90}抽, 还差{int(nearest_data[1]) + 90 - self.given_data_length}抽"
-                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 90 - self.given_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 90 - self.given_data_length) * 160}原石"
+                guarantee_model += f"\n当前已经{current_data_length}/{int(nearest_data[1]) + 90}抽, 还差{int(nearest_data[1]) + 90 - current_data_length}抽"
+                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 90 - current_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 90 - current_data_length) * 160}原石"
             else:
                 guarantee_model += "情况: 保底重置"
                 guarantee_model += f"\n最近一次在第{nearest_data[1]}抽得到{nearest_data[0]}"
                 guarantee_model += f", 意味着将在第{int(nearest_data[1]) + 90}抽之前有50%的概率出当期UP，在第{int(nearest_data[1]) + 180}抽之前必出当期UP"
-                guarantee_model += f"\n小保底: 当前已经{self.given_data_length}/{int(nearest_data[1]) + 90}抽, 还差{int(nearest_data[1]) + 90 - self.given_data_length}抽"
-                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 90 - self.given_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 90 - self.given_data_length) * 160}原石"
-                guarantee_model += f"\n大保底: 当前已经{self.given_data_length}/{int(nearest_data[1]) + 180}抽, 还差{int(nearest_data[1]) + 180 - self.given_data_length}抽"
-                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 180 - self.given_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 180 - self.given_data_length) * 160}原石"
+                guarantee_model += f"\n小保底: 当前已经{current_data_length}/{int(nearest_data[1]) + 90}抽, 还差{int(nearest_data[1]) + 90 - current_data_length}抽"
+                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 90 - current_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 90 - current_data_length) * 160}原石"
+                guarantee_model += f"\n大保底: 当前已经{current_data_length}/{int(nearest_data[1]) + 180}抽, 还差{int(nearest_data[1]) + 180 - current_data_length}抽"
+                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 180 - current_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 180 - current_data_length) * 160}原石"
             return guarantee_model
-        elif self.pray_mode == "302":
-            if not len(self.list_5):
+        elif pray_mode == "302":
+            if not current_data_length:
                 return "暂未出现5星武器"
-            guarantee_data = self.get_5()
+            guarantee_data = self.get_5(pray_mode)
             nearest_data = [i.replace(']', '') for i in guarantee_data[0][0].split("[")]
             if nearest_data[0] in weapon_5_w_list:
                 guarantee_model += "情况: 小保底歪了/直接进入大保底"
                 guarantee_model += f"\n最近一次在第{nearest_data[1]}抽得到{nearest_data[0]}"
                 guarantee_model += f", 意味着将在第{int(nearest_data[1]) + 80}抽之前必出当期UP"
-                guarantee_model += f"\n当前已经{self.given_data_length}/{int(nearest_data[1]) + 80}抽, 还差{int(nearest_data[1]) + 80 - self.given_data_length}抽"
-                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 80 - self.given_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 80 - self.given_data_length) * 160}原石"
+                guarantee_model += f"\n当前已经{current_data_length}/{int(nearest_data[1]) + 80}抽, 还差{int(nearest_data[1]) + 80 - current_data_length}抽"
+                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 80 - current_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 80 - current_data_length) * 160}原石"
             else:
                 guarantee_model += "情况: 保底重置"
                 guarantee_model += f"\n最近一次在第{nearest_data[1]}抽得到{nearest_data[0]}"
                 guarantee_model += f", 意味着将在第{int(nearest_data[1]) + 80}抽之前有50%的概率出当期UP，在第{int(nearest_data[1]) + 160}抽之前必出当期UP"
-                guarantee_model += f"\n小保底: 当前已经{self.given_data_length}/{int(nearest_data[1]) + 80}抽, 还差{int(nearest_data[1]) + 80 - self.given_data_length}抽"
-                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 80 - self.given_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 80 - self.given_data_length) * 160}原石"
-                guarantee_model += f"\n大保底: 当前已经{self.given_data_length}/{int(nearest_data[1]) + 160}抽, 还差{int(nearest_data[1]) + 160 - self.given_data_length}抽"
-                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 160 - self.given_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 160 - self.given_data_length) * 160}原石"
+                guarantee_model += f"\n小保底: 当前已经{current_data_length}/{int(nearest_data[1]) + 80}抽, 还差{int(nearest_data[1]) + 80 - current_data_length}抽"
+                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 80 - current_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 80 - current_data_length) * 160}原石"
+                guarantee_model += f"\n大保底: 当前已经{current_data_length}/{int(nearest_data[1]) + 160}抽, 还差{int(nearest_data[1]) + 160 - current_data_length}抽"
+                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 160 - current_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 160 - current_data_length) * 160}原石"
             return guarantee_model
-        elif self.pray_mode == "200":
-            if not len(self.list_5):
+        elif pray_mode == "200":
+            if not current_data_length:
                 return "暂未出现5星"
-            guarantee_data = self.get_5()
+            guarantee_data = self.get_5(pray_mode)
             nearest_data = [i.replace(']', '') for i in guarantee_data[0][0].split("[")]
             if nearest_data[0] in weapon_5_list or nearest_data[0] in character_5_list:
                 guarantee_model += f"最近一次在第{nearest_data[1]}抽得到{nearest_data[0]}"
                 guarantee_model += f", 意味着将在第{int(nearest_data[1]) + 90}抽之前必出当期UP"
-                guarantee_model += f"\n当前已经{self.given_data_length}/{int(nearest_data[1]) + 90}抽, 还差{int(nearest_data[1]) + 90 - self.given_data_length}抽"
-                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 90 - self.given_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 90 - self.given_data_length) * 160}原石"
+                guarantee_model += f"\n当前已经{current_data_length}/{int(nearest_data[1]) + 90}抽, 还差{int(nearest_data[1]) + 90 - current_data_length}抽"
+                guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 90 - current_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 90 - current_data_length) * 160}原石"
             return guarantee_model
         return "暂未支持新手祈愿分析"

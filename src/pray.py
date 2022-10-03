@@ -166,6 +166,7 @@ class MainForm(QMainWindow):
         self.widget.setLayout(self.base_layout)
 
         # Functions
+        self.analyser = None
 
         # File Verification
         self.file_verification = verification.Verification()
@@ -238,6 +239,7 @@ class MainForm(QMainWindow):
         if self.all_data_list:
             self.target_uid = list(self.all_data_list.keys())[0]
             self.uid_current_uid_label.setText(f"{self.target_uid}")
+        self.analyser = analysis.Analysis(self.target_uid, self.all_data_list)
 
     def file_check(self):
         result = self.file_verification.exist()
@@ -409,20 +411,20 @@ class MainForm(QMainWindow):
                     pos += 9
                 pos += 1
         # 重新生成右侧分析
-        analyser = analysis.Analysis(data_list, GACHATYPE[pray_mode])
+        pray_mode = GACHATYPE[pray_mode]
         try:
-            percent_5 = round(analyser.get_5()[1] / len(data_list) * 100, 2)
-            percent_4 = round(analyser.get_4()[1] / len(data_list) * 100, 2)
-            percent_3 = round(analyser.get_3() / len(data_list) * 100, 2)
+            percent_5 = round(self.analyser.get_5(pray_mode)[1] / len(data_list) * 100, 2)
+            percent_4 = round(self.analyser.get_4(pray_mode)[1] / len(data_list) * 100, 2)
+            percent_3 = round(self.analyser.get_3(pray_mode) / len(data_list) * 100, 2)
         except ZeroDivisionError:
             percent_3, percent_4, percent_5 = "0.0", "0.0", "0.0"
         self.right_analysis_basic_total_label.setText(f"祈愿数: {len(data_list)}")
-        self.right_analysis_basic_5_label.setText(f"5星数量: {analyser.get_5()[1]} ({percent_5}%)")
-        self.right_analysis_basic_5_list_textEdit.setText(','.join(analyser.get_5()[0]))
-        self.right_analysis_basic_4_label.setText(f"4星数量: {analyser.get_4()[1]} ({percent_4}%)")
-        self.right_analysis_basic_4_list_textEdit.setText(','.join(analyser.get_4()[0]))
-        self.right_analysis_basic_3_label.setText(f"3星数量: {analyser.get_3()} ({percent_3}%)")
-        self.right_analysis_right_guarantee_label.setText(analyser.guarantee())
+        self.right_analysis_basic_5_label.setText(f"5星数量: {self.analyser.get_5(pray_mode)[1]} ({percent_5}%)")
+        self.right_analysis_basic_5_list_textEdit.setText(','.join(self.analyser.get_5(pray_mode)[0]))
+        self.right_analysis_basic_4_label.setText(f"4星数量: {self.analyser.get_4(pray_mode)[1]} ({percent_4}%)")
+        self.right_analysis_basic_4_list_textEdit.setText(','.join(self.analyser.get_4(pray_mode)[0]))
+        self.right_analysis_basic_3_label.setText(f"3星数量: {self.analyser.get_3(pray_mode)} ({percent_3}%)")
+        self.right_analysis_right_guarantee_label.setText(self.analyser.guarantee(pray_mode))
 
     def setColor(self, name: str, row: int):  # 设置某一列的颜色
         if name in analysis.weapon_4_list or name in analysis.character_4_list:

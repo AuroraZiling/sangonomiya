@@ -5,4 +5,11 @@
     <orderEntry type="jdk" jdkName="Pipenv (genshin-pray-export)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
+  <component name="PyNamespacePackagesService">
+    <option name="namespacePackageFolders">
+      <list>
+        <option value="$MODULE_DIR$/src" />
+      </list>
+    </option>
+  </component>
 </module>

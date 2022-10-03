@@ -1,5 +1,7 @@
 <input type="checkbox" disabled="true"/> UIGF.W 导出支持 *预计在Release 6实现*
 
+<input type="checkbox" disabled="true"/> UIGF/.W 导入支持 *预计在Release 6实现*
+
 <input type="checkbox" disabled="true"/> 多UID支持 *预计在Release 6实现*
 
 <input type="checkbox" disabled="true"/> 更有效率的数据更新 *预计在Release 6实现*

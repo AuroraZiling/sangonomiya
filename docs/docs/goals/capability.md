@@ -14,7 +14,5 @@
 
 <input type="checkbox" disabled="true" checked/> [已于Release 5 Development 7实装] 工具箱 *卡池历史记录等*
 
-<input type="checkbox" disabled="true"/> 图表导出数据 *预计在Release 5实现*
-
 <input type="checkbox" disabled="true"/> 重构代码(往API方向) *长期实现*
 
