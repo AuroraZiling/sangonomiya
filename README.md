@@ -20,7 +20,15 @@
 
 ### Release 5 (推荐)
 
+[蓝奏云](https://auroraziling.lanzouv.com/iaPpJ0d4gbkf)
 
+[阿里云盘](https://www.aliyundrive.com/s/em2MRrnyuxN)
+
+## 卸载 / Uninstall
+
+由于是绿色软件，不会在其他位置留下任何文件
+
+删除整个文件夹即可
 
 ## 已实现功能 / Implemented Features
 
