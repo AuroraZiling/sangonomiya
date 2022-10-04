@@ -8,7 +8,7 @@ a = Analysis(
     ['src\\pray.py'],
     pathex=[],
     binaries=[],
-    datas=[('.\\src\\modules', '.\\modules'),('.\\src\\interact', '.'),('.\\src\\assets', '.\\assets'),('.\\src\\config.json', '.')],
+    datas=[('.\\src\\modules', '.\\modules'),('.\\src\\interact', '.'),('.\\src\\assets', '.\\assets'),('.\\src\\plugins', '.\\plugins'),('.\\src\\config.json', '.')],
     hiddenimports=["PyQt6.QtSvg"],
     hookspath=[],
     hooksconfig={},

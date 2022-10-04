@@ -20,6 +20,7 @@
     ["modules/sub_widgets/settings_widget.py", "error", "file"],
     ["modules/GenshinProxyServer.exe", "error", "file"],
     ["pray_history", "create", "directory"],
+    ["plugins", "create", "directory"],
     ["config.json", "error", "file"],
     ["interact", "create", "file"]
   ]

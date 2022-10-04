@@ -18,10 +18,9 @@
 
 *由于目前未实现更新功能，每个Release的发布内容将会尽可能多*
 
-### Release 4 (推荐)
-[阿里云盘: 下载/Download](https://www.aliyundrive.com/s/irQ2FkMH22H)
+### Release 5 (推荐)
 
-[蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/inxVL0bfagwf) *密码:0000*
+
 
 ## 已实现功能 / Implemented Features
 
@@ -45,7 +44,7 @@ pyinstaller pray.spec
 
 ## 更新日志 / Changelog
 
-[Change Log](https://github.com/AuroraZiling/genshin-pray-export/releases)
+[Change Log](https://auroraziling.github.io/genshin-pray-export/dev_logs/r5/)
 
 ## 使用须知 / Notice
 

@@ -1,6 +1,6 @@
 一个原神祈愿导出工具
 
-目前状态: **最新正式版本: Release 4** **最新预览版本: Release 5 Development 7** 
+目前状态: **最新正式版本: Release 5** **最新预览版本: Release 5 Development 7** 
 
 ## 功能
 

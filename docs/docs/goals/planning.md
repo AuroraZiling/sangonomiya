@@ -10,6 +10,8 @@
 
 <input type="checkbox" disabled="true"/> 真正的文件校验
 
+<input type="checkbox" disabled="true"/> 图表导出支持 *预计使用plotly/pyqtgraph*
+
 <input type="checkbox" disabled="true"/> 攻略跳转 *预计在Release 7实现*
 
 <input type="checkbox" disabled="true"/> 米游社信息显示 *预计在Release 7实现*

@@ -239,7 +239,8 @@ class MainForm(QMainWindow):
         if self.all_data_list:
             self.target_uid = list(self.all_data_list.keys())[0]
             self.uid_current_uid_label.setText(f"{self.target_uid}")
-        self.analyser = analysis.Analysis(self.target_uid, self.all_data_list)
+        if len(self.loaded_pray_list) >= 3:
+            self.analyser = analysis.Analysis(self.target_uid, self.all_data_list)
 
     def file_check(self):
         result = self.file_verification.exist()
