@@ -19,24 +19,15 @@ weapon_3_list = ['冷刃', '飞天御剑', '黎明神剑', '以理服人', '沐�
 
 class Analysis:
     def __init__(self, target_uid, given_data=None):
-        if given_data is None:
-            given_data = {}
-        self.given_data = given_data
+        self.given_data = given_data if given_data else {}
         self.target_uid = target_uid
         self.ori_data_list, self.data_list, self.length_list = {}, {}, {}
         self.ori_data_list[target_uid] = {"100": [], "200": [], "301": [], "400": [], "302": []}
-        self.ori_data_list[target_uid]["100"] = self.given_data[target_uid]["data_100"]["data"]
-        self.ori_data_list[target_uid]["200"] = self.given_data[target_uid]["data_200"]["data"]
-        self.ori_data_list[target_uid]["301"] = self.given_data[target_uid]["data_301"]["data"]
-        self.ori_data_list[target_uid]["400"] = self.given_data[target_uid]["data_400"]["data"]
-        self.ori_data_list[target_uid]["302"] = self.given_data[target_uid]["data_302"]["data"]
         self.length_list[target_uid] = {"100": 0, "200": 0, "301": 0, "400": 0, "302": 0}
-        self.length_list[target_uid]["100"] = len(self.given_data[target_uid]["data_100"]["data"])
-        self.length_list[target_uid]["200"] = len(self.given_data[target_uid]["data_200"]["data"])
-        self.length_list[target_uid]["301"] = len(self.given_data[target_uid]["data_301"]["data"])
-        self.length_list[target_uid]["400"] = len(self.given_data[target_uid]["data_400"]["data"])
-        self.length_list[target_uid]["302"] = len(self.given_data[target_uid]["data_302"]["data"])
         self.data_list[target_uid] = {}
+        for each_mode in ["100", "200", "301", "400", "302"]:
+            self.ori_data_list[target_uid][each_mode] = self.given_data[target_uid][f"data_{each_mode}"]["data"]
+            self.length_list[target_uid][each_mode] = len(self.given_data[target_uid][f"data_{each_mode}"]["data"])
         for each in self.ori_data_list[target_uid].keys():
             tmp_list_5, tmp_list_4 = [], []
             self.data_list[target_uid][each] = {}

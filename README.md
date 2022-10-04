@@ -60,6 +60,8 @@ pyinstaller pray.spec
    >No QCoreApplication instance found. Application patches not applied. You have to call load_stylesheet function after instantiation of QApplication to take effect.
 2. 占用空间过大(约150MB~320MB):
    >蓝奏云不好传，原因竟是内置浏览器
+3. [3.1]对于提那里的判断失效
+   >不知道是歪出来的，还是3.0UP池中的
 
 ## 维护者 / Maintainer
 
