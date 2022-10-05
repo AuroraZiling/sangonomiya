@@ -5,6 +5,10 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QTextEdit, QLabel
 
+from ..api import information
+
+CONFIG_PATH = "config.json"
+
 
 class About(QWidget):
     def __init__(self):
@@ -12,16 +16,13 @@ class About(QWidget):
         self.setWindowTitle("关于 / About")
         self.setFixedSize(490, 500)
 
-        # File About
-        self.about_json = json.loads(open("config.json", "r", encoding="utf-8").read())["about"]
-
         # UI Design
         self.base_layout = QVBoxLayout(self)
         self.content_change_h_layout = QHBoxLayout()
         self.link_h_layout = QHBoxLayout()
 
         self.software_label = QLabel("Genshin Pray Export")
-        self.software_version = QLabel(self.about_json["version"])
+        self.software_version = QLabel(information.get_exporter_version(CONFIG_PATH))
         self.author_qq_label = QLabel("QQ: 2935876049")
         self.author_mail = QLabel("Mail: 2935876049@qq.com")
 

@@ -14,5 +14,13 @@
 
 <input type="checkbox" disabled="true" checked/> [已于Release 5 Development 7实装] 工具箱 *卡池历史记录等*
 
+<input type="checkbox" disabled="true"/> UIGF/UIGF.W 导入/导出支持 *预计在Release 6实现(API)*
+
+<input type="checkbox" disabled="true"/> 多UID支持 *预计在Release 6实现*
+
+<input type="checkbox" disabled="true"/> 更有效率的数据更新 *预计在Release 6实现*
+
+<input type="checkbox" disabled="true"/> 角色攻略跳转 *预计在Release 6实现*
+
 <input type="checkbox" disabled="true"/> 重构代码(往API方向) *长期实现*
 

@@ -1,8 +1,14 @@
+import json
+
 from requests import get
 
 announce_request_model = "https://hk4e-api-static.mihoyo.com/common/hk4e_cn/announcement/api/getAnnContent?game=hk4e&game_biz=hk4e_cn&lang=zh-cn&bundle_id=hk4e_cn&platform=pc&region=cn_gf01&t=1663409289&level=60&channel_id=1"
 up_character_color = {"风": "#00FF00", "岩": "#FFD700", "雷": "#7B68EE", "水": "#00BFFF", "火": "#FF4500",
                       "冰": "#4169E1", "草": "#7CFC00"}
+
+
+def get_exporter_version(config_path):
+    return json.loads(open(config_path, "r", encoding="utf-8").read())["about"]["version"]
 
 
 class Information:

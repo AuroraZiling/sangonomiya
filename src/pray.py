@@ -1,10 +1,10 @@
 # -*- coding:utf-8 -*-
 import json
 import os
+import time
 from pickle import load, dump
 from subprocess import Popen
 from sys import exit, argv
-from time import sleep, strftime, localtime, time
 from requests import get
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
@@ -22,12 +22,16 @@ from modules.file_verification import verification
 gachaUrl = ""
 GACHATYPE = {"新手祈愿": "100", "常驻祈愿": "200", "角色活动祈愿": "301", "角色活动祈愿-2": "400", "武器祈愿": "302"}
 UIGF_GACHATYPE = {"100": "100", "200": "200", "301": "301", "400": "301", "302": "302"}
+UIGF_VERSION = "v2.2"
 gachaTarget = ""
 gachaItemLevelColor = {4: QColor(132, 112, 255), 5: QColor(255, 185, 15)}
 export_data = {"info": {"uid": "", "lang": "zh-cn", "export_time": ""}, "list": []}
 
+CONFIG_PATH = "config.json"
+
 basedir = os.path.dirname(__file__)
-hide_new = json.loads(open("config.json", "r", encoding="utf-8").read())["settings"]["hide_new"]
+version = "Unknown"
+hide_new = json.loads(open(CONFIG_PATH, "r", encoding="utf-8").read())["settings"]["hide_new"]
 
 try:
     from ctypes import windll  # Only Windows.
@@ -56,6 +60,8 @@ class MainForm(QMainWindow):
 
         # API
         self.api_information = information.Information()
+        global version
+        version = information.get_exporter_version(CONFIG_PATH)
 
         # UI Design
         self.widget = QWidget()
@@ -192,8 +198,8 @@ class MainForm(QMainWindow):
                                                   "data_302": {"data": [], "data_time": ""}}})
             if os.path.exists(f"pray_history/{each_dir}/original_data/100.pickle") and not hide_new:
                 data_100 = load(open(f"pray_history/{each_dir}/original_data/100.pickle", "rb"))
-                data_time_100 = strftime("%Y-%m-%d %H:%M:%S",
-                                         localtime((os.path.getmtime(
+                data_time_100 = time.strftime("%Y-%m-%d %H:%M:%S",
+                                         time.localtime((os.path.getmtime(
                                              f"pray_history/{each_dir}/original_data/100.pickle"))))
                 self.all_data_list[each_dir]["data_100"]["data"] = data_100
                 self.loaded_pray_list.append("新手祈愿")
@@ -201,8 +207,8 @@ class MainForm(QMainWindow):
                 self.all_data_list[each_dir]["data_100"]["data_time"] = data_time_100
             if os.path.exists(f"pray_history/{each_dir}/original_data/200.pickle"):
                 data_200 = load(open(f"pray_history/{each_dir}/original_data/200.pickle", "rb"))
-                data_time_200 = strftime("%Y-%m-%d %H:%M:%S",
-                                         localtime((os.path.getmtime(
+                data_time_200 = time.strftime("%Y-%m-%d %H:%M:%S",
+                                         time.localtime((os.path.getmtime(
                                              f"pray_history/{each_dir}/original_data/200.pickle"))))
                 self.all_data_list[each_dir]["data_200"]["data"] = data_200
                 self.loaded_pray_list.append("常驻祈愿")
@@ -210,8 +216,8 @@ class MainForm(QMainWindow):
                 self.all_data_list[each_dir]["data_200"]["data_time"] = data_time_200
             if os.path.exists(f"pray_history/{each_dir}/original_data/301.pickle"):
                 data_301 = load(open(f"pray_history/{each_dir}/original_data/301.pickle", "rb"))
-                data_time_301 = strftime("%Y-%m-%d %H:%M:%S",
-                                         localtime((os.path.getmtime(
+                data_time_301 = time.strftime("%Y-%m-%d %H:%M:%S",
+                                         time.localtime((os.path.getmtime(
                                              f"pray_history/{each_dir}/original_data/301.pickle"))))
                 self.all_data_list[each_dir]["data_301"]["data"] = data_301
                 self.loaded_pray_list.append("角色活动祈愿")
@@ -219,8 +225,8 @@ class MainForm(QMainWindow):
                 self.all_data_list[each_dir]["data_301"]["data_time"] = data_time_301
             if os.path.exists(f"pray_history/{each_dir}/original_data/400.pickle"):
                 data_400 = load(open(f"pray_history/{each_dir}/original_data/400.pickle", "rb"))
-                data_time_400 = strftime("%Y-%m-%d %H:%M:%S",
-                                         localtime((os.path.getmtime(
+                data_time_400 = time.strftime("%Y-%m-%d %H:%M:%S",
+                                         time.localtime((os.path.getmtime(
                                              f"pray_history/{each_dir}/original_data/400.pickle"))))
                 self.all_data_list[each_dir]["data_400"]["data"] = data_400
                 self.loaded_pray_list.append("角色活动祈愿-2")
@@ -228,8 +234,8 @@ class MainForm(QMainWindow):
                 self.all_data_list[each_dir]["data_400"]["data_time"] = data_time_400
             if os.path.exists(f"pray_history/{each_dir}/original_data/302.pickle"):
                 data_302 = load(open(f"pray_history/{each_dir}/original_data/302.pickle", "rb"))
-                data_time_302 = strftime("%Y-%m-%d %H:%M:%S",
-                                         localtime((os.path.getmtime(
+                data_time_302 = time.strftime("%Y-%m-%d %H:%M:%S",
+                                         time.localtime((os.path.getmtime(
                                              f"pray_history/{each_dir}/original_data/302.pickle"))))
                 self.all_data_list[each_dir]["data_302"]["data"] = data_302
                 self.loaded_pray_list.append("武器祈愿")
@@ -362,7 +368,7 @@ class MainForm(QMainWindow):
         if os.path.exists("requestUrl.txt"):
             os.remove("requestUrl.txt")
         hide_new = json.loads(open("config.json", 'r').read())["settings"]["hide_new"]
-        sleep(0.5)
+        time.sleep(0.5)
         ex_module = Popen("modules/GenshinProxyServer.exe")
         ex_module.wait()
         if not os.path.exists("requestUrl.txt"):
@@ -486,9 +492,9 @@ class LeftPrayListThread(QThread):
                 try:
                     target_url = target_url.replace(f"page={old_page}", f"page={page}").replace(f"end_id={old_end_id}",
                                                                                                 f"end_id={end_id}")
-                    rep_start_time = time()
+                    rep_start_time = time.time()
                     rep = get(target_url).json()
-                    rep_end_time = time()
+                    rep_end_time = time.time()
                     if rep["data"] is None:
                         break
                     tmp = rep["data"]["list"]
@@ -514,7 +520,11 @@ class LeftPrayListThread(QThread):
                 os.mkdir(each_path) if not os.path.exists(each_path) else None
             with open(f'pray_history/{self.uid}/original_data/{gachaTarget}.pickle', 'wb') as f:
                 dump(proceed_data, f)
-        export_data["info"]["export_time"] = strftime("%Y-%m-%d %H:%M:%S", localtime())
+        export_data["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        export_data["info"]["export_timestamp"] = int(round(time.time() * 1000))
+        export_data["info"]["export_app"] = "genshin-pray-export"
+        export_data["info"]["export_app_version"] = version
+        export_data["info"]["uigf_version"] = UIGF_VERSION
         export_data["list"] = export_data_list
         open(f"pray_history/{self.uid}/export/{self.uid}_export_data.json", "w", encoding="utf-8").write(
             json.dumps(export_data, indent=2, sort_keys=True, ensure_ascii=False))
