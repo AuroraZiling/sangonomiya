@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import json
 import os
+import sys
 import time
 from pickle import load, dump
 from subprocess import Popen
@@ -14,7 +15,7 @@ from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPu
     QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit, QTableWidgetItem
 import qdarkstyle
 
-from modules.api import information
+from modules.api import information, transformation
 from modules.sub_widgets import about_widget, announce_widget, settings_widget, toolbox_widget
 from modules.analysis import analysis
 from modules.file_verification import verification
@@ -23,6 +24,7 @@ gachaUrl = ""
 GACHATYPE = {"新手祈愿": "100", "常驻祈愿": "200", "角色活动祈愿": "301", "角色活动祈愿-2": "400", "武器祈愿": "302"}
 UIGF_GACHATYPE = {"100": "100", "200": "200", "301": "301", "400": "301", "302": "302"}
 UIGF_VERSION = "v2.2"
+WORKING_DIR = '/'.join(sys.argv[0].split('/')[:-1]) + '/'
 gachaTarget = ""
 gachaItemLevelColor = {4: QColor(132, 112, 255), 5: QColor(255, 185, 15)}
 export_data = {"info": {"uid": "", "lang": "zh-cn", "export_time": ""}, "list": []}
