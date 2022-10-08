@@ -40,8 +40,10 @@ nav:
     - 插件开发:
         - 开发指南: plugin-development/guide.md
     - API:
-        - 基本信息API: api_doc/information.md
-        - 插件管理API: api_doc/pluginManager.md
+        - 分析: api_doc/analysis.md
+        - 基本信息: api_doc/information.md
+        - 插件管理: api_doc/pluginManager.md
+        - UIGF格式转换: api_doc/transformation.md
     - 构建:
         - 构建: build/index.md
     - 开发日志:
