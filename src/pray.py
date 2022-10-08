@@ -15,9 +15,8 @@ from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPu
     QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit, QTableWidgetItem
 import qdarkstyle
 
-from modules.api import information, transformation
+from modules.api import information, analysis
 from modules.sub_widgets import about_widget, announce_widget, settings_widget, toolbox_widget
-from modules.analysis import analysis
 from modules.file_verification import verification
 
 gachaUrl = ""

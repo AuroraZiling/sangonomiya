@@ -1,4 +1,3 @@
-import json
 import webbrowser
 
 from PyQt6.QtCore import Qt
