@@ -98,7 +98,7 @@ class Analysis:
             nearest_data = [i.replace(']', '') for i in guarantee_data[0][0].split("[")]
             if nearest_data[0] in weapon_5_list or nearest_data[0] in character_5_list:
                 guarantee_model += f"最近一次在第{nearest_data[1]}抽得到{nearest_data[0]}"
-                guarantee_model += f", 意味着将在第{int(nearest_data[1]) + 90}抽之前必出当期UP"
+                guarantee_model += f", 意味着将在第{int(nearest_data[1]) + 90}抽之前必出五星"
                 guarantee_model += f"\n当前已经{current_data_length}/{int(nearest_data[1]) + 90}抽, 还差{int(nearest_data[1]) + 90 - current_data_length}抽"
                 guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 90 - current_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 90 - current_data_length) * 160}原石"
             return guarantee_model

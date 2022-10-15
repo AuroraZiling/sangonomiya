@@ -12,7 +12,7 @@ from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont, QBrush, QColor, QFontDatabase
 from PyQt6.QtSvgWidgets import QSvgWidget
 from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
-    QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit, QTableWidgetItem
+    QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit, QTableWidgetItem, QComboBox
 import qdarkstyle
 
 from modules.api import information, analysis
@@ -54,6 +54,7 @@ class MainForm(QMainWindow):
 
         # Pray List Init
         self.loaded_pray_list = []
+        self.current_show_list = None
         self.pray_list = {"100": None, "200": None, "301": None, "400": None, "302": None}
 
         # Multi-process
@@ -75,7 +76,10 @@ class MainForm(QMainWindow):
 
         # UI UID
         self.uid_user_image = QSvgWidget("assets/user.svg")
-        self.uid_current_uid_label = QLabel("未知")
+        self.uid_current_uid_combobox = QComboBox(self)
+
+        self.uid_label_splitter = QFrame(self)
+
         self.uid_announce_btn = QPushButton("游戏公告")
         self.uid_up_character_label = QLabel("当期UP角色: 未知")
         self.uid_up_weapon_label = QLabel("当期UP武器: 未知")
@@ -83,7 +87,8 @@ class MainForm(QMainWindow):
         self.uid_settings_btn = QPushButton("设置")
         self.uid_about_btn = QPushButton("关于")
         self.uid_h_layout.addWidget(self.uid_user_image)
-        self.uid_h_layout.addWidget(self.uid_current_uid_label)
+        self.uid_h_layout.addWidget(self.uid_current_uid_combobox)
+        self.uid_h_layout.addWidget(self.uid_label_splitter)
         self.uid_h_layout.addWidget(self.uid_announce_btn)
         self.uid_h_layout.addWidget(self.uid_up_character_label)
         self.uid_h_layout.addWidget(self.uid_up_weapon_label)
@@ -242,12 +247,32 @@ class MainForm(QMainWindow):
                 self.loaded_pray_list.append("武器祈愿")
                 self.pray_list["302"] = data_302
                 self.all_data_list[each_dir]["data_302"]["data_time"] = data_time_302
-        # Pre: 多UID支持预备
+        self.uid_current_uid_combobox.clear()
+        self.uid_current_uid_combobox.addItems(self.all_data_list.keys())
         if self.all_data_list:
-            self.target_uid = list(self.all_data_list.keys())[0]
-            self.uid_current_uid_label.setText(f"{self.target_uid}")
+            ori_config_json = json.loads(open("config.json", 'r').read())
+            latest_uid = ori_config_json["settings"]["latest_uid_selected"]
+            if not latest_uid:
+                self.target_uid = list(self.all_data_list.keys())[0]
+                self.uid_current_uid_combobox.setCurrentIndex(0)
+            elif latest_uid in self.all_data_list.keys():
+                self.target_uid = latest_uid
+                self.uid_current_uid_combobox.setCurrentIndex(self.uid_current_uid_combobox.findText(latest_uid))
+            elif latest_uid not in self.all_data_list.keys():
+                self.target_uid = list(self.all_data_list.keys())[0]
+                self.uid_current_uid_combobox.setCurrentIndex(0)
+            ori_config_json["settings"]["latest_uid_selected"] = self.target_uid
+            open(f"config.json", "w", encoding="utf-8").write(
+                json.dumps(ori_config_json, indent=2, sort_keys=True, ensure_ascii=False))
         if len(self.loaded_pray_list) >= 3:
             self.analyser = analysis.Analysis(self.target_uid, self.all_data_list)
+
+    def uid_changed_regenerate(self):
+        self.target_uid = self.uid_current_uid_combobox.currentText()
+        for each in self.pray_list.keys():
+            self.pray_list[each] = self.all_data_list[self.target_uid][f"data_{each}"]["data"]
+        self.refreshList(self.current_show_list) if self.current_show_list else None
+        self.analyser = analysis.Analysis(self.target_uid, self.all_data_list)
 
     def file_check(self):
         result = self.file_verification.exist()
@@ -267,7 +292,8 @@ class MainForm(QMainWindow):
         # UID - Image
         self.uid_user_image.setFixedSize(30, 30)
         # UID
-        self.uid_current_uid_label.setFont(QFont(self.global_font, 13))
+        self.uid_current_uid_combobox.setFont(QFont(self.global_font, 13))
+        self.uid_label_splitter.setFrameShape(QFrame.Shape.VLine)
         self.uid_announce_btn.setFixedWidth(70)
         self.uid_up_character_label.setText(f"当期UP角色: {''.join(self.api_information.get_up_character())}")
         self.uid_up_weapon_label.setText(f"当期UP武器: {''.join(self.api_information.get_up_weapon())}")
@@ -275,6 +301,7 @@ class MainForm(QMainWindow):
         self.uid_settings_btn.setFixedWidth(90)
         self.uid_about_btn.setFixedWidth(90)
 
+        self.uid_current_uid_combobox.currentIndexChanged.connect(self.uid_changed_regenerate)
         self.uid_announce_btn.clicked.connect(lambda: self.announce_window.show())
         self.uid_toolbox_btn.clicked.connect(lambda: self.toolbox_window.show())
         self.uid_settings_btn.clicked.connect(lambda: self.settings_window.show())
@@ -346,6 +373,7 @@ class MainForm(QMainWindow):
 
     # Pray Mode Part
     def left_pray_list_btn_change(self, btn_type):
+
         if btn_type == "武器祈愿":
             self.right_analysis_right_weapon_alert_label.show()
         else:
@@ -354,6 +382,7 @@ class MainForm(QMainWindow):
             return
         if btn_type in self.loaded_pray_list:
             self.refreshList(btn_type)
+            self.current_show_list = btn_type
             self.left_status_label.setText(f"状态: 已读取{btn_type}")
             self.left_update_time_label.setText(
                 f"数据时间: {self.all_data_list[self.target_uid][f'data_{GACHATYPE[btn_type]}']['data_time']}")

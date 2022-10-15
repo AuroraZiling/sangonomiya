@@ -66,7 +66,7 @@ pyinstaller pray.spec
 1. [无影响]关于`qdarkstyle`的Warning:
    >No QCoreApplication instance found. Application patches not applied. You have to call load_stylesheet function after instantiation of QApplication to take effect.
 2. 占用空间过大(约150MB~320MB):
-   >蓝奏云不好传，原因竟是内置浏览器
+   >蓝奏云不好传，原因竟是游戏内公告显示的内置浏览器模块
 3. [3.1]对于提那里的判断失效
    >不知道是歪出来的，还是3.0UP池中的，工具将其暂时视作UP池，后期会通过时间做特判
 

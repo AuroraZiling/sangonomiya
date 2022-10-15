@@ -1,8 +1,9 @@
 {
-    "about": {
-        "version": "Release 6 Dev 2"
-    },
-    "settings": {
-        "hide_new": true
-    }
+  "about": {
+    "version": "Release 6 Dev 3"
+  },
+  "settings": {
+    "hide_new": true,
+    "latest_uid_selected": "230351200"
+  }
 }
