@@ -9,7 +9,6 @@
     ["modules/api", "error", "directory"],
     ["modules/api/analysis.py", "error", "file"],
     ["modules/api/information.py", "error", "file"],
-    ["modules/api/pluginManager.py", "error", "file"],
     ["modules/api/transformation.py", "error", "file"],
     ["modules/file_verification", "error", "directory"],
     ["modules/file_verification/verification.py", "error", "file"],
@@ -21,10 +20,8 @@
     ["modules/sub_widgets/about_widget.py", "error", "file"],
     ["modules/sub_widgets/announce_widget.py", "error", "file"],
     ["modules/sub_widgets/settings_widget.py", "error", "file"],
-    ["modules/sub_widgets/toolbox_widget.py", "error", "file"],
     ["modules/GenshinProxyServer.exe", "error", "file"],
     ["pray_history", "create", "directory"],
-    ["plugins", "create", "directory"],
     ["config.json", "error", "file"],
     ["interact", "create", "file"]
   ]

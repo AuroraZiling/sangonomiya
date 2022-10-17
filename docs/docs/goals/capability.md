@@ -12,11 +12,9 @@
 
 <input type="checkbox" disabled="true" checked/> [已于Release 5 Development 6实装] 缓存占用空间显示
 
-<input type="checkbox" disabled="true" checked/> [已于Release 5 Development 7实装] 工具箱 *卡池历史记录等*
+<input type="checkbox" disabled="true" checked/> [已于Release 6 Development 3实装] 多UID支持 *待测试*
 
 <input type="checkbox" disabled="true"/> UIGF(Json) 导入/导出支持 *预计在Release 6实现(API)*
-
-<input type="checkbox" disabled="true"/> 多UID支持 *预计在Release 6实现*
 
 <input type="checkbox" disabled="true"/> 更有效率的数据更新 *预计在Release 6实现*
 

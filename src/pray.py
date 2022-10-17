@@ -16,7 +16,7 @@ from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPu
 import qdarkstyle
 
 from modules.api import information, analysis
-from modules.sub_widgets import about_widget, announce_widget, settings_widget, toolbox_widget
+from modules.sub_widgets import about_widget, announce_widget, settings_widget
 from modules.file_verification import verification
 
 gachaUrl = ""
@@ -83,7 +83,6 @@ class MainForm(QMainWindow):
         self.uid_announce_btn = QPushButton("游戏公告")
         self.uid_up_character_label = QLabel("当期UP角色: 未知")
         self.uid_up_weapon_label = QLabel("当期UP武器: 未知")
-        self.uid_toolbox_btn = QPushButton("工具箱")
         self.uid_settings_btn = QPushButton("设置")
         self.uid_about_btn = QPushButton("关于")
         self.uid_h_layout.addWidget(self.uid_user_image)
@@ -93,7 +92,6 @@ class MainForm(QMainWindow):
         self.uid_h_layout.addWidget(self.uid_up_character_label)
         self.uid_h_layout.addWidget(self.uid_up_weapon_label)
         self.uid_h_layout.addStretch()
-        self.uid_h_layout.addWidget(self.uid_toolbox_btn)
         self.uid_h_layout.addWidget(self.uid_settings_btn)
         self.uid_h_layout.addWidget(self.uid_about_btn)
         self.uid_splitter = QFrame(self)
@@ -189,7 +187,6 @@ class MainForm(QMainWindow):
 
         # Child Windows
         self.announce_window = announce_widget.Announce()
-        self.toolbox_window = toolbox_widget.Toolbox()
         self.about_window = about_widget.About()
         self.settings_window = settings_widget.Settings()
 
@@ -269,6 +266,10 @@ class MainForm(QMainWindow):
 
     def uid_changed_regenerate(self):
         self.target_uid = self.uid_current_uid_combobox.currentText()
+        ori_config_json = json.loads(open("config.json", 'r').read())
+        ori_config_json["settings"]["latest_uid_selected"] = self.target_uid
+        open(f"config.json", "w", encoding="utf-8").write(
+            json.dumps(ori_config_json, indent=4, sort_keys=True, ensure_ascii=False))
         for each in self.pray_list.keys():
             self.pray_list[each] = self.all_data_list[self.target_uid][f"data_{each}"]["data"]
         self.refreshList(self.current_show_list) if self.current_show_list else None
@@ -297,13 +298,11 @@ class MainForm(QMainWindow):
         self.uid_announce_btn.setFixedWidth(70)
         self.uid_up_character_label.setText(f"当期UP角色: {''.join(self.api_information.get_up_character())}")
         self.uid_up_weapon_label.setText(f"当期UP武器: {''.join(self.api_information.get_up_weapon())}")
-        self.uid_toolbox_btn.setFixedWidth(90)
         self.uid_settings_btn.setFixedWidth(90)
         self.uid_about_btn.setFixedWidth(90)
 
         self.uid_current_uid_combobox.currentIndexChanged.connect(self.uid_changed_regenerate)
         self.uid_announce_btn.clicked.connect(lambda: self.announce_window.show())
-        self.uid_toolbox_btn.clicked.connect(lambda: self.toolbox_window.show())
         self.uid_settings_btn.clicked.connect(lambda: self.settings_window.show())
         self.uid_about_btn.clicked.connect(lambda: self.about_window.show())
         # UID - Splitter

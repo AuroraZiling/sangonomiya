@@ -53,8 +53,12 @@ class Announce(QWidget):
         self.initUI()
 
     def get_announce(self):
-        self.source = requests.get(request_model).json()["data"]
-        open("cache/announce.json", "w", encoding="utf-8").write(json.dumps(self.source, indent=4, ensure_ascii=False))
+        try:
+            self.source = requests.get(request_model).json()["data"]
+            open("cache/announce.json", "w", encoding="utf-8").write(
+                json.dumps(self.source, indent=4, ensure_ascii=False))
+        except requests.exceptions.ConnectionError:
+            pass
 
     def initUI(self):
         # Font
