@@ -12,7 +12,7 @@ from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont, QBrush, QColor, QFontDatabase
 from PyQt6.QtSvgWidgets import QSvgWidget
 from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
-    QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit, QTableWidgetItem, QComboBox
+    QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit, QTableWidgetItem, QComboBox, QFileDialog
 import qdarkstyle
 
 from modules.api import information, analysis
@@ -77,6 +77,7 @@ class MainForm(QMainWindow):
         # UI UID
         self.uid_user_image = QSvgWidget("assets/user.svg")
         self.uid_current_uid_combobox = QComboBox(self)
+        self.uid_json_import_btn = QPushButton("JSON导入")
 
         self.uid_label_splitter = QFrame(self)
 
@@ -87,6 +88,7 @@ class MainForm(QMainWindow):
         self.uid_about_btn = QPushButton("关于")
         self.uid_h_layout.addWidget(self.uid_user_image)
         self.uid_h_layout.addWidget(self.uid_current_uid_combobox)
+        self.uid_h_layout.addWidget(self.uid_json_import_btn)
         self.uid_h_layout.addWidget(self.uid_label_splitter)
         self.uid_h_layout.addWidget(self.uid_announce_btn)
         self.uid_h_layout.addWidget(self.uid_up_character_label)
@@ -264,6 +266,28 @@ class MainForm(QMainWindow):
         if len(self.loaded_pray_list) >= 3:
             self.analyser = analysis.Analysis(self.target_uid, self.all_data_list)
 
+    def uid_json_import(self):
+        import_json_path = QFileDialog.getOpenFileName(self, "选择UIGF-Json文件", "./", "Json文件(*.json)")[0]
+        json_detail = json.loads(open(import_json_path, "r", encoding="utf-8").read())
+        try:
+            json_info = json_detail["info"]
+            if json_info['uid'] in self.all_data_list.keys():
+                QMessageBox.information(self, "提示", f"该UID已存在\n若仍要导入，请删除原有UID的数据(pray_history/{json_info['uid']})后再导入")
+                return
+            json_info_show = f"确认导入?\n\nUID: {json_info['uid']}\n导出时间: {json_info['export_time']}\n导出软件: {json_info['export_app']} - {json_info['export_app_version']}"
+        except KeyError:
+            QMessageBox.critical(self, "错误", "导入的Json文件格式错误")
+            return
+        reply = QMessageBox.question(self, "导入", json_info_show, QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if reply == QMessageBox.StandardButton.Yes:
+            self.all_data_list[json_info["uid"]] = json_detail
+            self.uid_current_uid_combobox.addItem(json_info["uid"])
+            self.uid_current_uid_combobox.setCurrentIndex(self.uid_current_uid_combobox.findText(json_info["uid"]))
+            self.target_uid = json_info["uid"]
+            self.uid_current_uid_combobox.currentIndexChanged.emit(self.uid_current_uid_combobox.currentIndex())
+            QMessageBox.information(self, "提示", "导入成功")
+        return
+
     def uid_changed_regenerate(self):
         self.target_uid = self.uid_current_uid_combobox.currentText()
         ori_config_json = json.loads(open("config.json", 'r').read())
@@ -294,6 +318,7 @@ class MainForm(QMainWindow):
         self.uid_user_image.setFixedSize(30, 30)
         # UID
         self.uid_current_uid_combobox.setFont(QFont(self.global_font, 13))
+        self.uid_json_import_btn.setFixedWidth(70)
         self.uid_label_splitter.setFrameShape(QFrame.Shape.VLine)
         self.uid_announce_btn.setFixedWidth(70)
         self.uid_up_character_label.setText(f"当期UP角色: {''.join(self.api_information.get_up_character())}")
@@ -302,6 +327,7 @@ class MainForm(QMainWindow):
         self.uid_about_btn.setFixedWidth(90)
 
         self.uid_current_uid_combobox.currentIndexChanged.connect(self.uid_changed_regenerate)
+        self.uid_json_import_btn.clicked.connect(self.uid_json_import)
         self.uid_announce_btn.clicked.connect(lambda: self.announce_window.show())
         self.uid_settings_btn.clicked.connect(lambda: self.settings_window.show())
         self.uid_about_btn.clicked.connect(lambda: self.about_window.show())

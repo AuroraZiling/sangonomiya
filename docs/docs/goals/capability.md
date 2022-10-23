@@ -18,6 +18,4 @@
 
 <input type="checkbox" disabled="true"/> 更有效率的数据更新 *预计在Release 6实现*
 
-<input type="checkbox" disabled="true"/> 角色攻略跳转 *预计在Release 6实现*
-
 <input type="checkbox" disabled="true"/> 重构代码(往API方向) *长期实现*
