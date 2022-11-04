@@ -290,6 +290,8 @@ class MainForm(QMainWindow):
 
     def uid_changed_regenerate(self):
         self.target_uid = self.uid_current_uid_combobox.currentText()
+        if not self.target_uid:
+            return
         ori_config_json = json.loads(open("config.json", 'r').read())
         ori_config_json["settings"]["latest_uid_selected"] = self.target_uid
         open(f"config.json", "w", encoding="utf-8").write(
@@ -380,6 +382,8 @@ class MainForm(QMainWindow):
             "background-color: gray; border-radius: 10px; padding: 5px;")
 
     def allBtnStatusChange(self, is_enabled: bool):
+        self.uid_current_uid_combobox.setEnabled(is_enabled)
+        self.uid_json_import_btn.setEnabled(is_enabled)
         if not hide_new:
             self.left_pray_mode_100_btn.setEnabled(is_enabled)
         self.left_pray_mode_200_btn.setEnabled(is_enabled)
@@ -447,6 +451,7 @@ class MainForm(QMainWindow):
             self.clearList()
             self.pre_generate()
             self.allBtnStatusChange(True)
+            self.uid_current_uid_combobox.setCurrentText(self.target_uid)
 
     def clearList(self):  # 清空左侧列表
         [self.left_pray_list.removeRow(0) for _ in range(self.left_pray_list.rowCount())]
