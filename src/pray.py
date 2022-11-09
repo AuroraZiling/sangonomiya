@@ -49,7 +49,7 @@ class MainForm(QMainWindow):
         self.target_uid = ""
         self.all_data_list = {}
         self.setWindowTitle("Genshin Pray Export")
-        self.setFixedSize(1300, 700)
+        self.setFixedSize(1200, 650)
         self.global_font = "Microsoft YaHei"
 
         # Pray List Init
@@ -268,6 +268,8 @@ class MainForm(QMainWindow):
 
     def uid_json_import(self):
         import_json_path = QFileDialog.getOpenFileName(self, "选择UIGF-Json文件", "./", "Json文件(*.json)")[0]
+        if not import_json_path:
+            return
         json_detail = json.loads(open(import_json_path, "r", encoding="utf-8").read())
         try:
             json_info = json_detail["info"]
@@ -373,9 +375,9 @@ class MainForm(QMainWindow):
         self.right_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.right_analysis_basic_label.setFont(QFont(self.global_font, 12))
         self.right_analysis_right_label.setFont(QFont(self.global_font, 12))
-        self.right_analysis_basic_5_list_textEdit.setFixedHeight(90)
+        self.right_analysis_basic_5_list_textEdit.setFixedHeight(140)
         self.right_analysis_basic_5_list_textEdit.setReadOnly(True)
-        self.right_analysis_basic_4_list_textEdit.setFixedHeight(90)
+        self.right_analysis_basic_4_list_textEdit.setFixedHeight(140)
         self.right_analysis_basic_4_list_textEdit.setReadOnly(True)
         self.right_analysis_right_weapon_alert_label.hide()
         self.right_analysis_right_weapon_alert_label.setStyleSheet(

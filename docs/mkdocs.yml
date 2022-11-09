@@ -36,7 +36,6 @@ nav:
         - 预览版: download/development.md
     - 目标:
         - 可行: goals/capability.md
-        - 计划内: goals/planning.md
     - API:
         - 分析: api_doc/analysis.md
         - 基本信息: api_doc/information.md

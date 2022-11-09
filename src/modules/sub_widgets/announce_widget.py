@@ -77,7 +77,7 @@ class Announce(QWidget):
             self.side_bar.addItem(QListWidgetItem(QIcon(f"cache/{self.icon_list[each].split('/')[-1]}"), subtitle))
             self.side_bar.item(each).setSizeHint(QtCore.QSize(300, 30))
             self.side_bar.item(each).setFont(QFont("Microsoft YaHei", 10))
-        self.side_bar.itemClicked.connect(self.update_content)
+        self.side_bar.itemSelectionChanged.connect(self.update_content)
         # Content
         self.content_title.setFont(QFont(self.global_font, 16))
         self.banner.setFixedSize(674, 236)
@@ -107,6 +107,14 @@ class Announce(QWidget):
             self.banner.setFixedSize(674, 326)
             self.content.setFixedHeight(210)
         if not os.path.exists(f"cache/{announce_id}.jpg"):
+            try:
+                open(f"cache/{announce_id}.jpg", "wb").write(
+                    requests.get(self.source["list"][self.side_bar.currentRow()]["banner"]).content)
+            except requests.exceptions.MissingSchema:
+                pass
+        self.banner.setPixmap(QPixmap(f"cache/{announce_id}.jpg"))
+        if self.banner.pixmap().rect().getRect() == (0, 0, 0, 0):  # 解决奇妙的Banner损坏情况
+            os.remove(f"cache/{announce_id}.jpg")
             try:
                 open(f"cache/{announce_id}.jpg", "wb").write(
                     requests.get(self.source["list"][self.side_bar.currentRow()]["banner"]).content)
