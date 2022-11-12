@@ -1,5 +1,7 @@
 # Genshin Pray Export
 
+*由于MiHoYo疑似在3.2版本更改了Authkey格式，有可能会对旧版本(R5及之前)产生影响*
+
 **原神祈愿记录导出工具**
 
 ![](https://img.shields.io/badge/Language-Python-blue.svg?style=flat-square)

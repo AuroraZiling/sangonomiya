@@ -16,6 +16,8 @@
 
 <input type="checkbox" disabled="true" checked/> [已于Release 6 Development 7实装] UIGF(Json) 导入/导出支持
 
-<input type="checkbox" disabled="true"/> 更有效率的数据更新 *预计在Release 6实现*
+<input type="checkbox" disabled="true"/> 更有效率的数据更新 *预计在Release 7实现*
+
+<input type="checkbox" disabled="true"/> 有关提纳里的特判 *预计在Release 7实现*
 
 <input type="checkbox" disabled="true"/> 重构代码(往API方向) *长期实现*
