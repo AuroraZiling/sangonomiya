@@ -15,12 +15,13 @@ from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPu
     QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit, QTableWidgetItem, QComboBox, QFileDialog
 import qdarkstyle
 
-from modules.api import information, analysis
+from modules.api import information, analysis, transformation
 from modules.sub_widgets import about_widget, announce_widget, settings_widget
 from modules.file_verification import verification
 
 gachaUrl = ""
 GACHATYPE = {"新手祈愿": "100", "常驻祈愿": "200", "角色活动祈愿": "301", "角色活动祈愿-2": "400", "武器祈愿": "302"}
+REV_GACHATYPE = {v: k for k, v in GACHATYPE.items()}
 UIGF_GACHATYPE = {"100": "100", "200": "200", "301": "301", "400": "301", "302": "302"}
 UIGF_VERSION = "v2.2"
 WORKING_DIR = '/'.join(sys.argv[0].split('/')[:-1]) + '/'
@@ -77,7 +78,8 @@ class MainForm(QMainWindow):
         # UI UID
         self.uid_user_image = QSvgWidget("assets/user.svg")
         self.uid_current_uid_combobox = QComboBox(self)
-        self.uid_json_import_btn = QPushButton("JSON导入")
+        self.uid_json_import_btn = QPushButton("导入")
+        self.uid_json_export_btn = QPushButton("导出")
 
         self.uid_label_splitter = QFrame(self)
 
@@ -89,6 +91,7 @@ class MainForm(QMainWindow):
         self.uid_h_layout.addWidget(self.uid_user_image)
         self.uid_h_layout.addWidget(self.uid_current_uid_combobox)
         self.uid_h_layout.addWidget(self.uid_json_import_btn)
+        self.uid_h_layout.addWidget(self.uid_json_export_btn)
         self.uid_h_layout.addWidget(self.uid_label_splitter)
         self.uid_h_layout.addWidget(self.uid_announce_btn)
         self.uid_h_layout.addWidget(self.uid_up_character_label)
@@ -287,8 +290,32 @@ class MainForm(QMainWindow):
             self.uid_current_uid_combobox.setCurrentIndex(self.uid_current_uid_combobox.findText(json_info["uid"]))
             self.target_uid = json_info["uid"]
             self.uid_current_uid_combobox.currentIndexChanged.emit(self.uid_current_uid_combobox.currentIndex())
+            os.mkdir(f"pray_history/{json_info['uid']}")
+            os.mkdir(f"pray_history/{json_info['uid']}/original_data")
+            os.mkdir(f"pray_history/{json_info['uid']}/export")
+            import_data = transformation.jsonToOriginal(json_detail)
+            for each_data in import_data:
+                if import_data[each_data]:
+                    self.loaded_pray_list.append(REV_GACHATYPE[each_data])
+                    dump(import_data[each_data], open(f"pray_history/{json_info['uid']}/original_data/{each_data}.pickle", "wb"))
+            self.pre_generate()
             QMessageBox.information(self, "提示", "导入成功")
         return
+
+    def uid_json_export(self):
+        json_export_data = export_data
+        json_export_data["info"]["export_app"] = "genshin-pray-export"
+        json_export_data["info"]["uigf_version"] = UIGF_VERSION
+        json_export_data["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        json_export_data["info"]["export_timestamp"] = int(round(time.time() * 1000))
+        json_export_data['info']['uid'] = self.target_uid
+        json_export_data["info"]["export_app_version"] = version
+        json_export_data["list"] = transformation.OriginalToJson(f"pray_history/{self.target_uid}/original_data/", os.listdir(f"pray_history/{self.target_uid}/original_data/"))
+        export_json_path = QFileDialog.getSaveFileName(self, "保存UIGF-Json文件", f"./{self.target_uid}_export_data.json", "Json文件(*.json)")[0]
+        if not export_json_path:
+            return
+        open(export_json_path, "w", encoding="utf-8").write(
+            json.dumps(json_export_data, indent=2, sort_keys=True, ensure_ascii=False))
 
     def uid_changed_regenerate(self):
         self.target_uid = self.uid_current_uid_combobox.currentText()
@@ -299,7 +326,10 @@ class MainForm(QMainWindow):
         open(f"config.json", "w", encoding="utf-8").write(
             json.dumps(ori_config_json, indent=4, sort_keys=True, ensure_ascii=False))
         for each in self.pray_list.keys():
-            self.pray_list[each] = self.all_data_list[self.target_uid][f"data_{each}"]["data"]
+            try:
+                self.pray_list[each] = self.all_data_list[self.target_uid][f"data_{each}"]["data"]
+            except KeyError:
+                continue
         self.refreshList(self.current_show_list) if self.current_show_list else None
         self.analyser = analysis.Analysis(self.target_uid, self.all_data_list)
 
@@ -322,7 +352,9 @@ class MainForm(QMainWindow):
         self.uid_user_image.setFixedSize(30, 30)
         # UID
         self.uid_current_uid_combobox.setFont(QFont(self.global_font, 13))
-        self.uid_json_import_btn.setFixedWidth(70)
+        self.uid_current_uid_combobox.setFixedWidth(125)
+        self.uid_json_import_btn.setFixedWidth(35)
+        self.uid_json_export_btn.setFixedWidth(35)
         self.uid_label_splitter.setFrameShape(QFrame.Shape.VLine)
         self.uid_announce_btn.setFixedWidth(70)
         self.uid_up_character_label.setText(f"当期UP角色: {''.join(self.api_information.get_up_character())}")
@@ -332,6 +364,7 @@ class MainForm(QMainWindow):
 
         self.uid_current_uid_combobox.currentIndexChanged.connect(self.uid_changed_regenerate)
         self.uid_json_import_btn.clicked.connect(self.uid_json_import)
+        self.uid_json_export_btn.clicked.connect(self.uid_json_export)
         self.uid_announce_btn.clicked.connect(lambda: self.announce_window.show())
         self.uid_settings_btn.clicked.connect(lambda: self.settings_window.show())
         self.uid_about_btn.clicked.connect(lambda: self.about_window.show())
@@ -386,6 +419,7 @@ class MainForm(QMainWindow):
     def allBtnStatusChange(self, is_enabled: bool):
         self.uid_current_uid_combobox.setEnabled(is_enabled)
         self.uid_json_import_btn.setEnabled(is_enabled)
+        self.uid_json_export_btn.setEnabled(is_enabled)
         if not hide_new:
             self.left_pray_mode_100_btn.setEnabled(is_enabled)
         self.left_pray_mode_200_btn.setEnabled(is_enabled)
@@ -534,6 +568,7 @@ class LeftPrayListThread(QThread):
 
     def run(self):
         export_data_list = []
+        json_export_data = export_data
         for key in GACHATYPE.keys():
             if (hide_new and key == "新手祈愿") or key == "角色活动祈愿-2":
                 continue
@@ -547,7 +582,7 @@ class LeftPrayListThread(QThread):
             rep = get(target_url).json()
             try:
                 self.uid = rep['data']["list"][0]['uid']
-                export_data['info']['uid'] = self.uid
+                json_export_data['info']['uid'] = self.uid
             except IndexError:
                 pass
             while True:
@@ -565,7 +600,7 @@ class LeftPrayListThread(QThread):
                                      "item_type": i["item_type"],
                                      "rank_type": i["rank_type"], "id": i["id"],
                                      "uigf_gacha_type": UIGF_GACHATYPE[i["gacha_type"]]}
-                        proceed_data.append([i['item_type'], i['name'], i['time']])
+                        proceed_data.append([i['item_type'], i['name'], i['time'], i['id'], i['rank_type']])
                         export_data_list.append(each_data)
                     self.usleep(400)  # 防止API检测到频繁请求而拒止
                     old_page, old_end_id = page, end_id
@@ -582,14 +617,14 @@ class LeftPrayListThread(QThread):
                 os.mkdir(each_path) if not os.path.exists(each_path) else None
             with open(f'pray_history/{self.uid}/original_data/{gachaTarget}.pickle', 'wb') as f:
                 dump(proceed_data, f)
-        export_data["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        export_data["info"]["export_timestamp"] = int(round(time.time() * 1000))
-        export_data["info"]["export_app"] = "genshin-pray-export"
-        export_data["info"]["export_app_version"] = version
-        export_data["info"]["uigf_version"] = UIGF_VERSION
-        export_data["list"] = export_data_list
+        json_export_data["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        json_export_data["info"]["export_timestamp"] = int(round(time.time() * 1000))
+        json_export_data["info"]["export_app"] = "genshin-pray-export"
+        json_export_data["info"]["export_app_version"] = version
+        json_export_data["info"]["uigf_version"] = UIGF_VERSION
+        json_export_data["list"] = export_data_list
         open(f"pray_history/{self.uid}/export/{self.uid}_export_data.json", "w", encoding="utf-8").write(
-            json.dumps(export_data, indent=2, sort_keys=True, ensure_ascii=False))
+            json.dumps(json_export_data, indent=2, sort_keys=True, ensure_ascii=False))
         self.trigger.emit("全部列表读取完毕")
 
 

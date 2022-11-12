@@ -26,8 +26,11 @@ class Analysis:
         self.length_list[target_uid] = {"100": 0, "200": 0, "301": 0, "400": 0, "302": 0}
         self.data_list[target_uid] = {}
         for each_mode in ["100", "200", "301", "400", "302"]:
-            self.ori_data_list[target_uid][each_mode] = self.given_data[target_uid][f"data_{each_mode}"]["data"]
-            self.length_list[target_uid][each_mode] = len(self.given_data[target_uid][f"data_{each_mode}"]["data"])
+            try:
+                self.ori_data_list[target_uid][each_mode] = self.given_data[target_uid][f"data_{each_mode}"]["data"]
+                self.length_list[target_uid][each_mode] = len(self.given_data[target_uid][f"data_{each_mode}"]["data"])
+            except KeyError:
+                continue
         for each in self.ori_data_list[target_uid].keys():
             tmp_list_5, tmp_list_4 = [], []
             self.data_list[target_uid][each] = {}
@@ -55,7 +58,10 @@ class Analysis:
             if not current_data_length:
                 return "暂未出现5星角色"
             guarantee_data = self.get_5(pray_mode)
-            nearest_data = [i.replace(']', '') for i in guarantee_data[0][0].split("[")]
+            try:
+                nearest_data = [i.replace(']', '') for i in guarantee_data[0][0].split("[")]
+            except IndexError:
+                return "暂未出现5星角色"
             if nearest_data[0] in character_5_w_list:
                 guarantee_model += "情况: 小保底歪了/直接进入大保底"
                 guarantee_model += f"\n最近一次在第{nearest_data[1]}抽得到{nearest_data[0]}"
@@ -75,7 +81,10 @@ class Analysis:
             if not current_data_length:
                 return "暂未出现5星武器"
             guarantee_data = self.get_5(pray_mode)
-            nearest_data = [i.replace(']', '') for i in guarantee_data[0][0].split("[")]
+            try:
+                nearest_data = [i.replace(']', '') for i in guarantee_data[0][0].split("[")]
+            except IndexError:
+                return "暂未出现5星武器"
             if nearest_data[0] in weapon_5_w_list:
                 guarantee_model += "情况: 小保底歪了/直接进入大保底"
                 guarantee_model += f"\n最近一次在第{nearest_data[1]}抽得到{nearest_data[0]}"
