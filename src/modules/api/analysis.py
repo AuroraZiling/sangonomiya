@@ -64,14 +64,16 @@ class Analysis:
                 return "暂未出现5星角色"
             if nearest_data[0] in character_5_w_list:
                 guarantee_model += "情况: 小保底歪了/直接进入大保底"
+                guarantee_model += "(由于最近一次5星角色是提纳里，以下判断可能有误)" if nearest_data[0] == "提纳里" else ""
                 guarantee_model += f"\n最近一次在第{nearest_data[1]}抽得到{nearest_data[0]}"
                 guarantee_model += f", 意味着将在第{int(nearest_data[1]) + 90}抽之前必出当期UP"
                 guarantee_model += f"\n当前已经{current_data_length}/{int(nearest_data[1]) + 90}抽, 还差{int(nearest_data[1]) + 90 - current_data_length}抽"
                 guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 90 - current_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 90 - current_data_length) * 160}原石"
             else:
                 guarantee_model += "情况: 保底重置"
+                guarantee_model += "(由于最近一次5星角色是提纳里，以下判断可能有误)" if nearest_data[0] == "提纳里" else ""
                 guarantee_model += f"\n最近一次在第{nearest_data[1]}抽得到{nearest_data[0]}"
-                guarantee_model += f", 意味着将在第{int(nearest_data[1]) + 90}抽之前有50%的概率出当期UP，在第{int(nearest_data[1]) + 180}抽之前必出当期UP"
+                guarantee_model += f"\n(第{int(nearest_data[1]) + 90}抽之前有50%的概率出当期UP，在第{int(nearest_data[1]) + 180}抽之前必出当期UP)"
                 guarantee_model += f"\n小保底: 当前已经{current_data_length}/{int(nearest_data[1]) + 90}抽, 还差{int(nearest_data[1]) + 90 - current_data_length}抽"
                 guarantee_model += f"\n预计最多需要{int(nearest_data[1]) + 90 - current_data_length}个纠缠之缘, 约等于{(int(nearest_data[1]) + 90 - current_data_length) * 160}原石"
                 guarantee_model += f"\n大保底: 当前已经{current_data_length}/{int(nearest_data[1]) + 180}抽, 还差{int(nearest_data[1]) + 180 - current_data_length}抽"

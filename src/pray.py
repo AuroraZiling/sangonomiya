@@ -50,7 +50,7 @@ class MainForm(QMainWindow):
         self.target_uid = ""
         self.all_data_list = {}
         self.setWindowTitle("Genshin Pray Export")
-        self.setFixedSize(1200, 650)
+        self.setFixedSize(1250, 690)
         self.global_font = "Microsoft YaHei"
 
         # Pray List Init
@@ -207,8 +207,8 @@ class MainForm(QMainWindow):
             if os.path.exists(f"pray_history/{each_dir}/original_data/100.pickle") and not hide_new:
                 data_100 = load(open(f"pray_history/{each_dir}/original_data/100.pickle", "rb"))
                 data_time_100 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                         time.localtime((os.path.getmtime(
-                                             f"pray_history/{each_dir}/original_data/100.pickle"))))
+                                              time.localtime((os.path.getmtime(
+                                                  f"pray_history/{each_dir}/original_data/100.pickle"))))
                 self.all_data_list[each_dir]["data_100"]["data"] = data_100
                 self.loaded_pray_list.append("新手祈愿")
                 self.pray_list["100"] = data_100
@@ -216,8 +216,8 @@ class MainForm(QMainWindow):
             if os.path.exists(f"pray_history/{each_dir}/original_data/200.pickle"):
                 data_200 = load(open(f"pray_history/{each_dir}/original_data/200.pickle", "rb"))
                 data_time_200 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                         time.localtime((os.path.getmtime(
-                                             f"pray_history/{each_dir}/original_data/200.pickle"))))
+                                              time.localtime((os.path.getmtime(
+                                                  f"pray_history/{each_dir}/original_data/200.pickle"))))
                 self.all_data_list[each_dir]["data_200"]["data"] = data_200
                 self.loaded_pray_list.append("常驻祈愿")
                 self.pray_list["200"] = data_200
@@ -225,8 +225,8 @@ class MainForm(QMainWindow):
             if os.path.exists(f"pray_history/{each_dir}/original_data/301.pickle"):
                 data_301 = load(open(f"pray_history/{each_dir}/original_data/301.pickle", "rb"))
                 data_time_301 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                         time.localtime((os.path.getmtime(
-                                             f"pray_history/{each_dir}/original_data/301.pickle"))))
+                                              time.localtime((os.path.getmtime(
+                                                  f"pray_history/{each_dir}/original_data/301.pickle"))))
                 self.all_data_list[each_dir]["data_301"]["data"] = data_301
                 self.loaded_pray_list.append("角色活动祈愿")
                 self.pray_list["301"] = data_301
@@ -234,8 +234,8 @@ class MainForm(QMainWindow):
             if os.path.exists(f"pray_history/{each_dir}/original_data/400.pickle"):
                 data_400 = load(open(f"pray_history/{each_dir}/original_data/400.pickle", "rb"))
                 data_time_400 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                         time.localtime((os.path.getmtime(
-                                             f"pray_history/{each_dir}/original_data/400.pickle"))))
+                                              time.localtime((os.path.getmtime(
+                                                  f"pray_history/{each_dir}/original_data/400.pickle"))))
                 self.all_data_list[each_dir]["data_400"]["data"] = data_400
                 self.loaded_pray_list.append("角色活动祈愿-2")
                 self.pray_list["400"] = data_400
@@ -243,8 +243,8 @@ class MainForm(QMainWindow):
             if os.path.exists(f"pray_history/{each_dir}/original_data/302.pickle"):
                 data_302 = load(open(f"pray_history/{each_dir}/original_data/302.pickle", "rb"))
                 data_time_302 = time.strftime("%Y-%m-%d %H:%M:%S",
-                                         time.localtime((os.path.getmtime(
-                                             f"pray_history/{each_dir}/original_data/302.pickle"))))
+                                              time.localtime((os.path.getmtime(
+                                                  f"pray_history/{each_dir}/original_data/302.pickle"))))
                 self.all_data_list[each_dir]["data_302"]["data"] = data_302
                 self.loaded_pray_list.append("武器祈愿")
                 self.pray_list["302"] = data_302
@@ -277,13 +277,15 @@ class MainForm(QMainWindow):
         try:
             json_info = json_detail["info"]
             if json_info['uid'] in self.all_data_list.keys():
-                QMessageBox.information(self, "提示", f"该UID已存在\n若仍要导入，请删除原有UID的数据(pray_history/{json_info['uid']})后再导入")
+                QMessageBox.information(self, "提示",
+                                        f"该UID已存在\n若仍要导入，请删除原有UID的数据(pray_history/{json_info['uid']})后再导入")
                 return
             json_info_show = f"确认导入?\n\nUID: {json_info['uid']}\n导出时间: {json_info['export_time']}\n导出软件: {json_info['export_app']} - {json_info['export_app_version']}"
         except KeyError:
             QMessageBox.critical(self, "错误", "导入的Json文件格式错误")
             return
-        reply = QMessageBox.question(self, "导入", json_info_show, QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        reply = QMessageBox.question(self, "导入", json_info_show,
+                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         if reply == QMessageBox.StandardButton.Yes:
             self.all_data_list[json_info["uid"]] = json_detail
             self.uid_current_uid_combobox.addItem(json_info["uid"])
@@ -297,7 +299,8 @@ class MainForm(QMainWindow):
             for each_data in import_data:
                 if import_data[each_data]:
                     self.loaded_pray_list.append(REV_GACHATYPE[each_data])
-                    dump(import_data[each_data], open(f"pray_history/{json_info['uid']}/original_data/{each_data}.pickle", "wb"))
+                    dump(import_data[each_data],
+                         open(f"pray_history/{json_info['uid']}/original_data/{each_data}.pickle", "wb"))
             self.pre_generate()
             QMessageBox.information(self, "提示", "导入成功")
         return
@@ -310,8 +313,12 @@ class MainForm(QMainWindow):
         json_export_data["info"]["export_timestamp"] = int(round(time.time() * 1000))
         json_export_data['info']['uid'] = self.target_uid
         json_export_data["info"]["export_app_version"] = version
-        json_export_data["list"] = transformation.OriginalToJson(f"pray_history/{self.target_uid}/original_data/", os.listdir(f"pray_history/{self.target_uid}/original_data/"))
-        export_json_path = QFileDialog.getSaveFileName(self, "保存UIGF-Json文件", f"./{self.target_uid}_export_data.json", "Json文件(*.json)")[0]
+        json_export_data["list"] = transformation.OriginalToJson(f"pray_history/{self.target_uid}/original_data/",
+                                                                 os.listdir(
+                                                                     f"pray_history/{self.target_uid}/original_data/"))
+        export_json_path = \
+        QFileDialog.getSaveFileName(self, "保存UIGF-Json文件", f"./{self.target_uid}_export_data.json",
+                                    "Json文件(*.json)")[0]
         if not export_json_path:
             return
         open(export_json_path, "w", encoding="utf-8").write(
@@ -330,8 +337,11 @@ class MainForm(QMainWindow):
                 self.pray_list[each] = self.all_data_list[self.target_uid][f"data_{each}"]["data"]
             except KeyError:
                 continue
-        self.refreshList(self.current_show_list) if self.current_show_list else None
         self.analyser = analysis.Analysis(self.target_uid, self.all_data_list)
+        if self.current_show_list:
+            self.refreshList(self.current_show_list)
+            self.analysis_regenerate(GACHATYPE[self.current_show_list],
+                                     self.pray_list[GACHATYPE[self.current_show_list]])
 
     def file_check(self):
         result = self.file_verification.exist()
@@ -408,9 +418,11 @@ class MainForm(QMainWindow):
         self.right_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.right_analysis_basic_label.setFont(QFont(self.global_font, 12))
         self.right_analysis_right_label.setFont(QFont(self.global_font, 12))
-        self.right_analysis_basic_5_list_textEdit.setFixedHeight(140)
+        self.right_analysis_basic_5_list_textEdit.setFixedHeight(135)
+        self.right_analysis_basic_5_list_textEdit.setFixedWidth(600)
         self.right_analysis_basic_5_list_textEdit.setReadOnly(True)
-        self.right_analysis_basic_4_list_textEdit.setFixedHeight(140)
+        self.right_analysis_basic_4_list_textEdit.setFixedHeight(135)
+        self.right_analysis_basic_4_list_textEdit.setFixedWidth(600)
         self.right_analysis_basic_4_list_textEdit.setReadOnly(True)
         self.right_analysis_right_weapon_alert_label.hide()
         self.right_analysis_right_weapon_alert_label.setStyleSheet(
@@ -428,6 +440,21 @@ class MainForm(QMainWindow):
         self.left_pray_mode_302_btn.setEnabled(is_enabled)
         self.left_refresh_btn.setEnabled(is_enabled)
         self.uid_settings_btn.setEnabled(is_enabled)
+
+    def analysis_regenerate(self, pray_mode, data_list):
+        try:
+            percent_5 = round(self.analyser.get_5(pray_mode)[1] / len(data_list) * 100, 2)
+            percent_4 = round(self.analyser.get_4(pray_mode)[1] / len(data_list) * 100, 2)
+            percent_3 = round(self.analyser.get_3(pray_mode) / len(data_list) * 100, 2)
+        except ZeroDivisionError:
+            percent_3, percent_4, percent_5 = "0.0", "0.0", "0.0"
+        self.right_analysis_basic_total_label.setText(f"祈愿数: {len(data_list)}")
+        self.right_analysis_basic_5_label.setText(f"5星数量: {self.analyser.get_5(pray_mode)[1]} ({percent_5}%)")
+        self.right_analysis_basic_5_list_textEdit.setText(','.join(self.analyser.get_5(pray_mode)[0]))
+        self.right_analysis_basic_4_label.setText(f"4星数量: {self.analyser.get_4(pray_mode)[1]} ({percent_4}%)")
+        self.right_analysis_basic_4_list_textEdit.setText(','.join(self.analyser.get_4(pray_mode)[0]))
+        self.right_analysis_basic_3_label.setText(f"3星数量: {self.analyser.get_3(pray_mode)} ({percent_3}%)")
+        self.right_analysis_right_guarantee_label.setText(self.analyser.guarantee(pray_mode))
 
     # Left Function Part
     def left_open_export_dir(self):
@@ -515,19 +542,7 @@ class MainForm(QMainWindow):
                 pos += 1
         # 重新生成右侧分析
         pray_mode = GACHATYPE[pray_mode]
-        try:
-            percent_5 = round(self.analyser.get_5(pray_mode)[1] / len(data_list) * 100, 2)
-            percent_4 = round(self.analyser.get_4(pray_mode)[1] / len(data_list) * 100, 2)
-            percent_3 = round(self.analyser.get_3(pray_mode) / len(data_list) * 100, 2)
-        except ZeroDivisionError:
-            percent_3, percent_4, percent_5 = "0.0", "0.0", "0.0"
-        self.right_analysis_basic_total_label.setText(f"祈愿数: {len(data_list)}")
-        self.right_analysis_basic_5_label.setText(f"5星数量: {self.analyser.get_5(pray_mode)[1]} ({percent_5}%)")
-        self.right_analysis_basic_5_list_textEdit.setText(','.join(self.analyser.get_5(pray_mode)[0]))
-        self.right_analysis_basic_4_label.setText(f"4星数量: {self.analyser.get_4(pray_mode)[1]} ({percent_4}%)")
-        self.right_analysis_basic_4_list_textEdit.setText(','.join(self.analyser.get_4(pray_mode)[0]))
-        self.right_analysis_basic_3_label.setText(f"3星数量: {self.analyser.get_3(pray_mode)} ({percent_3}%)")
-        self.right_analysis_right_guarantee_label.setText(self.analyser.guarantee(pray_mode))
+        self.analysis_regenerate(pray_mode, data_list)
 
     def setColor(self, name: str, row: int):  # 设置某一列的颜色
         if name in analysis.weapon_4_list or name in analysis.character_4_list:
