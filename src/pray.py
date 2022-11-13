@@ -122,12 +122,9 @@ class MainForm(QMainWindow):
             self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_100_btn)
         self.left_pray_mode_200_btn = QPushButton("常驻祈愿")
         self.left_pray_mode_301_btn = QPushButton("角色祈愿")
-        # 疑似无用
-        # self.left_pray_mode_400_btn = QPushButton("角色祈愿-2")
         self.left_pray_mode_302_btn = QPushButton("武器祈愿")
         self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_200_btn)
         self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_301_btn)
-        # self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_400_btn)
         self.left_pray_mode_h_layout.addWidget(self.left_pray_mode_302_btn)
         self.left_layout.addLayout(self.left_pray_mode_h_layout)
 
@@ -317,8 +314,8 @@ class MainForm(QMainWindow):
                                                                  os.listdir(
                                                                      f"pray_history/{self.target_uid}/original_data/"))
         export_json_path = \
-        QFileDialog.getSaveFileName(self, "保存UIGF-Json文件", f"./{self.target_uid}_export_data.json",
-                                    "Json文件(*.json)")[0]
+            QFileDialog.getSaveFileName(self, "保存UIGF-Json文件", f"./{self.target_uid}_export_data.json",
+                                        "Json文件(*.json)")[0]
         if not export_json_path:
             return
         open(export_json_path, "w", encoding="utf-8").write(
@@ -407,7 +404,6 @@ class MainForm(QMainWindow):
             self.left_pray_mode_100_btn.clicked.connect(lambda: self.left_pray_list_btn_change("新手祈愿"))
         self.left_pray_mode_200_btn.clicked.connect(lambda: self.left_pray_list_btn_change("常驻祈愿"))
         self.left_pray_mode_301_btn.clicked.connect(lambda: self.left_pray_list_btn_change("角色活动祈愿"))
-        # self.left_pray_mode_400_btn.clicked.connect(lambda: self.left_pray_list_btn_change("角色活动祈愿-2"))
         self.left_pray_mode_302_btn.clicked.connect(lambda: self.left_pray_list_btn_change("武器祈愿"))
         # All - Splitter
         self.splitter.setFrameShape(QFrame.Shape.VLine)
@@ -436,7 +432,6 @@ class MainForm(QMainWindow):
             self.left_pray_mode_100_btn.setEnabled(is_enabled)
         self.left_pray_mode_200_btn.setEnabled(is_enabled)
         self.left_pray_mode_301_btn.setEnabled(is_enabled)
-        # self.left_pray_mode_400_btn.setEnabled(is_enabled)
         self.left_pray_mode_302_btn.setEnabled(is_enabled)
         self.left_refresh_btn.setEnabled(is_enabled)
         self.uid_settings_btn.setEnabled(is_enabled)
@@ -472,7 +467,7 @@ class MainForm(QMainWindow):
             self.right_analysis_right_weapon_alert_label.hide()
         if btn_type == "新手祈愿" and hide_new:
             return
-        if btn_type in self.loaded_pray_list:
+        if btn_type in self.loaded_pray_list and self.all_data_list[self.target_uid][f'data_{GACHATYPE[btn_type]}']['data_time']:
             self.refreshList(btn_type)
             self.current_show_list = btn_type
             self.left_status_label.setText(f"状态: 已读取{btn_type}")
@@ -585,7 +580,7 @@ class LeftPrayListThread(QThread):
         export_data_list = []
         json_export_data = export_data
         for key in GACHATYPE.keys():
-            if (hide_new and key == "新手祈愿") or key == "角色活动祈愿-2":
+            if hide_new and key == "新手祈愿":
                 continue
             global gachaTarget
             gachaTarget = GACHATYPE[key]
