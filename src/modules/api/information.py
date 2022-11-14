@@ -1,5 +1,6 @@
 import json
 
+import requests.exceptions
 from requests import get
 
 announce_request_model = "https://hk4e-api-static.mihoyo.com/common/hk4e_cn/announcement/api/getAnnContent?game=hk4e&game_biz=hk4e_cn&lang=zh-cn&bundle_id=hk4e_cn&platform=pc&region=cn_gf01&t=1663409289&level=60&channel_id=1"
@@ -13,9 +14,15 @@ def get_exporter_version(config_path):
 
 class Information:
     def __init__(self):
-        self.announce_data = get(announce_request_model).json()["data"]
+        self.announce_data = []
+        try:
+            self.announce_data = get(announce_request_model).json()["data"]
+        except requests.exceptions.ConnectionError:
+            pass
 
     def get_up_character(self, with_color=False):
+        if not self.announce_data:
+            return ["无网络连接"]
         announce_list = self.announce_data["list"]
         up_list, color_list = [], []
         for announce in announce_list:
@@ -26,6 +33,8 @@ class Information:
         return up_list if not with_color else (up_list, color_list)
 
     def get_up_weapon(self):
+        if not self.announce_data:
+            return ["无网络连接"]
         announce_list = self.announce_data["list"]
         up_list = []
         for announce in announce_list:

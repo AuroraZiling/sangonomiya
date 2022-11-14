@@ -5,7 +5,7 @@ import requests
 from PyQt6 import QtCore
 from PyQt6.QtGui import QFont, QPixmap, QFontDatabase, QIcon
 from PyQt6.QtWebEngineWidgets import QWebEngineView
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QListWidget, QListWidgetItem
+from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QListWidget, QListWidgetItem, QMessageBox
 
 request_model = "https://hk4e-api-static.mihoyo.com/common/hk4e_cn/announcement/api/getAnnContent?game=hk4e&game_biz=hk4e_cn&lang=zh-cn&bundle_id=hk4e_cn&platform=pc&region=cn_gf01&t=1663409289&level=60&channel_id=1"
 icon_model = "https://hk4e-api.mihoyo.com/common/hk4e_cn/announcement/api/getAnnList?game=hk4e&game_biz=hk4e_cn&lang=zh-cn&auth_appid=announcement&authkey_ver=1&bundle_id=hk4e_cn&channel_id=1&level=60&platform=pc&region=cn_gf01&sdk_presentation_style=fullscreen&sdk_screen_transparent=true&sign_type=2&uid=1"
@@ -58,7 +58,7 @@ class Announce(QWidget):
             open("cache/announce.json", "w", encoding="utf-8").write(
                 json.dumps(self.source, indent=4, ensure_ascii=False))
         except requests.exceptions.ConnectionError:
-            pass
+            return
 
     def initUI(self):
         # Font
@@ -69,6 +69,8 @@ class Announce(QWidget):
         self.side_bar.setFixedWidth(350)
         self.side_bar.minimumSizeHint()
         self.get_icon_list()
+        if not self.source:
+            return
         for each in range(self.source["total"]):
             if not os.path.exists(f"cache/{self.icon_list[each].split('/')[-1]}"):
                 open(f"cache/{self.icon_list[each].split('/')[-1]}", "wb").write(
@@ -85,9 +87,12 @@ class Announce(QWidget):
         self.content.hide()
 
     def get_icon_list(self):
-        for first_level in requests.get(icon_model).json()["data"]["list"]:
-            for second_level in first_level["list"]:
-                self.icon_list.append(second_level["tag_icon"])
+        try:
+            for first_level in requests.get(icon_model).json()["data"]["list"]:
+                for second_level in first_level["list"]:
+                    self.icon_list.append(second_level["tag_icon"])
+        except requests.exceptions.ConnectionError:
+            return
 
     def update_content(self):
         self.content.show()

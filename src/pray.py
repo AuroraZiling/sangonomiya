@@ -63,6 +63,7 @@ class MainForm(QMainWindow):
 
         # API
         self.api_information = information.Information()
+        self.able_to_get_announce = True and len(self.api_information.announce_data)
         global version
         version = information.get_exporter_version(CONFIG_PATH)
 
@@ -263,8 +264,10 @@ class MainForm(QMainWindow):
             ori_config_json["settings"]["latest_uid_selected"] = self.target_uid
             open(f"config.json", "w", encoding="utf-8").write(
                 json.dumps(ori_config_json, indent=2, sort_keys=True, ensure_ascii=False))
+            self.uid_current_uid_combobox.setCurrentText(self.target_uid)
         if len(self.loaded_pray_list) >= 3:
             self.analyser = analysis.Analysis(self.target_uid, self.all_data_list)
+        self.uid_changed_regenerate()
 
     def uid_json_import(self):
         import_json_path = QFileDialog.getOpenFileName(self, "选择UIGF-Json文件", "./", "Json文件(*.json)")[0]
@@ -372,6 +375,8 @@ class MainForm(QMainWindow):
         self.uid_current_uid_combobox.currentIndexChanged.connect(self.uid_changed_regenerate)
         self.uid_json_import_btn.clicked.connect(self.uid_json_import)
         self.uid_json_export_btn.clicked.connect(self.uid_json_export)
+        if not self.able_to_get_announce:
+            self.uid_announce_btn.setEnabled(False)
         self.uid_announce_btn.clicked.connect(lambda: self.announce_window.show())
         self.uid_settings_btn.clicked.connect(lambda: self.settings_window.show())
         self.uid_about_btn.clicked.connect(lambda: self.about_window.show())
@@ -460,7 +465,6 @@ class MainForm(QMainWindow):
 
     # Pray Mode Part
     def left_pray_list_btn_change(self, btn_type):
-
         if btn_type == "武器祈愿":
             self.right_analysis_right_weapon_alert_label.show()
         else:
@@ -524,6 +528,7 @@ class MainForm(QMainWindow):
             data_list = self.pray_list["100"]
         else:
             data_list = self.pray_list[GACHATYPE[pray_mode]]
+        print(data_list)
         for i in data_list:
             self.addRow(len(data_list), i[0], i[1], i[2], "单抽")
         if len(data_list) >= 10:
