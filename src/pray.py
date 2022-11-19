@@ -7,11 +7,11 @@ from pickle import load, dump
 from subprocess import Popen
 from sys import exit, argv
 from requests import get
-from PyQt6 import QtCore, QtGui
-from PyQt6.QtCore import Qt, QThread, pyqtSignal
-from PyQt6.QtGui import QFont, QBrush, QColor, QFontDatabase
-from PyQt6.QtSvgWidgets import QSvgWidget
-from PyQt6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
+from PySide6 import QtCore, QtGui
+from PySide6.QtCore import Qt, QThread, Signal
+from PySide6.QtGui import QFont, QBrush, QColor, QFontDatabase
+from PySide6.QtSvgWidgets import QSvgWidget
+from PySide6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
     QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit, QTableWidgetItem, QComboBox, QFileDialog
 import qdarkstyle
 
@@ -574,7 +574,7 @@ class MainForm(QMainWindow):
 
 
 class LeftPrayListThread(QThread):
-    trigger = pyqtSignal(str)
+    trigger = Signal(str)
 
     def __init__(self, parent=None):
         super(LeftPrayListThread, self).__init__(parent)

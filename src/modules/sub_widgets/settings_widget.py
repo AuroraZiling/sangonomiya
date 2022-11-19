@@ -2,8 +2,8 @@ import json
 import os
 import winreg
 
-from PyQt6 import QtGui
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel, QRadioButton, QMessageBox
+from PySide6 import QtGui
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel, QRadioButton, QMessageBox
 
 
 def get_dir_size(dir_path):
