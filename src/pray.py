@@ -528,7 +528,6 @@ class MainForm(QMainWindow):
             data_list = self.pray_list["100"]
         else:
             data_list = self.pray_list[GACHATYPE[pray_mode]]
-        print(data_list)
         for i in data_list:
             self.addRow(len(data_list), i[0], i[1], i[2], "单抽")
         if len(data_list) >= 10:

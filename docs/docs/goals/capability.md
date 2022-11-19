@@ -20,4 +20,6 @@
 
 <input type="checkbox" disabled="true"/> 有关提纳里的特判 *预计在Release 7实现*
 
+<input type="checkbox" disabled="true"/> 在一个版本的上下半卡池转换前期，公告会同时出现两个卡池的角色和武器，导致显示有误 *预计在Release 7修复*
+
 <input type="checkbox" disabled="true"/> 重构代码(往API方向) *长期实现*
