@@ -1,5 +1,9 @@
-### Release 5 (推荐)
-[阿里云盘: 下载/Download](https://www.aliyundrive.com/s/em2MRrnyuxN)
+### Release 6 (推荐)
+[阿里云盘: 下载/Download](https://www.aliyundrive.com/s/ay3Y7WJbJho)
+[蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/b02juwo3g)
+
+### Release 5
+[阿里云盘: 下载/Download](https://www.aliyundrive.com/s/TWDieGHEq4B)
 
 [蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/iaPpJ0d4gbkf) *密码:0000*
 

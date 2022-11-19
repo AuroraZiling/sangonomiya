@@ -20,11 +20,13 @@
 
 *由于目前未实现更新功能，每个Release的发布内容将会尽可能多*
 
-### Release 5 (推荐)
+*如果你使用了较新的Microsoft Edge, 访问蓝奏云下载会出现(您可能拼写错误)的问题，[如何解决?](https://www.bilibili.com/video/BV1i24y197X7)*
 
-[蓝奏云](https://auroraziling.lanzouv.com/iaPpJ0d4gbkf)
+### Release 6 (推荐)
 
-[阿里云盘](https://www.aliyundrive.com/s/em2MRrnyuxN)
+[阿里云盘](https://www.aliyundrive.com/s/ay3Y7WJbJho)
+
+[蓝奏云](https://auroraziling.lanzouv.com/b02juwo3g)
 
 ## 卸载 / Uninstall
 
