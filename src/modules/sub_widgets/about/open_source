@@ -1,6 +1,6 @@
-PyQt6
-Copyright (c) Riverbank Computing Limited
-Homepage (Under GPL-3.0): https://www.riverbankcomputing.com/software/pyqt
+PySide6
+Copyright (c) 2022 The Qt Company
+Homepage (Under LGPL): https://www.qt.io/licensing/
 
 requests
 Copyright (c) Kenneth Reitz
