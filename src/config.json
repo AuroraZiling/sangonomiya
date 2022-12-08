@@ -1,9 +1,9 @@
 {
     "about": {
-        "version": "Release 6"
+        "version": "Release 7 Dev 1"
     },
     "settings": {
         "hide_new": true,
-        "latest_uid_selected": ""
+        "latest_uid_selected": "230351204"
     }
 }

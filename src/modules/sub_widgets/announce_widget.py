@@ -21,6 +21,8 @@ html_model = '''
 </html>
 '''
 
+os.environ['NO_PROXY'] = request_model
+
 
 class Announce(QWidget):
     def __init__(self):

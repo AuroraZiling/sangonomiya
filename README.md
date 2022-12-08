@@ -37,11 +37,12 @@
 ## 已实现功能 / Implemented Features
 
 - [x] 彩色列表
-- [x] JSON导出 (符合[统一可交换祈愿记录标准](https://github.com/DGP-Studio/Snap.Genshin/wiki/StandardFormat))
+- [x] JSON导入/导出 (符合[统一可交换祈愿记录标准](https://github.com/DGP-Studio/Snap.Genshin/wiki/StandardFormat))
 - [x] 列表显示数据增多 (比如是否属于十连/单抽等)
 - [x] 基础的数据分析
 - [x] 公告显示
 - [x] 当期UP池显示
+- [x] 多UID
 
 ## 打包 / Usage
 
