@@ -1,4 +1,4 @@
-# Genshin Pray Export
+# Sangonomiya
 
 *该项目更新频率将在2023.7之前放缓，上学中*
 
