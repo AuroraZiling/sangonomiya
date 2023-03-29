@@ -307,7 +307,7 @@ class MainForm(QMainWindow):
 
     def uid_json_export(self):
         json_export_data = export_data
-        json_export_data["info"]["export_app"] = "genshin-pray-export"
+        json_export_data["info"]["export_app"] = "sangonomiya"
         json_export_data["info"]["uigf_version"] = UIGF_VERSION
         json_export_data["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         json_export_data["info"]["export_timestamp"] = int(round(time.time() * 1000))
@@ -633,7 +633,7 @@ class LeftPrayListThread(QThread):
                 dump(proceed_data, f)
         json_export_data["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         json_export_data["info"]["export_timestamp"] = int(round(time.time() * 1000))
-        json_export_data["info"]["export_app"] = "genshin-pray-export"
+        json_export_data["info"]["export_app"] = "sangonomiya"
         json_export_data["info"]["export_app_version"] = version
         json_export_data["info"]["uigf_version"] = UIGF_VERSION
         json_export_data["list"] = export_data_list
