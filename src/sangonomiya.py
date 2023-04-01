@@ -1,27 +1,18 @@
 # coding:utf-8
+import ctypes
 import sys
-from PySide6.QtCore import Qt, QRect
-from PySide6.QtGui import QIcon, QPainter, QImage, QBrush, QColor, QFont
-from PySide6.QtWidgets import QApplication, QFrame, QStackedWidget, QHBoxLayout, QLabel
 
-from qfluentwidgets import (NavigationInterface, NavigationItemPostion, NavigationWidget, MessageBox,
-                            isDarkTheme, setTheme, Theme, setThemeColor)
-from qfluentwidgets import FluentIcon as FIF
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QApplication, QStackedWidget, QHBoxLayout
+from qfluentwidgets import FluentIcon
+from qfluentwidgets import (NavigationInterface, NavigationItemPostion, setTheme, Theme, Dialog)
 from qframelesswindow import FramelessWindow, StandardTitleBar
 
-from components.avatarWidget import AvatarWidget
-from components import messageBox as msgBox
+from components import themeManager, customIcon
+from modules.subWidgets import gachaReportWidget, announcementWidget, accountWidget, pluginWidget, settingWidget
 
-
-class Widget(QFrame):
-
-    def __init__(self, text: str, parent=None):
-        super().__init__(parent=parent)
-        self.label = QLabel(text, self)
-        self.label.setAlignment(Qt.AlignCenter)
-        self.hBoxLayout = QHBoxLayout(self)
-        self.hBoxLayout.addWidget(self.label, 1, Qt.AlignCenter)
-        self.setObjectName(text.replace(' ', '-'))
+ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
 
 
 class Window(FramelessWindow):
@@ -30,118 +21,105 @@ class Window(FramelessWindow):
         super().__init__()
         self.setTitleBar(StandardTitleBar(self))
 
-        # use dark theme mode
         setTheme(Theme.DARK)
-        self.messageBox = msgBox.MessageBoxUtil(self)
 
-        # change the theme color
-        # setThemeColor('#0078d4')
-
-        self.hBoxLayout = QHBoxLayout(self)
+        self.mainHBoxLayout = QHBoxLayout(self)
         self.navigationInterface = NavigationInterface(self, showMenuButton=True)
-        self.stackWidget = QStackedWidget(self)
+        self.mainStackWidget = QStackedWidget(self)
 
-        # create sub interface
-        self.searchInterface = Widget('Search Interface', self)
-        self.musicInterface = Widget('Music Interface', self)
-        self.videoInterface = Widget('Video Interface', self)
-        self.folderInterface = Widget('Folder Interface', self)
-        self.settingInterface = Widget('Setting Interface', self)
+        self.gachaReportInterface = gachaReportWidget.GachaReportWidget(self)
+        self.announcementInterface = announcementWidget.AnnouncementWidget(self)
+        self.accountInterface = accountWidget.AccountWidget(self)
+        self.pluginInterface = pluginWidget.PluginWidget(self)
+        self.settingInterface = settingWidget.SettingWidget(self)
 
-        self.stackWidget.addWidget(self.searchInterface)
-        self.stackWidget.addWidget(self.musicInterface)
-        self.stackWidget.addWidget(self.videoInterface)
-        self.stackWidget.addWidget(self.folderInterface)
-        self.stackWidget.addWidget(self.settingInterface)
+        self.mainStackWidget.addWidget(self.gachaReportInterface)
+        self.mainStackWidget.addWidget(self.announcementInterface)
+        self.mainStackWidget.addWidget(self.accountInterface)
+        self.mainStackWidget.addWidget(self.pluginInterface)
+        self.mainStackWidget.addWidget(self.settingInterface)
 
-        # initialize layout
         self.initLayout()
-
-        # add items to navigation interface
         self.initNavigation()
-
         self.initWindow()
 
     def initLayout(self):
-        self.hBoxLayout.setSpacing(0)
-        self.hBoxLayout.setContentsMargins(0, self.titleBar.height(), 0, 0)
-        self.hBoxLayout.addWidget(self.navigationInterface)
-        self.hBoxLayout.addWidget(self.stackWidget)
-        self.hBoxLayout.setStretchFactor(self.stackWidget, 1)
+        self.mainHBoxLayout.setSpacing(0)
+        self.mainHBoxLayout.setContentsMargins(0, self.titleBar.height(), 0, 0)
+        self.mainHBoxLayout.addWidget(self.navigationInterface)
+        self.mainHBoxLayout.addWidget(self.mainStackWidget)
+        self.mainHBoxLayout.setStretchFactor(self.mainStackWidget, 1)
 
     def initNavigation(self):
         self.navigationInterface.addItem(
-            routeKey=self.searchInterface.objectName(),
-            icon=FIF.SEARCH,
-            text='Search',
-            onClick=lambda: self.switchTo(self.searchInterface)
+            routeKey=self.gachaReportInterface.objectName(),
+            icon=customIcon.MyFluentIcon.GACHA_REPORT,
+            text='祈愿记录 / Gacha Report',
+            onClick=lambda: self.switchTo(self.gachaReportInterface)
         )
         self.navigationInterface.addItem(
-            routeKey=self.musicInterface.objectName(),
-            icon=FIF.MUSIC,
-            text='Music library',
-            onClick=lambda: self.switchTo(self.musicInterface)
-        )
-        self.navigationInterface.addItem(
-            routeKey=self.videoInterface.objectName(),
-            icon=FIF.VIDEO,
-            text='Video library',
-            onClick=lambda: self.switchTo(self.videoInterface)
+            routeKey=self.announcementInterface.objectName(),
+            icon=customIcon.MyFluentIcon.ANNOUNCEMENT,
+            text='公告 / Announcement',
+            onClick=lambda: self.switchTo(self.announcementInterface)
         )
 
         self.navigationInterface.addSeparator()
 
-        # add navigation items to scroll area
         self.navigationInterface.addItem(
-            routeKey=self.folderInterface.objectName(),
-            icon=FIF.FOLDER,
-            text='Folder library',
-            onClick=lambda: self.switchTo(self.folderInterface),
-            position=NavigationItemPostion.SCROLL
+            routeKey=self.accountInterface.objectName(),
+            icon=customIcon.MyFluentIcon.USER,
+            text='账户 / Account',
+            onClick=lambda: self.switchTo(self.accountInterface),
+            position=NavigationItemPostion.BOTTOM
         )
 
-        self.navigationInterface.addWidget(
-            routeKey='avatar',
-            widget=AvatarWidget(),
-            onClick=self.messageBox.show(""),
+        self.navigationInterface.addItem(
+            routeKey=self.pluginInterface.objectName(),
+            icon=customIcon.MyFluentIcon.PLUGIN,
+            text='插件 / Plugins',
+            onClick=lambda: self.switchTo(self.pluginInterface),
             position=NavigationItemPostion.BOTTOM
         )
 
         self.navigationInterface.addItem(
             routeKey=self.settingInterface.objectName(),
-            icon=FIF.SETTING,
-            text='Settings',
+            icon=FluentIcon.SETTING,
+            text='设置 / Settings',
             onClick=lambda: self.switchTo(self.settingInterface),
             position=NavigationItemPostion.BOTTOM
         )
 
-        self.navigationInterface.setExpandWidth(200)
+        self.navigationInterface.setExpandWidth(230)
 
-        self.stackWidget.currentChanged.connect(self.onCurrentInterfaceChanged)
-        self.stackWidget.setCurrentIndex(1)
+        self.mainStackWidget.currentChanged.connect(self.onCurrentInterfaceChanged)
+        self.mainStackWidget.setCurrentIndex(1)
 
     def initWindow(self):
         self.resize(900, 700)
-        self.setWindowTitle("Sangonomiya 珊瑚宫")
-        self.titleBar.setAttribute(Qt.WA_StyledBackground)
+        self.setWindowTitle('Sangonomiya')
+        self.setWindowIcon(QIcon('assets/avatar.png'))
+        self.titleBar.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
 
         desktop = QApplication.screens()[0].availableGeometry()
         w, h = desktop.width(), desktop.height()
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
 
-        self.setQss()
-
-    def setQss(self):
-        color = 'dark' if isDarkTheme() else 'light'
-        with open(f'assets/themes/{color}.qss', encoding='utf-8') as f:
-            self.setStyleSheet(f.read())
+        self.setStyleSheet(themeManager.setTheme("dark"))
 
     def switchTo(self, widget):
-        self.stackWidget.setCurrentWidget(widget)
+        self.mainStackWidget.setCurrentWidget(widget)
 
     def onCurrentInterfaceChanged(self, index):
-        widget = self.stackWidget.widget(index)
+        widget = self.mainStackWidget.widget(index)
         self.navigationInterface.setCurrentItem(widget.objectName())
+
+    def showMessageBox(self, title, content):
+        dialog = Dialog(title, content, self)
+        if dialog.exec():
+            print('Yes button is pressed')
+        else:
+            print('Cancel button is pressed')
 
 
 if __name__ == '__main__':

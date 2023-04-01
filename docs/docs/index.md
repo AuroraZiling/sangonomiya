@@ -23,7 +23,3 @@
 4. 更直观的祈愿列表显示
 5. 当期UP池显示
 6. 多UID
-
-## 赞助
-
-[爱发电](https://afdian.net/a/gpe_donate)

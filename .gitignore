@@ -7,3 +7,11 @@
 /src/test_delete/
 /src/cache/
 /src/cache/announce.json
+/_devTools/
+/src/_devTools/
+/src/test.py
+/src/sangonomiya.build/
+/src/sangonomiya.dist/
+/src/sangonomiya.onefile-build/
+/src/sangonomiya.cmd
+/src/sangonomiya.exe

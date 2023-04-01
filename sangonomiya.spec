@@ -5,11 +5,11 @@ block_cipher = None
 
 
 a = Analysis(
-    ['src\\pray.py'],
+    ['src\\sangonomiya.py'],
     pathex=[],
     binaries=[],
-    datas=[('.\\src\\modules', '.\\modules'),('.\\src\\interact', '.'),('.\\src\\assets', '.\\assets'),('.\\src\\config.json', '.')],
-    hiddenimports=["PySide6.QtSvg"],
+    datas=[('.\\src\\modules', '.\\modules'),('.\\src\\assets', '.\\assets'),('.\\src\\components', '.\\components')],
+    hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -26,7 +26,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='Genshin_Pray_Export',
+    name='Sangonomiya',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -37,7 +37,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-	icon='src\\assets\\icon.ico'
+	icon='src\\assets\\avatar.png'
 )
 coll = COLLECT(
     exe,
@@ -47,5 +47,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='Genshin_Pray_Export',
+    name='Sangonomiya',
 )
