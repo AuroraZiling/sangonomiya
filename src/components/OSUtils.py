@@ -41,4 +41,7 @@ def getAppVersion():
 
 
 def getFont(size):
-    return QFont("Microsoft YaHei", size)
+    if getOSName() == "Windows":
+        return QFont("Microsoft YaHei", size)
+    elif getOSName() == "MacOS":
+        return QFont("Microsoft YaHei", size + 4)

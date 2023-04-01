@@ -82,8 +82,6 @@ class AboutWidget(QFrame):
         self.settingVBox.insertSpacing(0, 15)
         # Open Source
         self.settingOpenSourceVBox.insertSpacing(0, 15)
-        # Feedback
-        self.settingFeedbackVBox.insertSpacing(0, 15)
 
     def initFrame(self):
         # Top
