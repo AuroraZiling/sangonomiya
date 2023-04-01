@@ -1,8 +1,11 @@
 from PyQt6.QtCore import Qt, QRect
-from PyQt6.QtGui import QImage, QPainter, QColor, QBrush, QFont
+from PyQt6.QtGui import QImage, QPainter, QColor, QBrush
 from qfluentwidgets import NavigationWidget, isDarkTheme
+import sys
 
-from ..components import OSUtils
+sys.path.append("..")
+
+from components import OSUtils
 
 WORKING_DIR = OSUtils.getWorkingDir()
 

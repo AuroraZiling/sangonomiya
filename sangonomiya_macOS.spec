@@ -5,10 +5,10 @@ block_cipher = None
 
 
 a = Analysis(
-    ['src\\sangonomiya.py'],
+    ['src/sangonomiya.py'],
     pathex=[],
     binaries=[],
-    datas=[('.\\src\\modules', '.\\modules'),('.\\src\\assets', '.\\assets'),('.\\src\\components', '.\\components')],
+    datas=[('src/modules', 'modules'),('src/assets', 'assets'),('src/components', 'components')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -26,7 +26,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='Sangonomiya',
+    name='sangonomiya',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -37,15 +37,20 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-   icon='src\\assets\\avatar.png'
 )
 coll = COLLECT(
     exe,
-   a.binaries,
+    a.binaries,
     a.zipfiles,
     a.datas,
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='Sangonomiya',
+    name='sangonomiya',
+)
+app = BUNDLE(
+    coll,
+    name='sangonomiya.app',
+    icon='src/assets/avatar.png',
+    bundle_identifier=None,
 )
