@@ -1,7 +1,7 @@
 <p align="center">
   <img width="18%" align="center" src="https://s1.imagehub.cc/images/2023/04/01/6b4f5494e44206a43b7156fadb9767e1.md.png" alt="logo">
 </p>
-  <h1 align="center">
+<h1 align="center">
   Sangonomiya
 </h1>
 <p align="center">
@@ -25,9 +25,15 @@
 
 ---
 
+## 注意
+
+本项目目前处于过期状态，即原神3.2版本后的变化均无法兼容
+
+---
+
 *该项目更新频率将在2023.7之前放缓，上学中*
 
-**文档: [GPE Documents](https://auroraziling.github.io/genshin-pray-export/)**
+**文档: [Sangonomiya Documents](https://auroraziling.github.io/sangonomiya/)**
 
 *原理(浅)讲解: [原神3.0 祈愿/抽卡记录导出工具原理讲解](https://www.bilibili.com/video/BV1cY4y1u758)*
 

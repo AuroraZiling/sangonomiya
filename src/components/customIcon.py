@@ -16,8 +16,10 @@ class MyFluentIcon(FluentIconBase, Enum):
 
     USER = "User"
     GACHA_REPORT = "GachaReport"
+    DATA = "Data"
     ANNOUNCEMENT = "Announcement"
     PLUGIN = "Plugin"
+    ABOUT = "About"
 
     def path(self, theme=Theme.AUTO):
         if theme == Theme.AUTO:

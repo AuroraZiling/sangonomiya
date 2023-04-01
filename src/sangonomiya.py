@@ -10,7 +10,7 @@ from qfluentwidgets import (NavigationInterface, NavigationItemPostion, setTheme
 from qframelesswindow import FramelessWindow, StandardTitleBar
 
 from components import themeManager, customIcon
-from modules.subWidgets import gachaReportWidget, announcementWidget, accountWidget, pluginWidget, settingWidget
+from modules.subWidgets import gachaReportWidget, linkWidget, announcementWidget, accountWidget, pluginWidget, settingWidget, aboutWidget
 from components import OSUtils
 
 WORKING_DIR = OSUtils.getWorkingDir()
@@ -32,16 +32,20 @@ class Window(FramelessWindow):
         self.mainStackWidget = QStackedWidget(self)
 
         self.gachaReportInterface = gachaReportWidget.GachaReportWidget(self)
+        self.linkInterface = linkWidget.LinkWidget(self)
         self.announcementInterface = announcementWidget.AnnouncementWidget(self)
         self.accountInterface = accountWidget.AccountWidget(self)
         self.pluginInterface = pluginWidget.PluginWidget(self)
         self.settingInterface = settingWidget.SettingWidget(self)
+        self.aboutInterface = aboutWidget.AboutWidget(self)
 
         self.mainStackWidget.addWidget(self.gachaReportInterface)
+        self.mainStackWidget.addWidget(self.linkInterface)
         self.mainStackWidget.addWidget(self.announcementInterface)
         self.mainStackWidget.addWidget(self.accountInterface)
         self.mainStackWidget.addWidget(self.pluginInterface)
         self.mainStackWidget.addWidget(self.settingInterface)
+        self.mainStackWidget.addWidget(self.aboutInterface)
 
         self.initLayout()
         self.initNavigation()
@@ -60,6 +64,12 @@ class Window(FramelessWindow):
             icon=customIcon.MyFluentIcon.GACHA_REPORT,
             text='祈愿记录 / Gacha Report',
             onClick=lambda: self.switchTo(self.gachaReportInterface)
+        )
+        self.navigationInterface.addItem(
+            routeKey=self.linkInterface.objectName(),
+            icon=customIcon.MyFluentIcon.DATA,
+            text='数据导入与导出 / Import & Export',
+            onClick=lambda: self.switchTo(self.linkInterface)
         )
         self.navigationInterface.addItem(
             routeKey=self.announcementInterface.objectName(),
@@ -94,13 +104,21 @@ class Window(FramelessWindow):
             position=NavigationItemPostion.BOTTOM
         )
 
-        self.navigationInterface.setExpandWidth(230)
+        self.navigationInterface.addItem(
+            routeKey=self.aboutInterface.objectName(),
+            icon=customIcon.MyFluentIcon.ABOUT,
+            text='关于 / About',
+            onClick=lambda: self.switchTo(self.aboutInterface),
+            position=NavigationItemPostion.BOTTOM
+        )
+
+        self.navigationInterface.setExpandWidth(280)
 
         self.mainStackWidget.currentChanged.connect(self.onCurrentInterfaceChanged)
         self.mainStackWidget.setCurrentIndex(1)
 
     def initWindow(self):
-        self.resize(900, 700)
+        self.setFixedSize(1000, 700)
         self.setWindowTitle('Sangonomiya')
         self.setWindowIcon(QIcon(f"assets/avatar.png"))
         self.setWindowIcon(QIcon(f'{WORKING_DIR}/assets/avatar.png'))

@@ -9,9 +9,10 @@
 /src/cache/announce.json
 /_devTools/
 /src/_devTools/
-/src/test.py
+/src/_expLab/test.py
 /src/sangonomiya.build/
 /src/sangonomiya.dist/
 /src/sangonomiya.onefile-build/
 /src/sangonomiya.cmd
 /src/sangonomiya.exe
+/src/_expLab/
