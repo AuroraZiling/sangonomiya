@@ -12,7 +12,8 @@ from qframelesswindow import FramelessWindow, StandardTitleBar
 from components import themeManager, customIcon
 from modules.subWidgets import gachaReportWidget, announcementWidget, accountWidget, pluginWidget, settingWidget
 
-ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
+if sys.platform.startswith("win32"):
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
 
 
 class Window(FramelessWindow):
@@ -98,7 +99,7 @@ class Window(FramelessWindow):
     def initWindow(self):
         self.resize(900, 700)
         self.setWindowTitle('Sangonomiya')
-        self.setWindowIcon(QIcon('assets/avatar.png'))
+        self.setWindowIcon(QIcon(f"assets/avatar.png"))
         self.titleBar.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
 
         desktop = QApplication.screens()[0].availableGeometry()

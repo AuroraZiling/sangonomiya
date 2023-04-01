@@ -66,7 +66,7 @@ pyinstaller pray.spec
 
 ## 更新日志 / Changelog
 
-[Change Log](https://auroraziling.github.io/genshin-pray-export/dev_logs/r6/)
+[Change Log](https://auroraziling.github.io/sangonomiya/dev_logs/r7/)
 
 ## 使用须知 / Notice
 

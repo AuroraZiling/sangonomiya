@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../PyQt6-Fluent-Widgets/.idea/PyQt6-Fluent-Widgets.iml" filepath="$PROJECT_DIR$/../PyQt6-Fluent-Widgets/.idea/PyQt6-Fluent-Widgets.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/genshin-pray-export.iml" filepath="$PROJECT_DIR$/.idea/genshin-pray-export.iml" />
     </modules>
   </component>
