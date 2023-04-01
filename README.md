@@ -1,21 +1,31 @@
-# Sangonomiya
+<p align="center">
+  <img width="18%" align="center" src="https://i.postimg.cc/26yRRHR7/avatar.png" alt="logo">
+</p>
+  <h1 align="center">
+  Sangonomiya
+</h1>
+<p align="center">
+  原神祈愿工具
+</p>
 
-## 注意 / Notice
+<p align="center">
+  <a style="text-decoration:none">
+    <img src="https://img.shields.io/badge/Platform-Windows%20|%20macOS-lightgreen?style=flat-square" alt="Platform Win32 | Linux | macOS"/>
+  </a>
 
-截至目前，本工具暂无数据自动更新功能，仅靠工具版本更新是低效的。
+  <a style="text-decoration:none">
+    <img src=https://img.shields.io/badge/Language-Python-blue.svg?style=flat-square alt="GPL-3.0"/>
+  </a>
 
-打算在Release 7对整个项目重构，并重写UI(基于[PyQt-Fluent-Widgets
-](https://github.com/zhiyiYo/PyQt-Fluent-Widgets))
+  <a style="text-decoration:none">
+    <img src=https://img.shields.io/badge/License-GPLv3-orange?style=flat-square alt="GPL-3.0"/>
+  </a>
+</p>
+
 
 ---
 
 *该项目更新频率将在2023.7之前放缓，上学中*
-
-*由于MiHoYo疑似在3.2版本更改了Authkey格式，有可能会对旧版本(R5及之前)产生影响*
-
-**原神祈愿记录导出工具**
-
-![](https://img.shields.io/badge/Language-Python-blue.svg?style=flat-square)
 
 **文档: [GPE Documents](https://auroraziling.github.io/genshin-pray-export/)**
 
@@ -26,8 +36,6 @@
 注：均为自释放压缩包
 
 *历史版本见上文提到的文档*
-
-*由于目前未实现更新功能，每个Release的发布内容将会尽可能多*
 
 *如果你使用了较新的Microsoft Edge, 访问蓝奏云下载会出现(您可能拼写错误)的问题，[如何解决?](https://www.bilibili.com/video/BV1i24y197X7)*
 
@@ -52,17 +60,6 @@
 - [x] 公告显示
 - [x] 当期UP池显示
 - [x] 多UID
-
-## 打包 / Usage
-
-需要安装`pyinstaller`
-```commandline
-pip install pyinstaller
-```
-
-```commandline
-pyinstaller pray.spec
-```
 
 ## 更新日志 / Changelog
 

@@ -2,9 +2,9 @@
 
 ## 注意
 
-截至目前，本工具暂无数据自动更新功能，仅靠工具版本更新是低效的。
+截至目前，本工具暂无数据自动更新功能，仅靠工具版本更新是低效的，故目前所有正式版都是过期的。
 
-打算在Release 7对整个项目重构，并重写UI(基于[PyQt-Fluent-Widgets
+项目重构中，重写UI(基于[PyQt-Fluent-Widgets
 ](https://github.com/zhiyiYo/PyQt-Fluent-Widgets))
 
 ---
@@ -13,7 +13,7 @@
 
 *由于MiHoYo疑似在3.2版本更改了Authkey格式，将可能会对旧版本(R5及之前)产生影响*
 
-目前状态: **最新正式版本: Release 6** **最新预览版本: Release 7 Development 1** 
+目前状态: **最新正式版本: Release 6** **最新预览版本: Release 7 Development 2** 
 
 ## 功能
 

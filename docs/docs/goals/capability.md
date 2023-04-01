@@ -16,13 +16,13 @@
 
 <input type="checkbox" disabled="true" checked/> [已于Release 6 Development 7实装] UIGF(Json) 导入/导出支持
 
-<input type="checkbox" disabled="true"/> 角色/武器图鉴在线更新 *预计在Release 7实现*
+<input type="checkbox" disabled="true"/> UI重写并兼容Windows和MacOS平台 *预计在Release 7实现*
 
-<input type="checkbox" disabled="true"/> 工具更新检查 *预计在Release 7实现*
+<input type="checkbox" disabled="true"/> 角色/武器图鉴在线更新 *预计在Release 8实现*
 
-<input type="checkbox" disabled="true"/> UI重写 *预计在Release 7实现*
+<input type="checkbox" disabled="true"/> 工具更新检查 *预计在Release 8实现*
 
-<input type="checkbox" disabled="true"/> 精确的当期卡池状态 *预计在Release 7修复*
+<input type="checkbox" disabled="true"/> 精确的当期卡池状态 *预计在Release 8修复*
 
 <input type="checkbox" disabled="true"/> 增量更新 *预计在Release 8实现*
 
