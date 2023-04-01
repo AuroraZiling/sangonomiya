@@ -5,7 +5,7 @@
   Sangonomiya
 </h1>
 <p align="center">
-  原神祈愿工具
+  原神祈愿记录工具
 </p>
 
 <p align="center">
