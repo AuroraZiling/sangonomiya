@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="18%" align="center" src="https://i.postimg.cc/26yRRHR7/avatar.png" alt="logo">
+  <img width="18%" align="center" src="https://s1.imagehub.cc/images/2023/04/01/2a179d96e54c5e472b91fb65e31b9e9b.md.png" alt="logo">
 </p>
   <h1 align="center">
   Sangonomiya
