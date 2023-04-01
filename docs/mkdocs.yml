@@ -36,7 +36,7 @@ nav:
         - 预览版: download/development.md
     - 目标:
         - 可行: goals/capability.md
-    - API:
+    - 内部接口:
         - 分析: api_doc/analysis.md
         - 基本信息: api_doc/information.md
         - UIGF格式转换: api_doc/transformation.md

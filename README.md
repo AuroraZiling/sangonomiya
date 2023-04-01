@@ -1,5 +1,14 @@
 # Sangonomiya
 
+## 注意 / Notice
+
+截至目前，本工具暂无数据自动更新功能，仅靠工具版本更新是低效的。
+
+打算在Release 7对整个项目重构，并重写UI(基于[PyQt-Fluent-Widgets
+](https://github.com/zhiyiYo/PyQt-Fluent-Widgets))
+
+---
+
 *该项目更新频率将在2023.7之前放缓，上学中*
 
 *由于MiHoYo疑似在3.2版本更改了Authkey格式，有可能会对旧版本(R5及之前)产生影响*
@@ -37,7 +46,7 @@
 ## 已实现功能 / Implemented Features
 
 - [x] 彩色列表
-- [x] JSON导入/导出 (符合[统一可交换祈愿记录标准](https://github.com/DGP-Studio/Snap.Genshin/wiki/StandardFormat))
+- [x] JSON导入/导出 (符合[UIGF统一可交换祈愿记录标准](https://github.com/DGP-Studio/Snap.Genshin/wiki/StandardFormat))
 - [x] 列表显示数据增多 (比如是否属于十连/单抽等)
 - [x] 基础的数据分析
 - [x] 公告显示

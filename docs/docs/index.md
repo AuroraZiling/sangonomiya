@@ -1,5 +1,14 @@
 一个原神祈愿导出工具
 
+## 注意
+
+截至目前，本工具暂无数据自动更新功能，仅靠工具版本更新是低效的。
+
+打算在Release 7对整个项目重构，并重写UI(基于[PyQt-Fluent-Widgets
+](https://github.com/zhiyiYo/PyQt-Fluent-Widgets))
+
+---
+
 *该项目更新频率将在2023.7之前放缓，上学中*
 
 *由于MiHoYo疑似在3.2版本更改了Authkey格式，将可能会对旧版本(R5及之前)产生影响*

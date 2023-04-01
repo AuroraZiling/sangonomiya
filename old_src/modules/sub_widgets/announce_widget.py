@@ -132,7 +132,7 @@ class Announce(QWidget):
 
     def html_generator(self, content):
         # 这个地方最好用正则，但是我不会捏！这里的大坑，以后再来填吧！
-        content = content.replace("<img src=", "<img width=645 src=")
+        content = content.replace("<img old_src=", "<img width=645 old_src=")
         content = content.replace("0.1rem", "1rem")
         content = content.replace("0.10rem", "1rem")
         content = content.replace("0.12rem", "1rem")
