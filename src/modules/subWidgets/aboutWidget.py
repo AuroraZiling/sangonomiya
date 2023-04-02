@@ -1,12 +1,13 @@
+import sys
+
+sys.path.append("..")
+
 from PyQt6 import QtGui, QtWidgets
 from PyQt6.QtCore import Qt, QTranslator, QLocale
 from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QWidget, QSplitter
-import sys
 
 from qfluentwidgets import SettingCardGroup, HyperlinkCard, ExpandLayout, HyperlinkButton
 from qfluentwidgets import FluentIcon
-
-sys.path.append("..")
 
 from components import OSUtils
 

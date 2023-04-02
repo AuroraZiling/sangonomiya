@@ -1,8 +1,10 @@
 import json
 import os
+from pathlib import Path
+
 import sys
 
-from PyQt6.QtCore import QLocale
+from PyQt6.QtCore import QLocale, QStandardPaths
 from PyQt6.QtGui import QFont
 
 
@@ -46,25 +48,43 @@ def getUIVersion():
     return json.loads(open(f"{getWorkingDir()}/configs/application.json", 'r').read())["ui_version"]
 
 
-def getLanguage():
-    return json.loads(open(f"{getWorkingDir()}/configs/settings.json", 'r').read())["Customize"]["language"]
-
-
 def openFolder(path):
-    print(path)
     if getOSName() == "Windows":
         os.startfile(path)
     elif getOSName() == "MacOS":
         os.system(f"open {path}")
 
+
+def getConfigDir():
+    path = Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation))
+    if not os.path.exists(path):
+        os.mkdir(path)
+    if not os.path.exists(path / "sangonomiya"):
+        os.mkdir(path / "sangonomiya")
+    path = str(path)
+    if path.endswith("sangonomiya"):
+        path = '/'.join(path.split('/')[:-1])+"/Python"
+    return path
+
+
+def getLanguage():
+    with open(f"{getConfigDir()}/sangonomiya/settings.json", 'r') as f:
+        tmp = json.loads(f.read())
+    return tmp["Customize"]["language"]
+
+
 def getSystemLanguage():
     return QLocale().system().name()
 
+
 def getLanguageFiles():
-    return [f"{getWorkingDir()}/languages/{getLanguage()}/{f}" for f in os.listdir(f"{getWorkingDir()}/languages/{getLanguage()}/") if f.endswith(".qm")]
+    return [f"{getWorkingDir()}/languages/{getLanguage()}/{f}" for f in
+            os.listdir(f"{getWorkingDir()}/languages/{getLanguage()}/") if f.endswith(".qm")]
 
 
 def getThemeColor():
+    if not os.path.exists(f"{getWorkingDir()}/configs/settings.json"):
+        return "#009faa"
     return json.loads(open(f"{getWorkingDir()}/configs/settings.json", 'r').read())["Customize"]["themeColor"]
 
 

@@ -1,4 +1,8 @@
 # coding:utf-8
+import sys
+
+sys.path.append("..")
+
 from modules.subWidgetConfigs import settingConfig
 from components import OSUtils
 from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
