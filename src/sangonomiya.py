@@ -2,10 +2,10 @@
 import ctypes
 import sys
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QTranslator
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QStackedWidget, QHBoxLayout
-from qfluentwidgets import FluentIcon
+from qfluentwidgets import FluentIcon, setThemeColor
 from qfluentwidgets import (NavigationInterface, NavigationItemPostion, setTheme, Theme, Dialog)
 from qframelesswindow import FramelessWindow, StandardTitleBar
 
@@ -118,7 +118,7 @@ class Window(FramelessWindow):
         self.mainStackWidget.setCurrentIndex(1)
 
     def initWindow(self):
-        self.setFixedSize(1000, 700)
+        self.setFixedSize(1100, 700)
         self.setWindowTitle('Sangonomiya')
         self.setWindowIcon(QIcon(f"assets/avatar.png"))
         self.setWindowIcon(QIcon(f'{WORKING_DIR}/assets/avatar.png'))
@@ -129,6 +129,7 @@ class Window(FramelessWindow):
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
 
         self.setStyleSheet(themeManager.setTheme("dark"))
+        setThemeColor(OSUtils.getThemeColor())
 
     def switchTo(self, widget):
         self.mainStackWidget.setCurrentWidget(widget)
@@ -148,6 +149,13 @@ class Window(FramelessWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon(f"{WORKING_DIR}/assets/avatar.png"))
+    if not OSUtils.getLanguage() == 'en_US':
+        translator = QTranslator()
+        if OSUtils.getLanguage() == "Auto":
+            translator.load(f"{WORKING_DIR}/languages/{OSUtils.getSystemLanguage()}.qm")
+        else:
+            translator.load(f"{WORKING_DIR}/languages/{OSUtils.getLanguage()}.qm")
+        app.installTranslator(translator)
     w = Window()
     w.show()
     app.exec()

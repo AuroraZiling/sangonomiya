@@ -8,7 +8,7 @@ a = Analysis(
     ['src\\sangonomiya.py'],
     pathex=[],
     binaries=[],
-    datas=[('.\\src\\modules', '.\\modules'),('.\\src\\assets', '.\\assets'),('.\\src\\components', '.\\components'),('.\\src\\configs', '.\\configs')],
+    datas=[('.\\src\\modules', '.\\modules'),('.\\src\\assets', '.\\assets'),('.\\src\\components', '.\\components'),('.\\src\\configs', '.\\configs'),('.\\src\\languages', '.\\languages')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

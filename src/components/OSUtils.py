@@ -2,6 +2,7 @@ import json
 import os
 import sys
 
+from PyQt6.QtCore import QLocale
 from PyQt6.QtGui import QFont
 
 
@@ -38,6 +39,33 @@ def getOpenSourceLicense():
 def getAppVersion():
     """Returns the version of the application"""
     return json.loads(open(f"{getWorkingDir()}/configs/application.json", 'r').read())["application_version"]
+
+
+def getUIVersion():
+    """Returns the UI version of the application"""
+    return json.loads(open(f"{getWorkingDir()}/configs/application.json", 'r').read())["ui_version"]
+
+
+def getLanguage():
+    return json.loads(open(f"{getWorkingDir()}/configs/settings.json", 'r').read())["Customize"]["language"]
+
+
+def openFolder(path):
+    print(path)
+    if getOSName() == "Windows":
+        os.startfile(path)
+    elif getOSName() == "MacOS":
+        os.system(f"open {path}")
+
+def getSystemLanguage():
+    return QLocale().system().name()
+
+def getLanguageFiles():
+    return [f"{getWorkingDir()}/languages/{getLanguage()}/{f}" for f in os.listdir(f"{getWorkingDir()}/languages/{getLanguage()}/") if f.endswith(".qm")]
+
+
+def getThemeColor():
+    return json.loads(open(f"{getWorkingDir()}/configs/settings.json", 'r').read())["Customize"]["themeColor"]
 
 
 def getFont(size):

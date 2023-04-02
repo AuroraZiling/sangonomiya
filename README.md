@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="18%" align="center" src="https://s1.imagehub.cc/images/2023/04/01/6b4f5494e44206a43b7156fadb9767e1.md.png" alt="logo">
+  <img width="22%" align="center" src="https://s1.imagehub.cc/images/2023/04/02/5fb7cf5f774ace41b2f0ac57712011e7.md.png" alt="logo">
 </p>
 <h1 align="center">
   Sangonomiya
@@ -33,9 +33,9 @@
 
 *该项目更新频率将在2023.7之前放缓，上学中*
 
-**文档: [Sangonomiya Documents](https://auroraziling.github.io/sangonomiya/)**
+**文档(Github Pages): [Sangonomiya Documents](https://auroraziling.github.io/sangonomiya/)** 
 
-*原理(浅)讲解: [原神3.0 祈愿/抽卡记录导出工具原理讲解](https://www.bilibili.com/video/BV1cY4y1u758)*
+**文档(Netlify): [Sangonomiya Documents](https://sangonomiya.netlify.app/)** [![Netlify Status](https://api.netlify.com/api/v1/badges/41a6827f-3fdb-4026-a374-542a46df6461/deploy-status)](https://app.netlify.com/sites/sangonomiya/deploys)
 
 ## 下载 / Download
 
@@ -45,7 +45,7 @@
 
 *如果你使用了较新的Microsoft Edge, 访问蓝奏云下载会出现(您可能拼写错误)的问题，[如何解决?](https://www.bilibili.com/video/BV1i24y197X7)*
 
-### Release 6 (推荐)
+### Release 6
 
 [阿里云盘](https://www.aliyundrive.com/s/ay3Y7WJbJho)
 
@@ -86,6 +86,10 @@
    >蓝奏云不好传，原因是游戏内公告显示的内置浏览器模块
 3. [3.1]对于提那里的判断失效
    >目前统一视作歪出来的
+
+## 状态 / Status
+
+![Sangonomiya](https://repobeats.axiom.co/api/embed/eec0093cddd14f5e609233104ac2487225cd4c3f.svg "Repobeats analytics image")
 
 ## 维护者 / Maintainer
 

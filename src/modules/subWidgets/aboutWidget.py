@@ -1,6 +1,6 @@
 from PyQt6 import QtGui, QtWidgets
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QWidget
+from PyQt6.QtCore import Qt, QTranslator, QLocale
+from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QWidget, QSplitter
 import sys
 
 from qfluentwidgets import SettingCardGroup, HyperlinkCard, ExpandLayout, HyperlinkButton
@@ -35,32 +35,47 @@ class AboutWidget(QFrame):
         self.settingTopProjDesVBox.addWidget(self.settingTopProjDesLicense)
         self.settingTopProjDesVBox.addWidget(self.settingTopProjDesGithub)
         self.settingTopProjDesVBox.addStretch(1)
-
         self.settingTopHBox.addLayout(self.settingTopProjDesVBox)
+
+        self.settingTopUIImage = QLabel("", self)
+        self.settingTopHBox.addWidget(self.settingTopUIImage)
+
+        self.settingTopUIDesVBox = QVBoxLayout(self)
+        self.settingTopUIDesDesignLabel = QLabel("UI Design", self)
+        self.settingTopUIDesLabel = QLabel("PyQt-Fluent-Widgets", self)
+        self.settingTopUIDesVersion = QLabel(f"{OSUtils.getUIVersion()} for PyQt6", self)
+        self.settingTopUIDesGithub = QLabel("https://github.com/zhiyiYo/PyQt-Fluent-Widgets", self)
+        self.settingTopUIDesVBox.addWidget(self.settingTopUIDesDesignLabel)
+        self.settingTopUIDesVBox.addWidget(self.settingTopUIDesLabel)
+        self.settingTopUIDesVBox.addWidget(self.settingTopUIDesVersion)
+        self.settingTopUIDesVBox.addWidget(self.settingTopUIDesGithub)
+        self.settingTopUIDesVBox.addStretch(1)
+
+        self.settingTopHBox.addLayout(self.settingTopUIDesVBox)
         self.settingVBox.addLayout(self.settingTopHBox)
 
         self.settingOpenSourceVBox = QVBoxLayout(self)
-        self.settingOpenSourceLabel = QLabel("开放源代码许可 / Open Source", self)
+        self.settingOpenSourceLabel = QLabel(self.tr("Open Source License"), self)
         self.settingOpenSourceTextEdit = QtWidgets.QTextEdit(self)
         self.settingOpenSourceVBox.addWidget(self.settingOpenSourceLabel)
         self.settingOpenSourceVBox.addWidget(self.settingOpenSourceTextEdit)
         self.settingVBox.addLayout(self.settingOpenSourceVBox)
 
         self.settingFeedbackVBox = QVBoxLayout(self)
-        self.settingFeedbackLabel = QLabel("反馈 / Feedback", self)
+        self.settingFeedbackLabel = QLabel(self.tr("Feedback"), self)
         self.settingFeedbackDocumentHyperlink = HyperlinkButton(
             url='https://auroraziling.github.io/sangonomiya/',
-            text='打开 Sangonomiya 文档',
+            text=self.tr('Open Sangonomiya Documents'),
             parent=self
         )
         self.settingFeedbackGithubIssueHyperlink = HyperlinkButton(
             url='https://github.com/AuroraZiling/sangonomiya/issues',
-            text='提交 Github Issue',
+            text=self.tr('Submit Github Issue'),
             parent=self
         )
         self.settingFeedbackGithubPullRequestHyperlink = HyperlinkButton(
             url='https://github.com/AuroraZiling/sangonomiya/pulls',
-            text='提交 Github Pull Request',
+            text=self.tr('Submit Github Pull Request'),
             parent=self
         )
         self.settingFeedbackVBox.addWidget(self.settingFeedbackLabel)
@@ -81,10 +96,15 @@ class AboutWidget(QFrame):
         self.settingTopHBox.insertSpacing(2, 10)
         self.settingVBox.insertSpacing(0, 15)
         # Open Source
-        self.settingOpenSourceVBox.insertSpacing(0, 15)
+        self.settingVBox.insertSpacing(2, 20)
+        self.settingOpenSourceVBox.insertSpacing(1, 10)
+        # Feedback
+        self.settingVBox.insertSpacing(4, 15)
+        self.settingFeedbackVBox.insertSpacing(1, 10)
 
     def initFrame(self):
         # Top
+        # Top - Project Description
         self.settingTopProjImage.move(50, 50)
         self.settingTopProjImage.setFixedSize(128, 128)
         self.settingTopProjImage.setPixmap(QtGui.QPixmap(f"{WORKING_DIR}/assets/avatar_rounded.png"))
@@ -96,6 +116,19 @@ class AboutWidget(QFrame):
         self.settingTopProjDesLicense.setStyleSheet("color: white;")
         self.settingTopProjDesLicense.setFont(OSUtils.getFont(12))
         self.settingTopProjDesGithub.setStyleSheet("color: grey;")
+        self.settingTopProjDesGithub.setFont(OSUtils.getFont(8))
+        # Top - UI Design
+        self.settingTopUIImage.setFixedSize(85, 85)
+        self.settingTopUIImage.setPixmap(QtGui.QPixmap(f"{WORKING_DIR}/assets/pyqt-fluent-widgets-logo.png"))
+        self.settingTopUIImage.setScaledContents(True)
+        self.settingTopUIDesDesignLabel.setStyleSheet("color: white; margin-bottom: 0px;")
+        self.settingTopUIDesDesignLabel.setFont(OSUtils.getFont(8))
+        self.settingTopUIDesLabel.setStyleSheet("color: white; margin-top: 0px;")
+        self.settingTopUIDesLabel.setFont(OSUtils.getFont(20))
+        self.settingTopUIDesVersion.setStyleSheet("color: white;")
+        self.settingTopUIDesVersion.setFont(OSUtils.getFont(10))
+        self.settingTopUIDesGithub.setStyleSheet("color: grey;")
+        self.settingTopUIDesGithub.setFont(OSUtils.getFont(7))
         # Open Source
         self.settingOpenSourceLabel.setStyleSheet("color: white;")
         self.settingOpenSourceLabel.setFont(OSUtils.getFont(16))
@@ -111,5 +144,3 @@ class AboutWidget(QFrame):
         self.settingFeedbackDocumentHyperlink.setFont(OSUtils.getFont(12))
         self.settingFeedbackGithubIssueHyperlink.setFont(OSUtils.getFont(12))
         self.settingFeedbackGithubPullRequestHyperlink.setFont(OSUtils.getFont(12))
-
-

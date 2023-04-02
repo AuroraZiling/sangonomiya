@@ -29,18 +29,24 @@ class MvQuality(Enum):
 class Language(Enum):
     """ Language enumeration """
 
-    CHINESE_SIMPLIFIED = "zh"
-    CHINESE_TRADITIONAL = "hk"
-    ENGLISH = "en"
+    CHINESE_SIMPLIFIED = "zh_CN"
+    ENGLISH = "en_US"
     AUTO = "Auto"
 
 
 class Config(QConfig):
     """ Config of application """
 
-    # folders
-    musicFolders = ConfigItem(
-        "Folders", "LocalMusic", [], FolderListValidator())
+    # Storage
+    storageDataFolders = ConfigItem(
+        "Folders", "Data", "data", FolderValidator())
+    storageCacheFolders = ConfigItem(
+        "Folders", "Cache", "cache", FolderValidator())
+
+    # Customize
+    customizeLanguage = OptionsConfigItem(
+        "Customize", "language", Language.AUTO, OptionsValidator(Language), EnumSerializer(Language), restart=True)
+    customizeThemeColor = ColorConfigItem("Customize", "themeColor", '#009faa')
 
     # online
     onlineSongQuality = OptionsConfigItem(
@@ -50,18 +56,6 @@ class Config(QConfig):
     onlineMvQuality = OptionsConfigItem(
         "Online", "MvQuality", MvQuality.FULL_HD, OptionsValidator(MvQuality), EnumSerializer(MvQuality))
 
-    # main window
-    enableAcrylicBackground = ConfigItem(
-        "MainWindow", "EnableAcrylicBackground", False, BoolValidator())
-    minimizeToTray = ConfigItem(
-        "MainWindow", "MinimizeToTray", True, BoolValidator())
-    playBarColor = ColorConfigItem("MainWindow", "PlayBarColor", "#225C7F")
-    recentPlaysNumber = RangeConfigItem(
-        "MainWindow", "RecentPlayNumbers", 300, RangeValidator(10, 300))
-    dpiScale = OptionsConfigItem(
-        "MainWindow", "DpiScale", "Auto", OptionsValidator([1, 1.25, 1.5, 1.75, 2, "Auto"]), restart=True)
-    language = OptionsConfigItem(
-        "MainWindow", "Language", Language.AUTO, OptionsValidator(Language), EnumSerializer(Language), restart=True)
 
     # desktop lyric
     deskLyricHighlightColor = ColorConfigItem(
@@ -96,5 +90,13 @@ class Config(QConfig):
         self.save()
 
 
+YEAR = 2023
+AUTHOR = "zhiyiYo"
+VERSION = "v0.2.0"
+HELP_URL = "https://pyqt-fluent-widgets.readthedocs.io"
+FEEDBACK_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets/issues"
+RELEASE_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets/releases/latest"
+
+
 cfg = Config()
-qconfig.load('config/config.json', cfg)
+qconfig.load('configs/settings.json', cfg)

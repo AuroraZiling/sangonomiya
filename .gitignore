@@ -16,4 +16,8 @@
 /src/sangonomiya.cmd
 /src/sangonomiya.exe
 /src/_expLab/
+<<<<<<< Updated upstream
 src/configs/settings.json
+=======
+/src/configs/settings.json
+>>>>>>> Stashed changes
