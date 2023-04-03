@@ -13,7 +13,7 @@ from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import QWidget, QLabel
 
 cfg = settingConfig.cfg
-WORKING_DIR = OSUtils.getWorkingDir()
+utils = OSUtils.OSUtils()
 
 
 class SettingWidget(ScrollArea):
@@ -116,7 +116,7 @@ class SettingWidget(ScrollArea):
         self.settingLabel.setObjectName('settingLabel')
 
         theme = 'dark' if isDarkTheme() else 'light'
-        with open(f"{WORKING_DIR}/assets/themes/{theme}_setting_interface.qss",
+        with open(f"{utils.workingDir}/assets/themes/{theme}_setting_interface.qss",
                   encoding='utf-8') as f:
             self.setStyleSheet(f.read())
 

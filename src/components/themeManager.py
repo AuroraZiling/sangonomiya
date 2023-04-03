@@ -4,8 +4,8 @@ sys.path.append("..")
 
 from components import OSUtils
 
-WORKING_DIR = OSUtils.getWorkingDir()
+utils = OSUtils.OSUtils()
 
 
 def setTheme(theme):
-    return open(f"{WORKING_DIR}/assets/themes/{theme}.qss", encoding='utf-8').read()
+    return open(f"{utils.workingDir}/assets/themes/{theme}.qss", encoding='utf-8').read()

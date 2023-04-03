@@ -11,10 +11,10 @@ from qfluentwidgets import FluentIcon, setThemeColor
 from qfluentwidgets import (NavigationInterface, NavigationItemPostion, setTheme, Theme, Dialog)
 from qframelesswindow import FramelessWindow, StandardTitleBar
 
-from components import themeManager, customIcon, OSUtils
 from modules.subWidgets import gachaReportWidget, linkWidget, announcementWidget, accountWidget, pluginWidget, settingWidget, aboutWidget
+from components import themeManager, customIcon, OSUtils
 
-WORKING_DIR = OSUtils.getWorkingDir()
+utils = OSUtils.OSUtils()
 
 if sys.platform.startswith("win32"):
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
@@ -121,7 +121,7 @@ class Window(FramelessWindow):
     def initWindow(self):
         self.setFixedSize(1100, 700)
         self.setWindowTitle('Sangonomiya')
-        self.setWindowIcon(QIcon(f'{WORKING_DIR}/assets/avatar.png'))
+        self.setWindowIcon(QIcon(f'{utils.workingDir}/assets/avatar.png'))
         self.titleBar.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
 
         desktop = QApplication.screens()[0].availableGeometry()
@@ -129,7 +129,7 @@ class Window(FramelessWindow):
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
 
         self.setStyleSheet(themeManager.setTheme("dark"))
-        setThemeColor(OSUtils.getThemeColor())
+        setThemeColor(utils.themeColor)
 
     def switchTo(self, widget):
         self.mainStackWidget.setCurrentWidget(widget)
@@ -148,18 +148,18 @@ class Window(FramelessWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon(f"{WORKING_DIR}/assets/avatar.png"))
+    app.setWindowIcon(QIcon(f"{utils.workingDir}/assets/avatar.png"))
     try:
-        if not OSUtils.getLanguage() == 'en_US':
+        if not utils.language == 'en_US':
             translator = QTranslator()
-            if OSUtils.getLanguage() == "Auto":
-                translator.load(f"{WORKING_DIR}/languages/{OSUtils.getSystemLanguage()}.qm")
+            if utils.language == "Auto":
+                translator.load(f"{utils.workingDir}/languages/{utils.systemLanguage}.qm")
             else:
-                translator.load(f"{WORKING_DIR}/languages/{OSUtils.getLanguage()}.qm")
+                translator.load(f"{utils.workingDir}/languages/{utils.language}.qm")
             app.installTranslator(translator)
     except FileNotFoundError:
         translator = QTranslator()
-        translator.load(f"{WORKING_DIR}/languages/{OSUtils.getSystemLanguage()}.qm")
+        translator.load(f"{utils.workingDir}/languages/{utils.systemLanguage}.qm")
         app.installTranslator(translator)
     w = Window()
     w.show()
