@@ -45,11 +45,14 @@ class OSUtils:
             os.mkdir(self.configPath)
         if not os.path.exists(self.configPath / "sangonomiya"):
             os.mkdir(self.configPath / "sangonomiya")
-        self.configPath = str(self.configPath)
+        self.configPath = str(self.configPath).replace("\\", "/")
         if self.configPath.endswith("sangonomiya"):
             self.configPath = '/'.join(self.configPath.split('/')[:-1]) + "/Python"
 
-        self.settings = json.loads(open(f"{self.configPath}/sangonomiya/settings.json", 'r').read())
+        if self.OSName == "Windows":
+            self.settings = json.loads(open(f"{self.configPath}/Python/sangonomiya/settings.json", 'r').read())
+        elif self.OSName == "MacOS":
+            self.settings = json.loads(open(f"{self.configPath}/sangonomiya/settings.json", 'r').read())
         self.settingsLocal = json.loads(open(f"{self.workingDir}/configs/application.json", 'r').read())
 
         self.appVersion = self.settingsLocal["application_version"]
