@@ -1,3 +1,4 @@
+*.pyc
 /src/pray_history/
 /src/requestUrl.txt
 /dist/
@@ -18,9 +19,7 @@
 /src/_expLab/
 <<<<<<< Updated upstream
 src/configs/settings.json
-=======
 /src/configs/settings.json
->>>>>>> Stashed changes
 /src/data/
 /src/test/
-src/components/__pycache__/customIcon.cpython-38.pyc
+
