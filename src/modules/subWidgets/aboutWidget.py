@@ -3,13 +3,12 @@ import sys
 sys.path.append("..")
 
 from PyQt6 import QtGui, QtWidgets
-from PyQt6.QtCore import Qt, QTranslator, QLocale
 from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QWidget, QSplitter
 
-from qfluentwidgets import SettingCardGroup, HyperlinkCard, ExpandLayout, HyperlinkButton
+from qfluentwidgets import SettingCardGroup, HyperlinkCard, ExpandLayout, HyperlinkCard
 from qfluentwidgets import FluentIcon
 
-from components import OSUtils
+from components import OSUtils, customIcon
 
 utils = OSUtils.OSUtils()
 
@@ -64,20 +63,26 @@ class AboutWidget(QFrame):
 
         self.settingFeedbackVBox = QVBoxLayout(self)
         self.settingFeedbackLabel = QLabel(self.tr("Feedback"), self)
-        self.settingFeedbackDocumentHyperlink = HyperlinkButton(
+        self.settingFeedbackDocumentHyperlink = HyperlinkCard(
             url='https://auroraziling.github.io/sangonomiya/',
-            text=self.tr('Open Sangonomiya Documents'),
-            parent=self
+            text=self.tr('Open'),
+            parent=self,
+            icon=FluentIcon.WEB,
+            title=self.tr('Sangonomiya Documents')
         )
-        self.settingFeedbackGithubIssueHyperlink = HyperlinkButton(
+        self.settingFeedbackGithubIssueHyperlink = HyperlinkCard(
             url='https://github.com/AuroraZiling/sangonomiya/issues',
-            text=self.tr('Submit Github Issue'),
-            parent=self
+            text=self.tr('Submit'),
+            parent=self,
+            icon=customIcon.MyFluentIcon.GITHUB,
+            title=self.tr('Github Issue')
         )
-        self.settingFeedbackGithubPullRequestHyperlink = HyperlinkButton(
+        self.settingFeedbackGithubPullRequestHyperlink = HyperlinkCard(
             url='https://github.com/AuroraZiling/sangonomiya/pulls',
-            text=self.tr('Submit Github Pull Request'),
-            parent=self
+            text=self.tr('Submit'),
+            parent=self,
+            icon=customIcon.MyFluentIcon.GITHUB,
+            title=self.tr('Github Pull Request')
         )
         self.settingFeedbackVBox.addWidget(self.settingFeedbackLabel)
         self.settingFeedbackVBox.addWidget(self.settingFeedbackDocumentHyperlink)

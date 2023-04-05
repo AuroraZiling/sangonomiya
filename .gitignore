@@ -24,3 +24,5 @@ src/configs/settings.json
 /src/data/
 /src/test/
 src/components/__pycache__/customIcon.cpython-38.pyc
+/venv/
+/ui_lib/

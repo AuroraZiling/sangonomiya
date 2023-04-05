@@ -7,7 +7,7 @@ import ctypes
 from PyQt6.QtCore import Qt, QTranslator
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QStackedWidget, QHBoxLayout
-from qfluentwidgets import FluentIcon, setThemeColor
+from qfluentwidgets import FluentIcon
 from qfluentwidgets import (NavigationInterface, NavigationItemPostion, setTheme, Theme, Dialog)
 from qframelesswindow import FramelessWindow, StandardTitleBar
 
@@ -63,19 +63,19 @@ class Window(FramelessWindow):
         self.navigationInterface.addItem(
             routeKey=self.gachaReportInterface.objectName(),
             icon=customIcon.MyFluentIcon.GACHA_REPORT,
-            text='祈愿记录 / Gacha Report',
+            text=self.tr("Gacha Report"),
             onClick=lambda: self.switchTo(self.gachaReportInterface)
         )
         self.navigationInterface.addItem(
             routeKey=self.linkInterface.objectName(),
             icon=customIcon.MyFluentIcon.DATA,
-            text='数据导入与导出 / Import & Export',
+            text=self.tr("Import & Export Data"),
             onClick=lambda: self.switchTo(self.linkInterface)
         )
         self.navigationInterface.addItem(
             routeKey=self.announcementInterface.objectName(),
             icon=customIcon.MyFluentIcon.ANNOUNCEMENT,
-            text='公告 / Announcement',
+            text=self.tr("Announcement"),
             onClick=lambda: self.switchTo(self.announcementInterface)
         )
 
@@ -84,7 +84,7 @@ class Window(FramelessWindow):
         self.navigationInterface.addItem(
             routeKey=self.accountInterface.objectName(),
             icon=customIcon.MyFluentIcon.USER,
-            text='账户 / Account',
+            text=self.tr("Account"),
             onClick=lambda: self.switchTo(self.accountInterface),
             position=NavigationItemPostion.BOTTOM
         )
@@ -92,7 +92,7 @@ class Window(FramelessWindow):
         self.navigationInterface.addItem(
             routeKey=self.pluginInterface.objectName(),
             icon=customIcon.MyFluentIcon.PLUGIN,
-            text='插件 / Plugins',
+            text=self.tr("Plugins"),
             onClick=lambda: self.switchTo(self.pluginInterface),
             position=NavigationItemPostion.BOTTOM
         )
@@ -100,7 +100,7 @@ class Window(FramelessWindow):
         self.navigationInterface.addItem(
             routeKey=self.settingInterface.objectName(),
             icon=FluentIcon.SETTING,
-            text='设置 / Settings',
+            text=self.tr("Settings"),
             onClick=lambda: self.switchTo(self.settingInterface),
             position=NavigationItemPostion.BOTTOM
         )
@@ -108,12 +108,12 @@ class Window(FramelessWindow):
         self.navigationInterface.addItem(
             routeKey=self.aboutInterface.objectName(),
             icon=customIcon.MyFluentIcon.ABOUT,
-            text='关于 / About',
+            text=self.tr("About"),
             onClick=lambda: self.switchTo(self.aboutInterface),
             position=NavigationItemPostion.BOTTOM
         )
 
-        self.navigationInterface.setExpandWidth(300)
+        self.navigationInterface.setExpandWidth(220)
 
         self.mainStackWidget.currentChanged.connect(self.onCurrentInterfaceChanged)
         self.mainStackWidget.setCurrentIndex(1)
@@ -129,7 +129,6 @@ class Window(FramelessWindow):
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
 
         self.setStyleSheet(themeManager.setTheme("dark"))
-        setThemeColor(utils.themeColor)
 
     def switchTo(self, widget):
         self.mainStackWidget.setCurrentWidget(widget)
