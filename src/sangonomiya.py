@@ -8,13 +8,15 @@ import time
 from PyQt6.QtCore import Qt, QTranslator
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QStackedWidget, QHBoxLayout
-from qfluentwidgets import FluentIcon
+from PyQt6.uic.properties import QtGui
+
+from qfluentwidgets import FluentIcon, NavigationDisplayMode
 from qfluentwidgets import (NavigationInterface, NavigationItemPostion, setTheme, Theme, Dialog)
 from qframelesswindow import FramelessWindow, StandardTitleBar
 
-from modules.subWidgets import gachaReportWidget, linkWidget, announcementWidget, accountWidget, pluginWidget, \
+from modules.subWidgets import homeWidget, gachaReportWidget, linkWidget, announcementWidget, accountWidget, pluginWidget, \
     settingWidget, aboutWidget
-from components import themeManager, customIcon, OSUtils
+from components import themeManager, customIcon, OSUtils, downloader
 from components import logTracker as log
 
 utils = OSUtils.OSUtils()
@@ -38,14 +40,15 @@ class Window(FramelessWindow):
 
     def __init__(self):
         super().__init__()
-        self.setTitleBar(StandardTitleBar(self))
 
+        self.setTitleBar(StandardTitleBar(self))
         setTheme(Theme.DARK)
 
         self.mainHBoxLayout = QHBoxLayout(self)
-        self.navigationInterface = NavigationInterface(self, showMenuButton=True)
+        self.navigationInterface = NavigationInterface(self, showMenuButton=False)
         self.mainStackWidget = QStackedWidget(self)
 
+        self.homeInterface = homeWidget.HomeWidget(self)
         self.gachaReportInterface = gachaReportWidget.GachaReportWidget(self)
         self.linkInterface = linkWidget.LinkWidget(self)
         self.announcementInterface = announcementWidget.AnnouncementWidget(self)
@@ -54,6 +57,7 @@ class Window(FramelessWindow):
         self.settingInterface = settingWidget.SettingWidget(self)
         self.aboutInterface = aboutWidget.AboutWidget(self)
 
+        self.mainStackWidget.addWidget(self.homeInterface)
         self.mainStackWidget.addWidget(self.gachaReportInterface)
         self.mainStackWidget.addWidget(self.linkInterface)
         self.mainStackWidget.addWidget(self.announcementInterface)
@@ -75,6 +79,12 @@ class Window(FramelessWindow):
         self.mainHBoxLayout.setStretchFactor(self.mainStackWidget, 1)
 
     def initNavigation(self):
+        self.navigationInterface.addItem(
+            routeKey=self.homeInterface.objectName(),
+            icon=FluentIcon.HOME,
+            text=self.tr("Home"),
+            onClick=lambda: self.switchTo(self.homeInterface)
+        )
         self.navigationInterface.addItem(
             routeKey=self.gachaReportInterface.objectName(),
             icon=customIcon.MyFluentIcon.GACHA_REPORT,
@@ -127,14 +137,12 @@ class Window(FramelessWindow):
             onClick=lambda: self.switchTo(self.aboutInterface),
             position=NavigationItemPostion.BOTTOM
         )
-
         self.navigationInterface.setExpandWidth(220)
-
         self.mainStackWidget.currentChanged.connect(self.onCurrentInterfaceChanged)
-        self.mainStackWidget.setCurrentIndex(1)
+        self.onCurrentInterfaceChanged(0)
 
     def initWindow(self):
-        self.setFixedSize(1100, 700)
+        self.resize(1300, 700)
         self.setWindowTitle('Sangonomiya')
         self.setWindowIcon(QIcon(f'{utils.workingDir}/assets/avatar.png'))
         self.titleBar.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
@@ -147,6 +155,8 @@ class Window(FramelessWindow):
 
     def switchTo(self, widget):
         self.mainStackWidget.setCurrentWidget(widget)
+
+
 
     def onCurrentInterfaceChanged(self, index):
         widget = self.mainStackWidget.widget(index)

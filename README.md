@@ -27,7 +27,9 @@
 
 ## 注意
 
-本项目目前处于过期状态，即原神3.2版本后的变化均无法兼容
+正在重写UI(顺便重构了)，内容更新放缓(基于[PyQt-Fluent-Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets))
+
+本项目目前不可用，部分内容(如原神3.2版本及以后的武器更新等)将暂时无法识别
 
 ---
 

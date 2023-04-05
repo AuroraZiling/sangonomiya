@@ -4,10 +4,11 @@ import sys
 sys.path.append("..")
 
 from modules.subWidgetConfigs import settingConfig
-from components import OSUtils
+from components import OSUtils, customIcon, infoBars
 from components import logTracker as log
 from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, ColorSettingCard, isDarkTheme, InfoBar)
+                            ComboBoxSettingCard, ExpandLayout, ColorSettingCard, isDarkTheme, InfoBar, InfoBarPosition,
+                            Dialog)
 from qfluentwidgets import FluentIcon
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import QWidget, QLabel
@@ -64,7 +65,7 @@ class SettingWidget(ScrollArea):
 
         self.defaultLogDeleteCard = PushSettingCard(
             self.tr("Delete"),
-            FluentIcon.CANCEL,
+            customIcon.MyFluentIcon.DELETE,
             self.tr("Delete all log files"),
             f"All logs in {utils.workingDir + '/logs'} will be deleted",
             self.defaultGroup
@@ -148,18 +149,18 @@ class SettingWidget(ScrollArea):
                   encoding='utf-8') as f:
             self.setStyleSheet(f.read())
 
-    def __showRestartTooltip(self):
-        """ show restart tooltip """
-        InfoBar.warning(
-            '',
-            self.tr('Configuration takes effect after restart'),
-            parent=self.window()
-        )
-        log.infoWrite("[SubWidget][Settings][Tooltip] Triggered")
+    def __showMessageBox(self, title, content):
+        Dialog(title, content, self).exec()
+
+    def __defaultLogDeleteCardClicked(self):
+        utils.deleteAllLogFiles()
+        log.infoWrite("[SubWidget][Settings] All old logs deleted")
+        infoBars.successBar(self.tr("Success"), self.tr("All old logs deleted"), parent=self.window())
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
-        cfg.appRestartSig.connect(self.__showRestartTooltip)
+        cfg.appRestartSig.connect(lambda: infoBars.warningBar(self.tr("Warning"), self.tr(
+            "Please restart the application to apply the changes"), parent=self.window()))
 
         # Storage
         self.storageDataCard.clicked.connect(lambda: utils.openFolder(cfg.get(cfg.storageDataFolders)))
@@ -168,4 +169,7 @@ class SettingWidget(ScrollArea):
         self.storageConfigCard.clicked.connect(lambda: utils.openFolder(self.configPath))
 
         # Default
-        self.defaultLogDeleteCard.clicked.connect(lambda: utils.deleteAllLogFiles())
+        self.defaultLogDeleteCard.clicked.connect(self.__defaultLogDeleteCardClicked)
+
+        # Update
+        self.updateCheckCard.clicked.connect(lambda: self.__showMessageBox(self.tr("Oops!"), self.tr("This feature is not available yet!")))
