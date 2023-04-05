@@ -1,8 +1,9 @@
 # coding:utf-8
-
+import os
 import sys
 
 import ctypes
+import time
 
 from PyQt6.QtCore import Qt, QTranslator
 from PyQt6.QtGui import QIcon
@@ -11,13 +12,26 @@ from qfluentwidgets import FluentIcon
 from qfluentwidgets import (NavigationInterface, NavigationItemPostion, setTheme, Theme, Dialog)
 from qframelesswindow import FramelessWindow, StandardTitleBar
 
-from modules.subWidgets import gachaReportWidget, linkWidget, announcementWidget, accountWidget, pluginWidget, settingWidget, aboutWidget
+from modules.subWidgets import gachaReportWidget, linkWidget, announcementWidget, accountWidget, pluginWidget, \
+    settingWidget, aboutWidget
 from components import themeManager, customIcon, OSUtils
+from components import logTracker as log
 
 utils = OSUtils.OSUtils()
 
+if not os.path.exists(utils.workingDir + "/logs/"):
+    os.mkdir(utils.workingDir + "/logs/")
+
 if sys.platform.startswith("win32"):
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
+
+log.infoWrite("-----===== Sangonomiya Log =====-----")
+log.infoWrite(f"Time: {time.strftime('%Y.%m.%d %H:%M:%S', time.localtime())}")
+log.infoWrite(f"OS Platform: {sys.platform}")
+log.infoWrite(f"Version: {utils.appVersion}")
+log.infoWrite(f"Python Version: {sys.version}")
+log.infoWrite(f"Working Directory: {utils.workingDir}")
+log.infoWrite("-----===== Start Tracking =====-----")
 
 
 class Window(FramelessWindow):
@@ -51,6 +65,7 @@ class Window(FramelessWindow):
         self.initLayout()
         self.initNavigation()
         self.initWindow()
+        log.infoWrite("[UI] UI Initialized")
 
     def initLayout(self):
         self.mainHBoxLayout.setSpacing(0)
@@ -146,6 +161,7 @@ class Window(FramelessWindow):
 
 
 if __name__ == '__main__':
+    log.infoWrite("[Sangonomiya] Main process starting")
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon(f"{utils.workingDir}/assets/avatar.png"))
     try:
@@ -157,9 +173,11 @@ if __name__ == '__main__':
                 translator.load(f"{utils.workingDir}/languages/{utils.language}.qm")
             app.installTranslator(translator)
     except FileNotFoundError:
+        log.warningWrite(f"[Sangonomiya] Config file not found, using default language (en_US)")
         translator = QTranslator()
         translator.load(f"{utils.workingDir}/languages/{utils.systemLanguage}.qm")
         app.installTranslator(translator)
+    log.infoWrite("[Sangonomiya] Language loaded")
     w = Window()
     w.show()
     app.exec()

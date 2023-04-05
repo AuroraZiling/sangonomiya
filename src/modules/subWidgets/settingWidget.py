@@ -5,6 +5,7 @@ sys.path.append("..")
 
 from modules.subWidgetConfigs import settingConfig
 from components import OSUtils
+from components import logTracker as log
 from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
                             ComboBoxSettingCard, ExpandLayout, ColorSettingCard, isDarkTheme, InfoBar)
 from qfluentwidgets import FluentIcon
@@ -24,30 +25,49 @@ class SettingWidget(ScrollArea):
         self.expandLayout = ExpandLayout(self.scrollWidget)
         self.settingLabel = QLabel(self.tr("Settings"), self)
 
-        self.configPath = utils.configPath + "/Python/sangonomiya"
+        self.configPath = utils.configPath
 
         # Storage
         self.storageGroup = SettingCardGroup(self.tr("Storage"), self.scrollWidget)
         self.storageDataCard = PushSettingCard(
             self.tr("Open"),
-            FluentIcon.DOWNLOAD,
+            FluentIcon.FOLDER,
             self.tr("Data Folder"),
             cfg.get(cfg.storageDataFolders),
             self.storageGroup
         )
         self.storageCacheCard = PushSettingCard(
             self.tr("Open"),
-            FluentIcon.DOWNLOAD,
+            FluentIcon.FOLDER,
             self.tr("Cache Folder"),
             cfg.get(cfg.storageCacheFolders),
             self.storageGroup
         )
+        self.storageLogCard = PushSettingCard(
+            self.tr("Open"),
+            FluentIcon.FOLDER,
+            self.tr("Log Folder"),
+            cfg.get(cfg.storageLogFolders),
+            self.storageGroup
+        )
         self.storageConfigCard = PushSettingCard(
             self.tr("Open"),
-            FluentIcon.DOWNLOAD,
+            FluentIcon.FOLDER,
             self.tr("Config Folder"),
             self.configPath,
             self.storageGroup
+        )
+
+        # Default
+
+        self.defaultGroup = SettingCardGroup(self.tr("Default"), self.scrollWidget)
+
+        self.defaultLogDeleteCard = PushSettingCard(
+            self.tr("Delete"),
+            FluentIcon.CANCEL,
+            self.tr("Delete all log files"),
+            f"All logs in {utils.workingDir + '/logs'} will be deleted",
+            self.defaultGroup
         )
 
         # Customize
@@ -74,6 +94,7 @@ class SettingWidget(ScrollArea):
         )
 
         self.__initWidget()
+        log.infoWrite("[SubWidget][Settings] Initialized")
 
     def __initWidget(self):
         self.resize(1000, 800)
@@ -96,7 +117,12 @@ class SettingWidget(ScrollArea):
 
         self.storageGroup.addSettingCard(self.storageDataCard)
         self.storageGroup.addSettingCard(self.storageCacheCard)
+        self.storageGroup.addSettingCard(self.storageLogCard)
         self.storageGroup.addSettingCard(self.storageConfigCard)
+
+        # Default
+
+        self.defaultGroup.addSettingCard(self.defaultLogDeleteCard)
 
         # Customize
 
@@ -108,6 +134,7 @@ class SettingWidget(ScrollArea):
         self.expandLayout.setSpacing(28)
         self.expandLayout.setContentsMargins(60, 10, 60, 0)
         self.expandLayout.addWidget(self.storageGroup)
+        self.expandLayout.addWidget(self.defaultGroup)
         self.expandLayout.addWidget(self.customizeGroup)
         self.expandLayout.addWidget(self.updateSoftwareGroup)
 
@@ -128,6 +155,7 @@ class SettingWidget(ScrollArea):
             self.tr('Configuration takes effect after restart'),
             parent=self.window()
         )
+        log.infoWrite("[SubWidget][Settings][Tooltip] Triggered")
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
@@ -136,4 +164,8 @@ class SettingWidget(ScrollArea):
         # Storage
         self.storageDataCard.clicked.connect(lambda: utils.openFolder(cfg.get(cfg.storageDataFolders)))
         self.storageCacheCard.clicked.connect(lambda: utils.openFolder(cfg.get(cfg.storageCacheFolders)))
+        self.storageLogCard.clicked.connect(lambda: utils.openFolder(cfg.get(cfg.storageLogFolders)))
         self.storageConfigCard.clicked.connect(lambda: utils.openFolder(self.configPath))
+
+        # Default
+        self.defaultLogDeleteCard.clicked.connect(lambda: utils.deleteAllLogFiles())

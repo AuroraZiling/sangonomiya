@@ -1,34 +1,21 @@
 # coding:utf-8
-import json
-from pathlib import Path
+import json\
 
 import sys
-from PyQt6.QtCore import QStandardPaths
 
 sys.path.append("../../")
 from enum import Enum
-import os
 
 from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
                             ColorConfigItem, OptionsValidator, RangeConfigItem, RangeValidator,
                             FolderListValidator, EnumSerializer, FolderValidator)
 
-if sys.platform.startswith("win32"):
-    workingDir = os.path.abspath(os.curdir).replace("\\", '/')
-elif sys.platform.startswith("darwin"):
-    workingDir = os.path.dirname(sys.argv[0])
+from components.OSUtils import getWorkingDir, getConfigPath
 
-configPath = Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation))
-if not os.path.exists(configPath):
-    os.mkdir(configPath)
-if not os.path.exists(configPath / "sangonomiya"):
-    os.mkdir(configPath / "sangonomiya")
-configPath = str(configPath)
-if configPath.endswith("sangonomiya"):
-    configPath = '/'.join(configPath.split('/')[:-1]) + "/Python"
+workingDir = getWorkingDir()
+configPath = getConfigPath()
 settingsLocal = json.loads(open(f"{workingDir}/configs/application.json", 'r').read())
-appVersion = settingsLocal["application_version"]
-UIVersion = settingsLocal["ui_version"]
+appVersion, UIVersion = settingsLocal["application_version"], settingsLocal["ui_version"]
 
 
 class Language(Enum):
@@ -51,6 +38,8 @@ class Config(QConfig):
         "Folders", "Data", "data", FolderValidator())
     storageCacheFolders = ConfigItem(
         "Folders", "Cache", "cache", FolderValidator())
+    storageLogFolders = ConfigItem(
+        "Folders", "Log", "logs", FolderValidator())
 
     # Customize
     customizeLanguage = OptionsConfigItem(

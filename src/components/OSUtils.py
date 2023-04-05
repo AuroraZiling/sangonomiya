@@ -2,10 +2,39 @@ import json
 import os
 from pathlib import Path
 import sys
+
 sys.path.append("..")
 from PyQt6.QtCore import QLocale, QStandardPaths
 from PyQt6.QtGui import QFont
 
+
+def getWorkingDir():
+    if sys.platform.startswith("win32"):
+        return os.path.abspath(os.curdir).replace("\\", '/')
+    elif sys.platform.startswith("darwin"):
+        return os.path.dirname(sys.argv[0])
+
+
+def getOSName():
+    if sys.platform.startswith("win32"):
+        return "Windows"
+    elif sys.platform.startswith("darwin"):
+        return "MacOS"
+    elif sys.platform.startswith("linux"):
+        return "Linux"
+    else:
+        return "Unknown"
+
+
+def getConfigPath(OSName=getOSName()):
+    configPath = str(Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation))).replace("\\", "/")
+    if not os.path.exists(configPath):
+        os.mkdir(configPath)
+    if not os.path.exists(f"{configPath}/sangonomiya"):
+        os.mkdir(f"{configPath}/sangonomiya")
+    if OSName == "Windows":
+        configPath = f"{configPath}/Python/sangonomiya"
+    return configPath
 
 
 class OSUtils:
@@ -13,7 +42,7 @@ class OSUtils:
         self.OSName = "Unknown"
         self.workingDir = ""
         self.appVersion = "Release 7 Dev 4"
-        self.UIVersion = "0.3.1"
+        self.UIVersion = "0.5.7"
         self.license = "Unknown"
         self.openSourceLicense = "Unknown"
         self.configPath = Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation))
@@ -27,29 +56,16 @@ class OSUtils:
         self.__config()
 
     def __config(self):
-        if sys.platform.startswith("win32"):
-            self.OSName = "Windows"
-            self.workingDir = os.path.abspath(os.curdir).replace("\\", '/')
-        elif sys.platform.startswith("darwin"):
-            self.OSName = "MacOS"
-            self.workingDir = os.path.dirname(sys.argv[0])
-        elif sys.platform.startswith("linux"):
-            self.OSName = "Linux"
-        else:
-            self.OSName = "Unknown"
+
+        self.workingDir = getWorkingDir()
+        self.OSName = getOSName()
+        self.configPath = getConfigPath()
 
         self.license = open(f"{self.workingDir}/configs/license", 'r').read()
         self.openSourceLicense = open(f"{self.workingDir}/configs/open_source", 'r').read()
 
-        if not os.path.exists(self.configPath):
-            os.mkdir(self.configPath)
-        if not os.path.exists(self.configPath / "sangonomiya"):
-            os.mkdir(self.configPath / "sangonomiya")
-        self.configPath = str(self.configPath).replace("\\", "/")
-        if self.configPath.endswith("sangonomiya"):
-            self.configPath = '/'.join(self.configPath.split('/')[:-1]) + "/Python"
-
-        if os.path.exists(f"{self.configPath}/Python/sangonomiya/settings.json") or os.path.exists(f"{self.configPath}/sangonomiya/settings.json"):
+        if os.path.exists(f"{self.configPath}/Python/sangonomiya/settings.json") or os.path.exists(
+                f"{self.configPath}/sangonomiya/settings.json"):
             if self.OSName == "Windows":
                 self.settings = json.loads(open(f"{self.configPath}/Python/sangonomiya/settings.json", 'r').read())
             elif self.OSName == "MacOS":
@@ -60,7 +76,6 @@ class OSUtils:
 
         self.appVersion = self.settingsLocal["application_version"]
         self.UIVersion = self.settingsLocal["ui_version"]
-
 
     def openFolder(self, path):
         if self.OSName == "Windows":
@@ -73,3 +88,11 @@ class OSUtils:
             return QFont("Microsoft YaHei", size)
         elif self.OSName == "MacOS":
             return QFont("Microsoft YaHei", size + 6)
+
+    def deleteAllLogFiles(self):
+        logDir = os.listdir(f"{self.workingDir}/logs")
+        for eachLogFile in logDir:
+            try:
+                os.remove(f"{self.workingDir}/logs/{eachLogFile}")
+            except PermissionError:
+                continue

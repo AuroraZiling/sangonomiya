@@ -9,6 +9,7 @@ from qfluentwidgets import SettingCardGroup, HyperlinkCard, ExpandLayout, Hyperl
 from qfluentwidgets import FluentIcon
 
 from components import OSUtils, customIcon
+from components import logTracker as log
 
 utils = OSUtils.OSUtils()
 
@@ -95,6 +96,7 @@ class AboutWidget(QFrame):
         self.setObjectName("AboutWidget")
         self.initGrid()
         self.initFrame()
+        log.infoWrite("[SubWidget][About] Initialized")
 
     def initGrid(self):
         # Top

@@ -25,3 +25,6 @@ src/components/__pycache__/customIcon.cpython-38.pyc
 /venv/
 /ui_lib/
 /src/_expLab/
+/src/logs/
+/src/qfluentwidgets/
+**/__pycache__
