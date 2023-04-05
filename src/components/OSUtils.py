@@ -49,19 +49,18 @@ class OSUtils:
         if self.configPath.endswith("sangonomiya"):
             self.configPath = '/'.join(self.configPath.split('/')[:-1]) + "/Python"
 
-        if self.OSName == "Windows":
-            self.settings = json.loads(open(f"{self.configPath}/Python/sangonomiya/settings.json", 'r').read())
-        elif self.OSName == "MacOS":
-            self.settings = json.loads(open(f"{self.configPath}/sangonomiya/settings.json", 'r').read())
+        if os.path.exists(f"{self.configPath}/Python/sangonomiya/settings.json") or os.path.exists(f"{self.configPath}/sangonomiya/settings.json"):
+            if self.OSName == "Windows":
+                self.settings = json.loads(open(f"{self.configPath}/Python/sangonomiya/settings.json", 'r').read())
+            elif self.OSName == "MacOS":
+                self.settings = json.loads(open(f"{self.configPath}/sangonomiya/settings.json", 'r').read())
+            with open(f"{self.configPath}/Python/sangonomiya/settings.json", 'r') as f:
+                self.language = json.loads(f.read())["Customize"]["language"]
         self.settingsLocal = json.loads(open(f"{self.workingDir}/configs/application.json", 'r').read())
 
         self.appVersion = self.settingsLocal["application_version"]
         self.UIVersion = self.settingsLocal["ui_version"]
 
-        with open(f"{self.configPath}/Python/sangonomiya/settings.json", 'r') as f:
-            self.language = json.loads(f.read())["Customize"]["language"]
-
-        self.themeColor = self.settings["Customize"]["themeColor"]
 
     def openFolder(self, path):
         if self.OSName == "Windows":

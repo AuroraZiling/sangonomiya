@@ -20,6 +20,7 @@ class MyFluentIcon(FluentIconBase, Enum):
     ANNOUNCEMENT = "Announcement"
     PLUGIN = "Plugin"
     ABOUT = "About"
+    GITHUB = "Github"
 
     def path(self, theme=Theme.AUTO):
         if theme == Theme.AUTO:

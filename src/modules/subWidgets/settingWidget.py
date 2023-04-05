@@ -6,8 +6,7 @@ sys.path.append("..")
 from modules.subWidgetConfigs import settingConfig
 from components import OSUtils
 from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, ToastToolTip, CustomColorSettingCard,
-                            setThemeColor, isDarkTheme)
+                            ComboBoxSettingCard, ExpandLayout, ColorSettingCard, isDarkTheme, InfoBar)
 from qfluentwidgets import FluentIcon
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import QWidget, QLabel
@@ -25,6 +24,8 @@ class SettingWidget(ScrollArea):
         self.expandLayout = ExpandLayout(self.scrollWidget)
         self.settingLabel = QLabel(self.tr("Settings"), self)
 
+        self.configPath = utils.configPath + "/Python/sangonomiya"
+
         # Storage
         self.storageGroup = SettingCardGroup(self.tr("Storage"), self.scrollWidget)
         self.storageDataCard = PushSettingCard(
@@ -41,17 +42,17 @@ class SettingWidget(ScrollArea):
             cfg.get(cfg.storageCacheFolders),
             self.storageGroup
         )
+        self.storageConfigCard = PushSettingCard(
+            self.tr("Open"),
+            FluentIcon.DOWNLOAD,
+            self.tr("Config Folder"),
+            self.configPath,
+            self.storageGroup
+        )
 
         # Customize
         self.customizeGroup = SettingCardGroup(self.tr("Customize"), self.scrollWidget)
 
-        self.customizeColorSetting = CustomColorSettingCard(
-            cfg.customizeThemeColor,
-            FluentIcon.PALETTE,
-            self.tr("Theme Color"),
-            self.tr("Set the theme color"),
-            self.customizeGroup
-        )
         self.customizeLanguageSetting = ComboBoxSettingCard(
             cfg.customizeLanguage,
             FluentIcon.LANGUAGE,
@@ -95,10 +96,10 @@ class SettingWidget(ScrollArea):
 
         self.storageGroup.addSettingCard(self.storageDataCard)
         self.storageGroup.addSettingCard(self.storageCacheCard)
+        self.storageGroup.addSettingCard(self.storageConfigCard)
 
         # Customize
 
-        self.customizeGroup.addSettingCard(self.customizeColorSetting)
         self.customizeGroup.addSettingCard(self.customizeLanguageSetting)
 
         self.updateSoftwareGroup.addSettingCard(self.updateCheckCard)
@@ -122,10 +123,10 @@ class SettingWidget(ScrollArea):
 
     def __showRestartTooltip(self):
         """ show restart tooltip """
-        ToastToolTip.warn(
-            self.tr('Configuration updated successfully'),
+        InfoBar.warning(
+            '',
             self.tr('Configuration takes effect after restart'),
-            self.window()
+            parent=self.window()
         )
 
     def __connectSignalToSlot(self):
@@ -133,8 +134,6 @@ class SettingWidget(ScrollArea):
         cfg.appRestartSig.connect(self.__showRestartTooltip)
 
         # Storage
-        self.storageDataCard.clicked.connect(lambda: OSUtils.openFolder(cfg.get(cfg.storageDataFolders)))
-        self.storageCacheCard.clicked.connect(lambda: OSUtils.openFolder(cfg.get(cfg.storageCacheFolders)))
-
-        # Customize
-        self.customizeColorSetting.colorChanged.connect(setThemeColor)
+        self.storageDataCard.clicked.connect(lambda: utils.openFolder(cfg.get(cfg.storageDataFolders)))
+        self.storageCacheCard.clicked.connect(lambda: utils.openFolder(cfg.get(cfg.storageCacheFolders)))
+        self.storageConfigCard.clicked.connect(lambda: utils.openFolder(self.configPath))
