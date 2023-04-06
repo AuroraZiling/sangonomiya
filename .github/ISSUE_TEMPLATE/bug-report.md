@@ -18,6 +18,10 @@ assignees: ''
 
 **截图 / Screenshots**
 
-**Windows 版本 / Windows Version**
+**系统版本 / System Version**
+
+E.g. Windows 10 21H2, MacOS Ventura 1.3.21
 
 **软件版本 / Software version**
+
+E.g. R7D4
