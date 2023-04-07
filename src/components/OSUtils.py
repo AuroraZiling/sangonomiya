@@ -7,7 +7,6 @@ sys.path.append("..")
 from PyQt6.QtCore import QLocale, QStandardPaths
 from PyQt6.QtGui import QFont
 
-
 ANNOUNCE_REQUEST_URL = "https://hk4e-api-static.mihoyo.com/common/hk4e_cn/announcement/api/getAnnContent?game=hk4e&game_biz=hk4e_cn&lang=zh-cn&bundle_id=hk4e_cn&platform=pc&region=cn_gf01&level=60&channel_id=1"
 ANNOUNCE_ICON_REQUEST_URL = "https://hk4e-api.mihoyo.com/common/hk4e_cn/announcement/api/getAnnList?game=hk4e&game_biz=hk4e_cn&lang=zh-cn&auth_appid=announcement&authkey_ver=1&bundle_id=hk4e_cn&channel_id=1&level=60&platform=pc&region=cn_gf01&sdk_presentation_style=fullscreen&sdk_screen_transparent=true&sign_type=2&uid=1"
 HTML_MODEL = '''
@@ -23,18 +22,30 @@ HTML_MODEL = '''
 '''
 
 
-def getWorkingDir():
+def getWorkingDir() -> str:
+    """
+    Get the directory where the script running.
+
+    Returns: (str) the parent directory where script running.
+        E.g. /Users/Username/Program/sangonomiya/src (in macOS)
+    """
     if sys.platform.startswith("win32"):
         return os.path.abspath(os.curdir).replace("\\", '/')
     elif sys.platform.startswith("darwin"):
         return os.path.dirname(sys.argv[0])
 
 
-def getOSName():
+def getOSName() -> str:
+    """
+    Get the name of operating system.
+
+    Returns: (str) the OS Name
+       Values are Windows, macOS, Linux, Unknown
+    """
     if sys.platform.startswith("win32"):
         return "Windows"
     elif sys.platform.startswith("darwin"):
-        return "MacOS"
+        return "macOS"
     elif sys.platform.startswith("linux"):
         return "Linux"
     else:
@@ -42,7 +53,14 @@ def getOSName():
 
 
 def getConfigPath(OSName=getOSName()):
-    configPath = str(Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation))).replace("\\", "/")
+    """
+    Get the directory where the configuration file is located.
+
+    Returns: (str) the path
+        E.g. /Users/Username/Library/Application Support (in macOS)
+    """
+    configPath = str(Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation))).replace(
+        "\\", "/")
     if not os.path.exists(configPath):
         os.mkdir(configPath)
     if not os.path.exists(f"{configPath}/sangonomiya"):
@@ -83,7 +101,7 @@ class OSUtils:
                 f"{self.configPath}/sangonomiya/settings.json"):
             if self.OSName == "Windows":
                 self.settings = json.loads(open(f"{self.configPath}/Python/sangonomiya/settings.json", 'r').read())
-            elif self.OSName == "MacOS":
+            elif self.OSName == "macOS":
                 self.settings = json.loads(open(f"{self.configPath}/sangonomiya/settings.json", 'r').read())
             with open(f"{self.configPath}/Python/sangonomiya/settings.json", 'r') as f:
                 self.language = json.loads(f.read())["Customize"]["language"]
@@ -95,15 +113,14 @@ class OSUtils:
     def openFolder(self, path):
         if self.OSName == "Windows":
             os.startfile(path)
-        elif self.OSName == "MacOS":
+        elif self.OSName == "macOS":
             os.system(f"open {path}")
 
     def getFont(self, size):
         if self.OSName == "Windows":
             return QFont("Microsoft YaHei", size)
-        elif self.OSName == "MacOS":
+        elif self.OSName == "macOS":
             return QFont("Microsoft YaHei", size + 6)
-
 
     @staticmethod
     def getAnnounceRequestURL():

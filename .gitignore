@@ -28,3 +28,4 @@ src/components/__pycache__/customIcon.cpython-38.pyc
 /src/logs/
 /src/qfluentwidgets/
 **/__pycache__
+/src/test/

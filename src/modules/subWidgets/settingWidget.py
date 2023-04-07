@@ -7,8 +7,7 @@ from modules.subWidgetConfigs import settingConfig
 from components import OSUtils, customIcon, infoBars
 from components import logTracker as log
 from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, ColorSettingCard, isDarkTheme, InfoBar, InfoBarPosition,
-                            Dialog)
+                            ComboBoxSettingCard, ExpandLayout, isDarkTheme, Dialog)
 from qfluentwidgets import FluentIcon
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import QWidget, QLabel

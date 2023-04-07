@@ -14,7 +14,8 @@ from qfluentwidgets import FluentIcon, NavigationDisplayMode
 from qfluentwidgets import (NavigationInterface, NavigationItemPostion, setTheme, Theme, Dialog)
 from qframelesswindow import FramelessWindow, StandardTitleBar
 
-from modules.subWidgets import homeWidget, gachaReportWidget, linkWidget, announcementWidget, accountWidget, pluginWidget, \
+from modules.subWidgets import homeWidget, gachaReportWidget, linkWidget, announcementWidget, accountWidget, \
+    pluginWidget, \
     settingWidget, aboutWidget
 from components import themeManager, customIcon, OSUtils, downloader
 from components import logTracker as log
@@ -155,8 +156,6 @@ class Window(FramelessWindow):
 
     def switchTo(self, widget):
         self.mainStackWidget.setCurrentWidget(widget)
-
-
 
     def onCurrentInterfaceChanged(self, index):
         widget = self.mainStackWidget.widget(index)

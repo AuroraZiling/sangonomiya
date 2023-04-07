@@ -1,14 +1,13 @@
 # coding:utf-8
-import json\
+import json
 
 import sys
 
 sys.path.append("../../")
 from enum import Enum
 
-from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
-                            ColorConfigItem, OptionsValidator, RangeConfigItem, RangeValidator,
-                            FolderListValidator, EnumSerializer, FolderValidator)
+from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem,
+                            ColorConfigItem, OptionsValidator, EnumSerializer, FolderValidator)
 
 from components.OSUtils import getWorkingDir, getConfigPath
 

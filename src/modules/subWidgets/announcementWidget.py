@@ -1,13 +1,10 @@
-import json
 import sys
-
-from PyQt6 import QtGui
 
 sys.path.append("..")
 
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QPushButton, QListWidget, QVBoxLayout
-from qfluentwidgets import PrimaryPushButton, FluentIcon, StateToolTip, TextEdit
+from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QListWidget, QVBoxLayout
+from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit
 
 from components import OSUtils, downloader
 from modules.subWidgetFunctions import announcementFunctions

@@ -3,9 +3,9 @@ import sys
 sys.path.append("..")
 
 from PyQt6 import QtGui, QtWidgets
-from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QWidget, QSplitter
+from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
 
-from qfluentwidgets import SettingCardGroup, HyperlinkCard, ExpandLayout, HyperlinkCard
+from qfluentwidgets import HyperlinkCard
 from qfluentwidgets import FluentIcon
 
 from components import OSUtils, customIcon
