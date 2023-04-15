@@ -68,7 +68,7 @@ class AboutWidget(QFrame):
             url='https://auroraziling.github.io/sangonomiya/',
             text=self.tr('Open'),
             parent=self,
-            icon=FluentIcon.WEB,
+            icon=FluentIcon.GLOBE,
             title=self.tr('Sangonomiya Documents')
         )
         self.aboutFeedbackGithubIssueHyperlink = HyperlinkCard(

@@ -1,6 +1,6 @@
 import logging
 import time
-from components.OSUtils import getWorkingDir
+from components.OSUtils import getWorkingDir, getConfigAutoDeleteLog, deleteFiles
 
 
 def debugWrite(content):
@@ -23,7 +23,9 @@ def errorWrite(content):
     logging.error(content)
 
 
-logDirPath = getWorkingDir() + "/logs/"
+logDirPath = getWorkingDir() + "/logs"
+if getConfigAutoDeleteLog():
+    deleteFiles(logDirPath)
 logFileName = "Sangonomiya " + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + ".log"
 logging.basicConfig(
     level=logging.DEBUG,

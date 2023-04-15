@@ -7,7 +7,7 @@ sys.path.append("../../")
 from enum import Enum
 
 from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem,
-                            ColorConfigItem, OptionsValidator, EnumSerializer, FolderValidator)
+                            ColorConfigItem, OptionsValidator, EnumSerializer, FolderValidator, BoolValidator)
 
 from components.OSUtils import getWorkingDir, getConfigPath
 
@@ -44,7 +44,9 @@ class Config(QConfig):
     customizeLanguage = OptionsConfigItem(
         "Customize", "language", Language.AUTO, OptionsValidator(Language), EnumSerializer(Language), restart=True)
     customizeThemeColor = ColorConfigItem("Customize", "themeColor", "#009faa")
+    customizeAutoDeleteLog = ConfigItem("Customize", "autoDeleteLog", False, BoolValidator(), restart=True)
+
 
 
 cfg = Config()
-qconfig.load(f"{configPath}/Python/sangonomiya/settings.json", cfg)
+qconfig.load(f"{configPath}/settings.json", cfg)

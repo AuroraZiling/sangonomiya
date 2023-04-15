@@ -6,9 +6,9 @@ block_cipher = None
 
 a = Analysis(
     ['src\\sangonomiya.py'],
-    pathex=[],
+    pathex=['F:\\Projects\\sangonomiya\\VirtualPython\\Lib\\site-packages'],
     binaries=[],
-    datas=[('.\\src\\modules', '.\\modules'),('.\\src\\assets', '.\\assets'),('.\\src\\components', '.\\components'),('.\\src\\configs', '.\\configs'),('.\\src\\languages', '.\\languages'),('.\\src\\qfluentwidgets', '.\\qfluentwidgets')],
+    datas=[('.\\src\\modules', '.\\modules'),('.\\src\\assets', '.\\assets'),('.\\src\\components', '.\\components'),('.\\src\\configs', '.\\configs'),('.\\src\\languages', '.\\languages'),('.\\hidden_imports\\qfluentwidgets', '.\\qfluentwidgets')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

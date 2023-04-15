@@ -29,3 +29,5 @@ src/components/__pycache__/customIcon.cpython-38.pyc
 /src/qfluentwidgets/
 **/__pycache__
 /src/test/
+/src/httpx/
+/hidden_imports/

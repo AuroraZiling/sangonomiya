@@ -1,3 +1,4 @@
+import os.path
 import sys
 
 sys.path.append("..")
@@ -7,6 +8,7 @@ from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QListWidget, QVBoxLayou
 from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit
 
 from components import OSUtils, downloader
+from components import logTracker as log
 from modules.subWidgetFunctions import announcementFunctions
 
 utils = OSUtils.OSUtils()
@@ -17,9 +19,12 @@ class AnnouncementWidget(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        downloader.downloadFromJson(utils.getAnnounceRequestURL(), utils.workingDir + "/cache/", "announce.json")
-        downloader.downloadFromJson(utils.getAnnounceIconRequestURL(), utils.workingDir + "/cache/",
-                                    "announce_icons.json")
+        if not (utils.jsonValidator(f"{utils.workingDir}/cache/announce.json") and utils.jsonValidator(f"{utils.workingDir}/cache/announce_icons.json")):
+            log.infoWrite("[SubWidget][Announcement] Get announce.json")
+            downloader.downloadFromJson(utils.getAnnounceRequestURL(), utils.workingDir + "/cache/", "announce.json")
+            log.infoWrite("[SubWidget][Announcement] Get announce_icon.json")
+            downloader.downloadFromJson(utils.getAnnounceIconRequestURL(), utils.workingDir + "/cache/",
+                                        "announce_icons.json")
 
         self.baseVBox = QVBoxLayout(self)
 
@@ -28,10 +33,27 @@ class AnnouncementWidget(QFrame):
         self.isAnnounceDataAvailable = False if (self.announceData is None) or (self.announceIconData is None) else True
 
         if self.isAnnounceDataAvailable:
-            self.baseAnnounceTitleLabel = QLabel(self)
-            self.baseContentTitleLabel = QLabel(self)
-            self.baseVBox.addWidget(self.baseAnnounceTitleLabel)
-            self.baseVBox.addWidget(self.baseContentTitleLabel)
+            self.headerHBox = QHBoxLayout(self)
+
+            self.headerLeftVBox = QVBoxLayout(self)
+            self.headerLeftAnnounceTitleLabel = QLabel(self)
+            self.headerLeftContentTitleLabel = QLabel(self)
+            self.headerLeftVBox.addWidget(self.headerLeftAnnounceTitleLabel)
+            self.headerLeftVBox.addWidget(self.headerLeftContentTitleLabel)
+
+            self.headerHBox.addLayout(self.headerLeftVBox)
+            self.headerHBox.addStretch(1)
+
+            self.headerRightVBox = QVBoxLayout(self)
+            self.headerRightRefreshBtn = PrimaryPushButton(self.tr("Refresh"), self, FluentIcon.SYNC)
+            self.headerRightAnnounceDateLabel = QLabel(self)
+            self.headerRightVBox.addSpacing(3)
+            self.headerRightVBox.addWidget(self.headerRightRefreshBtn, 0, Qt.AlignmentFlag.AlignRight)
+            self.headerRightVBox.addWidget(self.headerRightAnnounceDateLabel, 0, Qt.AlignmentFlag.AlignRight)
+
+            self.headerHBox.addLayout(self.headerRightVBox)
+            self.headerHBox.addSpacing(5)
+            self.baseVBox.addLayout(self.headerHBox)
 
             self.announceHBox = QHBoxLayout(self)
 
@@ -53,7 +75,7 @@ class AnnouncementWidget(QFrame):
             self.unBaseAnnounceTitleLabel = QLabel(self.tr("Unable to connect to the Internet"), self)
             self.unBaseContentTitleLabel = QLabel(
                 self.tr("You may need to check whether your Internet access is available."), self)
-            self.unRetryBtn = PrimaryPushButton(self.tr("Retry"), self, FluentIcon.UPDATE)
+            self.unRetryBtn = (self.tr("Retry"), self, FluentIcon.UPDATE)
 
             self.baseVBox.addStretch(1)
             self.baseVBox.addWidget(self.unBaseAnnounceTitleLabel)
@@ -68,23 +90,30 @@ class AnnouncementWidget(QFrame):
 
     def initFrame(self):
         if self.isAnnounceDataAvailable:
-            # Top
-            self.baseAnnounceTitleLabel.setText(self.tr("Announcement"))
-            self.baseAnnounceTitleLabel.setFont(utils.getFont(18))
-            self.baseAnnounceTitleLabel.setStyleSheet("color: #FFFFFF;")
-            self.baseContentTitleLabel.setText(self.tr("Have not selected any announcement"))
-            self.baseContentTitleLabel.setFont(utils.getFont(10))
-            self.baseContentTitleLabel.setStyleSheet("color: grey;")
+            # Top - Left
+            self.headerLeftAnnounceTitleLabel.setText(self.tr("Announcement"))
+            self.headerLeftAnnounceTitleLabel.setFont(utils.getFont(18))
+            self.headerLeftAnnounceTitleLabel.setStyleSheet("color: #FFFFFF;")
+            self.headerLeftContentTitleLabel.setText(self.tr("Have not selected any announcement"))
+            self.headerLeftContentTitleLabel.setFont(utils.getFont(10))
+            self.headerLeftContentTitleLabel.setStyleSheet("color: grey;")
+            # Top - Right
+            self.headerRightRefreshBtn.setFixedWidth(100)
+            self.headerRightAnnounceDateLabel.setText(self.tr("Updated on ") + utils.getFileDate(f"{utils.workingDir}/cache/announce.json"))
+            self.headerRightAnnounceDateLabel.setStyleSheet("color: #FFFFFF;")
+            self.headerRightAnnounceDateLabel.setFont(utils.getFont(10))
             # List
-            self.announceListBox.setFixedWidth(300)
+            self.announceListBox.resize(200, 200)
             self.announceListBox.setFrameShape(QFrame.Shape.NoFrame)
             self.announceListBox.setStyleSheet("background-color: #272727; color: #FFFFFF;")
+            self.announceListBox.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
             self.contentBanner.setScaledContents(True)
             # Content
             self.contentBanner.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.contentBanner.setMaximumWidth(750)
             self.content.setReadOnly(True)
-            #self.content.setMaximumWidth(750)
+            # Refresh
+            self.headerRightRefreshBtn.clicked.connect(self.refreshAnnounce)
         else:
             # Unavailable
             self.unBaseAnnounceTitleLabel.setFont(utils.getFont(32))
@@ -97,9 +126,12 @@ class AnnouncementWidget(QFrame):
 
     def __announceListBoxItemChanged(self):
         currentAnnounceData = self.announceFunc.getCurrentAnnounce(self.announceListBox.currentIndex().row())
-        self.baseContentTitleLabel.setText(currentAnnounceData["bigTitle"])
-        self.contentBanner.setPixmap(currentAnnounceData["banner"])
-        self.contentBanner.setFixedHeight(currentAnnounceData["bannerHeight"])
+        self.headerLeftContentTitleLabel.setText(currentAnnounceData["bigTitle"])
+        self.contentBanner.hide()
+        if currentAnnounceData["banner"]:
+            self.contentBanner.show()
+            self.contentBanner.setPixmap(currentAnnounceData["banner"])
+            self.contentBanner.setFixedHeight(currentAnnounceData["bannerHeight"])
         self.content.setHtml(currentAnnounceData["contentHtml"])
 
     def initAnnounce(self):
@@ -108,3 +140,18 @@ class AnnouncementWidget(QFrame):
             self.announceListBox.addItem(item)
             self.announceListBox.item(index).setSizeHint(QSize(300, 30))
         self.announceListBox.currentItemChanged.connect(self.__announceListBoxItemChanged)
+        self.announceListBox.setCurrentRow(0)
+        self.__announceListBoxItemChanged()
+
+    def refreshAnnounce(self):
+        self.announceListBox.clear()
+        log.infoWrite("[SubWidget][Announcement] Get announce.json")
+        downloader.downloadFromJson(utils.getAnnounceRequestURL(), utils.workingDir + "/cache/", "announce.json")
+        log.infoWrite("[SubWidget][Announcement] Get announce_icon.json")
+        downloader.downloadFromJson(utils.getAnnounceIconRequestURL(), utils.workingDir + "/cache/",
+                                    "announce_icons.json")
+        self.announceData = utils.getAnnounceData()
+        self.announceIconData = utils.getAnnounceIconData()
+        self.isAnnounceDataAvailable = False if (self.announceData is None) or (self.announceIconData is None) else True
+        self.initAnnounce()
+

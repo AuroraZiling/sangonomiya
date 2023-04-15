@@ -7,7 +7,8 @@ from modules.subWidgetConfigs import settingConfig
 from components import OSUtils, customIcon, infoBars
 from components import logTracker as log
 from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, isDarkTheme, Dialog)
+                            ComboBoxSettingCard, ExpandLayout, isDarkTheme, Dialog, OptionsSettingCard,
+                            SwitchSettingCard)
 from qfluentwidgets import FluentIcon
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import QWidget, QLabel
@@ -82,6 +83,14 @@ class SettingWidget(ScrollArea):
             parent=self.customizeGroup
         )
 
+        self.customizeAutoDeleteLogSetting = SwitchSettingCard(
+            FluentIcon.DELETE,
+            self.tr('Automatically delete old logs'),
+            self.tr("Delete all previous logs each time the application is started"),
+            configItem=cfg.customizeAutoDeleteLog,
+            parent=self.customizeGroup
+        )
+
         # Update
         self.updateSoftwareGroup = SettingCardGroup(self.tr("Software Update"), self.scrollWidget)
 
@@ -127,6 +136,9 @@ class SettingWidget(ScrollArea):
         # Customize
 
         self.customizeGroup.addSettingCard(self.customizeLanguageSetting)
+        self.customizeGroup.addSettingCard(self.customizeAutoDeleteLogSetting)
+
+        # Update
 
         self.updateSoftwareGroup.addSettingCard(self.updateCheckCard)
 

@@ -8,16 +8,15 @@ import time
 from PyQt6.QtCore import Qt, QTranslator
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QStackedWidget, QHBoxLayout
-from PyQt6.uic.properties import QtGui
 
-from qfluentwidgets import FluentIcon, NavigationDisplayMode
+from qfluentwidgets import FluentIcon
 from qfluentwidgets import (NavigationInterface, NavigationItemPostion, setTheme, Theme, Dialog)
 from qframelesswindow import FramelessWindow, StandardTitleBar
 
 from modules.subWidgets import homeWidget, gachaReportWidget, linkWidget, announcementWidget, accountWidget, \
     pluginWidget, \
     settingWidget, aboutWidget
-from components import themeManager, customIcon, OSUtils, downloader
+from components import themeManager, customIcon, OSUtils
 from components import logTracker as log
 
 utils = OSUtils.OSUtils()
@@ -46,7 +45,7 @@ class Window(FramelessWindow):
         setTheme(Theme.DARK)
 
         self.mainHBoxLayout = QHBoxLayout(self)
-        self.navigationInterface = NavigationInterface(self, showMenuButton=False)
+        self.navigationInterface = NavigationInterface(self, showMenuButton=True)
         self.mainStackWidget = QStackedWidget(self)
 
         self.homeInterface = homeWidget.HomeWidget(self)
