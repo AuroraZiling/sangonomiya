@@ -10,7 +10,7 @@ from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QStackedWidget, QHBoxLayout
 
 from qfluentwidgets import FluentIcon
-from qfluentwidgets import (NavigationInterface, NavigationItemPostion, setTheme, Theme, Dialog)
+from qfluentwidgets import (NavigationInterface, NavigationItemPosition, setTheme, Theme, Dialog)
 from qframelesswindow import FramelessWindow, StandardTitleBar
 
 from modules.subWidgets import homeWidget, gachaReportWidget, linkWidget, announcementWidget, accountWidget, \
@@ -111,7 +111,7 @@ class Window(FramelessWindow):
             icon=customIcon.MyFluentIcon.USER,
             text=self.tr("Account"),
             onClick=lambda: self.switchTo(self.accountInterface),
-            position=NavigationItemPostion.BOTTOM
+            position=NavigationItemPosition.BOTTOM
         )
 
         self.navigationInterface.addItem(
@@ -119,7 +119,7 @@ class Window(FramelessWindow):
             icon=customIcon.MyFluentIcon.PLUGIN,
             text=self.tr("Plugins"),
             onClick=lambda: self.switchTo(self.pluginInterface),
-            position=NavigationItemPostion.BOTTOM
+            position=NavigationItemPosition.BOTTOM
         )
 
         self.navigationInterface.addItem(
@@ -127,7 +127,7 @@ class Window(FramelessWindow):
             icon=FluentIcon.SETTING,
             text=self.tr("Settings"),
             onClick=lambda: self.switchTo(self.settingInterface),
-            position=NavigationItemPostion.BOTTOM
+            position=NavigationItemPosition.BOTTOM
         )
 
         self.navigationInterface.addItem(
@@ -135,14 +135,14 @@ class Window(FramelessWindow):
             icon=customIcon.MyFluentIcon.ABOUT,
             text=self.tr("About"),
             onClick=lambda: self.switchTo(self.aboutInterface),
-            position=NavigationItemPostion.BOTTOM
+            position=NavigationItemPosition.BOTTOM
         )
         self.navigationInterface.setExpandWidth(220)
         self.mainStackWidget.currentChanged.connect(self.onCurrentInterfaceChanged)
         self.onCurrentInterfaceChanged(0)
 
     def initWindow(self):
-        self.resize(1300, 700)
+        self.setFixedSize(1200, 700)
         self.setWindowTitle('Sangonomiya')
         self.setWindowIcon(QIcon(f'{utils.workingDir}/assets/avatar.png'))
         self.titleBar.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)

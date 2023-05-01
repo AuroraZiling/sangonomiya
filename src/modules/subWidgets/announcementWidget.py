@@ -136,6 +136,8 @@ class AnnouncementWidget(QFrame):
 
     def initAnnounce(self):
         self.announceFunc.getIcons()
+        self.headerRightAnnounceDateLabel.setText(
+            self.tr("Updated on ") + utils.getFileDate(f"{utils.workingDir}/cache/announce.json"))
         for index, item in enumerate(self.announceFunc.getItems()):
             self.announceListBox.addItem(item)
             self.announceListBox.item(index).setSizeHint(QSize(300, 30))
