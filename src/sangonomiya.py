@@ -46,7 +46,7 @@ class Window(FramelessWindow):
         setTheme(Theme.DARK)
 
         self.mainHBoxLayout = QHBoxLayout(self)
-        self.navigationInterface = NavigationInterface(self, showMenuButton=True)
+        self.navigationInterface = NavigationInterface(self, showMenuButton=True, showReturnButton=True)
         self.mainStackWidget = QStackedWidget(self)
 
         self.homeInterface = homeWidget.HomeWidget(self)

@@ -1,8 +1,9 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
-from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QAbstractItemView, QTextEdit
-from components import OSUtils, downloader
-from qfluentwidgets import FluentIcon, RoundMenu, TableWidget, TextEdit
+from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QAbstractItemView, QTextEdit, QHeaderView, QWidget
+from components import OSUtils, downloader, infoBars
+from pyqt6_plugins.examplebuttonplugin import QtGui
+from qfluentwidgets import FluentIcon, RoundMenu, TableWidget, TextEdit, MessageBox, Dialog, InfoBarPosition
 
 from qfluentwidgets import DropDownPushButton
 
@@ -13,6 +14,8 @@ class GachaReportWidget(QFrame):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+
+        self.frameMessageBox = None
 
         self.baseVBox = QVBoxLayout(self)
 
@@ -66,14 +69,18 @@ class GachaReportWidget(QFrame):
         self.setObjectName("GachaReportWidget")
         self.initFrame()
 
+    def showEvent(self, a0: QtGui.QShowEvent) -> None:
+        if utils.getAccountUid() == 0:
+            infoBars.warningBar(self.tr("Warning"), self.tr("No account information found"), InfoBarPosition.BOTTOM, self)
+
     def initFrame(self):
         self.headerLeftGachaReportTitleLabel.setFont(utils.getFont(18))
         self.headerLeftGachaReportTitleLabel.setStyleSheet("color: white;")
         self.headerLeftGachaReportUIDLabel.setStyleSheet("color: grey;")
-        self.headerRightFullUpdateDropBtn.setFixedWidth(280)
-        self.headerRightFullUpdateDropBtnMenu.addAction(QAction(FluentIcon.ALBUM.icon(), self.tr("Interception through proxy server")))
-        self.headerRightFullUpdateDropBtnMenu.addAction(QAction(FluentIcon.DOCUMENT.icon(), self.tr("Get through in-game web cache")))
-        self.headerRightFullUpdateDropBtnMenu.addAction(QAction(FluentIcon.ALIGNMENT.icon(), self.tr("Get by URL")))
+        self.headerRightFullUpdateDropBtn.setFixedWidth(200)
+        self.headerRightFullUpdateDropBtnMenu.addAction(QAction(FluentIcon.ALBUM.icon(), self.tr("Proxy Server Mode")))
+        self.headerRightFullUpdateDropBtnMenu.addAction(QAction(FluentIcon.DOCUMENT.icon(), self.tr("Web Cache Mode")))
+        self.headerRightFullUpdateDropBtnMenu.addAction(QAction(FluentIcon.ALIGNMENT.icon(), self.tr("URL Mode")))
         self.headerRightFullUpdateDropBtn.setMenu(self.headerRightFullUpdateDropBtnMenu)
 
         self.bottomLeftGachaTable.setRowCount(60)
@@ -81,6 +88,7 @@ class GachaReportWidget(QFrame):
         self.bottomLeftGachaTable.resizeColumnsToContents()
         self.bottomLeftGachaTable.setColumnCount(5)
         self.bottomLeftGachaTable.verticalHeader().setHidden(True)
+        self.bottomLeftGachaTable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.bottomLeftGachaTable.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.bottomLeftGachaTable.setHorizontalHeaderLabels([self.tr("ID"), self.tr("Type"), self.tr("Name"), self.tr("Time"), self.tr("Mode")])
 

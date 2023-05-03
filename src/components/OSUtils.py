@@ -123,6 +123,7 @@ class OSUtils:
         self.OSName = getOSName()
         self.configPath = getConfigPath()
 
+        self.accountInfo = json.loads(open(f"{self.configPath}/account.json", 'r', encoding="utf-8").read())
         self.license = open(f"{self.workingDir}/configs/license", 'r').read()
         self.openSourceLicense = open(f"{self.workingDir}/configs/open_source", 'r').read()
 
@@ -189,6 +190,14 @@ class OSUtils:
                 os.remove(f"{self.workingDir}/cache/{eachLogFile}")
             except PermissionError:
                 continue
+
+    def getAccountUid(self):
+        self.accountInfo = json.loads(open(f"{self.configPath}/account.json", 'r', encoding="utf-8").read())
+        return self.accountInfo["uid"]
+
+    def getAccountName(self):
+        self.accountInfo = json.loads(open(f"{self.configPath}/account.json", 'r', encoding="utf-8").read())
+        return self.accountInfo["name"]
 
     @staticmethod
     def jsonValidator(path):

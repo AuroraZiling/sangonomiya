@@ -1,5 +1,6 @@
 # coding:utf-8
 import json
+import os.path
 
 import sys
 
@@ -15,7 +16,6 @@ workingDir = getWorkingDir()
 configPath = getConfigPath()
 settingsLocal = json.loads(open(f"{workingDir}/configs/application.json", 'r').read())
 appVersion, UIVersion = settingsLocal["application_version"], settingsLocal["ui_version"]
-
 
 class Language(Enum):
     """ Language enumeration """
@@ -50,3 +50,7 @@ class Config(QConfig):
 
 cfg = Config()
 qconfig.load(f"{configPath}/settings.json", cfg)
+
+if not os.path.exists(f"{configPath}/account.json"):
+    modelFile = open(f"{workingDir}/configs/modelFiles/account.json", encoding="utf-8").read()
+    open(f"{configPath}/account.json", 'w', encoding="utf-8").write(modelFile)

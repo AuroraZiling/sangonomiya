@@ -1,14 +1,15 @@
 import os.path
 import sys
+import time
 import webbrowser
 
 sys.path.append("..")
 
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QListWidget, QVBoxLayout, QSizePolicy
-from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit, PushButton
+from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit, PushButton, StateToolTip, InfoBarPosition
 
-from components import OSUtils, downloader
+from components import OSUtils, downloader, infoBars
 from components import logTracker as log
 from modules.subWidgetFunctions import announcementFunctions
 
@@ -19,7 +20,6 @@ class AnnouncementWidget(QFrame):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-
         if not (utils.jsonValidator(f"{utils.workingDir}/cache/announce.json") and utils.jsonValidator(f"{utils.workingDir}/cache/announce_icons.json")):
             log.infoWrite("[SubWidget][Announcement] Get announce.json")
             downloader.downloadFromJson(utils.getAnnounceRequestURL(), utils.workingDir + "/cache/", "announce.json")
@@ -114,10 +114,12 @@ class AnnouncementWidget(QFrame):
             self.announceListBox.setStyleSheet("background-color: #272727; color: #FFFFFF;")
             self.announceListBox.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
             self.announceListBox.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-            self.contentBanner.setScaledContents(True)
+            self.announceListBox.currentItemChanged.connect(self.__announceListBoxItemChanged)
+            self.announceListBox.setCurrentRow(0)
             # Content
             self.contentBanner.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.contentBanner.setMaximumWidth(750)
+            self.contentBanner.setScaledContents(True)
             self.contentNoBanner.setFont(utils.getFont(24))
             self.contentNoBanner.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
             self.contentNoBanner.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -149,7 +151,6 @@ class AnnouncementWidget(QFrame):
         else:
             self.contentNoBanner.show()
         self.currentAnnounceHTMLPath = currentAnnounceData["contentHtml"]
-        print(self.currentAnnounceHTMLPath)
 
     def initAnnounce(self):
         self.announceFunc.getIcons()
@@ -158,8 +159,7 @@ class AnnouncementWidget(QFrame):
         for index, item in enumerate(self.announceFunc.getItems()):
             self.announceListBox.addItem(item)
             self.announceListBox.item(index).setSizeHint(QSize(300, 30))
-        self.announceListBox.currentItemChanged.connect(self.__announceListBoxItemChanged)
-        self.announceListBox.setCurrentRow(0)
+
         self.__announceListBoxItemChanged()
 
     def refreshAnnounce(self):
@@ -173,6 +173,7 @@ class AnnouncementWidget(QFrame):
         self.announceIconData = utils.getAnnounceIconData()
         self.isAnnounceDataAvailable = False if (self.announceData is None) or (self.announceIconData is None) else True
         self.initAnnounce()
+        infoBars.successBar(self.tr("Success"), self.tr("Announcement Updated"), InfoBarPosition.TOP, self)
 
     def openAnnounce(self):
         webbrowser.open(f"{utils.workingDir}/cache/{self.announceListBox.currentRow()}.html")
