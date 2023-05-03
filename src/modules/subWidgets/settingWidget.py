@@ -71,6 +71,14 @@ class SettingWidget(ScrollArea):
             self.defaultGroup
         )
 
+        self.defaultCacheDeleteCard = PushSettingCard(
+            self.tr("Delete"),
+            customIcon.MyFluentIcon.DELETE,
+            f"{self.tr('Delete all cache files')} ({self.tr('About')} {utils.getDirSize(utils.workingDir + '/cache')} MB)",
+            f"All cache files in {utils.workingDir + '/cache'} will be deleted",
+            self.defaultGroup
+        )
+
         # Customize
         self.customizeGroup = SettingCardGroup(self.tr("Customize"), self.scrollWidget)
 
@@ -103,6 +111,7 @@ class SettingWidget(ScrollArea):
         )
 
         self.__initWidget()
+        self.setObjectName("SettingWidget")
         log.infoWrite("[SubWidget][Settings] Initialized")
 
     def __initWidget(self):
@@ -132,6 +141,7 @@ class SettingWidget(ScrollArea):
         # Default
 
         self.defaultGroup.addSettingCard(self.defaultLogDeleteCard)
+        self.defaultGroup.addSettingCard(self.defaultCacheDeleteCard)
 
         # Customize
 
@@ -168,6 +178,11 @@ class SettingWidget(ScrollArea):
         log.infoWrite("[SubWidget][Settings] All old logs deleted")
         infoBars.successBar(self.tr("Success"), self.tr("All old logs deleted"), parent=self.window())
 
+    def __defaultCacheDeleteCardClicked(self):
+        utils.deleteAllCacheFiles()
+        log.infoWrite("[SubWidget][Settings] All cache files deleted")
+        infoBars.successBar(self.tr("Success"), self.tr("All old cache files deleted"), parent=self.window())
+
     def __connectSignalToSlot(self):
         """ connect signal to slot """
         cfg.appRestartSig.connect(lambda: infoBars.warningBar(self.tr("Warning"), self.tr(
@@ -181,6 +196,7 @@ class SettingWidget(ScrollArea):
 
         # Default
         self.defaultLogDeleteCard.clicked.connect(self.__defaultLogDeleteCardClicked)
+        self.defaultCacheDeleteCard.clicked.connect(self.__defaultCacheDeleteCardClicked)
 
         # Update
         self.updateCheckCard.clicked.connect(lambda: self.__showMessageBox(self.tr("Oops!"), self.tr("This feature is not available yet!")))

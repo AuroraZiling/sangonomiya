@@ -1,11 +1,12 @@
 import os.path
 import sys
+import webbrowser
 
 sys.path.append("..")
 
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QListWidget, QVBoxLayout
-from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit
+from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QListWidget, QVBoxLayout, QSizePolicy
+from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit, PushButton
 
 from components import OSUtils, downloader
 from components import logTracker as log
@@ -30,6 +31,7 @@ class AnnouncementWidget(QFrame):
 
         self.announceData = utils.getAnnounceData()
         self.announceIconData = utils.getAnnounceIconData()
+        self.currentAnnounceHTMLPath = ""
         self.isAnnounceDataAvailable = False if (self.announceData is None) or (self.announceIconData is None) else True
 
         if self.isAnnounceDataAvailable:
@@ -62,9 +64,13 @@ class AnnouncementWidget(QFrame):
 
             self.contentVBox = QVBoxLayout(self)
             self.contentBanner = QLabel(self)
-            self.content = TextEdit(self)
+            self.contentNoBanner = QLabel(self.tr("This announcement has no cover"), self)
+            self.contentHTMLBtn = PushButton(self)
             self.contentVBox.addWidget(self.contentBanner)
-            self.contentVBox.addWidget(self.content)
+            self.contentVBox.addStretch(1)
+            self.contentVBox.addWidget(self.contentNoBanner)
+            self.contentVBox.addStretch(1)
+            self.contentVBox.addWidget(self.contentHTMLBtn)
             self.announceHBox.addLayout(self.contentVBox)
 
             self.baseVBox.addLayout(self.announceHBox)
@@ -107,11 +113,18 @@ class AnnouncementWidget(QFrame):
             self.announceListBox.setFrameShape(QFrame.Shape.NoFrame)
             self.announceListBox.setStyleSheet("background-color: #272727; color: #FFFFFF;")
             self.announceListBox.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+            self.announceListBox.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
             self.contentBanner.setScaledContents(True)
             # Content
             self.contentBanner.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.contentBanner.setMaximumWidth(750)
-            self.content.setReadOnly(True)
+            self.contentNoBanner.setFont(utils.getFont(24))
+            self.contentNoBanner.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+            self.contentNoBanner.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.contentNoBanner.setStyleSheet("color: #FFFFFF;")
+            self.contentHTMLBtn.setText(self.tr("Details"))
+            self.contentHTMLBtn.setFixedSize(750, 30)
+            self.contentHTMLBtn.clicked.connect(self.openAnnounce)
             # Refresh
             self.headerRightRefreshBtn.clicked.connect(self.refreshAnnounce)
         else:
@@ -130,9 +143,13 @@ class AnnouncementWidget(QFrame):
         self.contentBanner.hide()
         if currentAnnounceData["banner"]:
             self.contentBanner.show()
+            self.contentNoBanner.hide()
             self.contentBanner.setPixmap(currentAnnounceData["banner"])
             self.contentBanner.setFixedHeight(currentAnnounceData["bannerHeight"])
-        self.content.setHtml(currentAnnounceData["contentHtml"])
+        else:
+            self.contentNoBanner.show()
+        self.currentAnnounceHTMLPath = currentAnnounceData["contentHtml"]
+        print(self.currentAnnounceHTMLPath)
 
     def initAnnounce(self):
         self.announceFunc.getIcons()
@@ -157,3 +174,5 @@ class AnnouncementWidget(QFrame):
         self.isAnnounceDataAvailable = False if (self.announceData is None) or (self.announceIconData is None) else True
         self.initAnnounce()
 
+    def openAnnounce(self):
+        webbrowser.open(f"{utils.workingDir}/cache/{self.announceListBox.currentRow()}.html")

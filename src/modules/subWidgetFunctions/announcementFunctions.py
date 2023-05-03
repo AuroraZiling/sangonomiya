@@ -12,14 +12,18 @@ from components import infoBars, downloader
 from components.OSUtils import getWorkingDir, HTML_MODEL
 
 
-def contentHTMLPhaser(css, contentHTML):
+def contentHTMLPhaser(css, contentHTML, innerImageUrl = None):
     contentHTML = contentHTML.replace('''style="color:rgba(85,85,85,1)"''', "")
     contentHTML = contentHTML.replace('''style="background-color: rgb(255, 215, 185);"''', "")
     contentHTML = contentHTML.replace('''style="background-color: rgb(254, 245, 231);"''', "")
     contentHTML = contentHTML.replace('''&lt;t class="t_lc"&gt;''', "")
     contentHTML = contentHTML.replace('''&lt;t class="t_gl"&gt;''', "")
     contentHTML = contentHTML.replace('''&lt;/t&gt;''', "")
-    return HTML_MODEL.replace("{css}", css).replace("{content}", contentHTML)
+    contentHTML = HTML_MODEL.replace("{css}", css).replace("{content}", contentHTML)
+    if innerImageUrl:
+        for eachInnerImage in innerImageUrl.keys():
+            contentHTML = contentHTML.replace(eachInnerImage, innerImageUrl[eachInnerImage])
+    return contentHTML
 
 
 class AnnouncementFunctions:
@@ -30,8 +34,9 @@ class AnnouncementFunctions:
         self.announceIconURLList = []
         self.announceIconNameList = []
         self.announceTitleList = []
+        self.announceInnerImageMapping = {}
 
-        self.announceStyle = open(f"{getWorkingDir()}/assets/css/github-markdown-dark.css", 'r').read()
+        self.announceStyle = open(f"{getWorkingDir()}/assets/css/github-markdown-light.css", 'r').read()
 
         self.getIconsURL()
         self.getTitles()
@@ -70,6 +75,11 @@ class AnnouncementFunctions:
         announceId = str(currentAnnounce["ann_id"])
         bigTitle = currentAnnounce["title"]
         contentHtml = currentAnnounce["content"]
+        innerImageSources = self.getImageURLFromSource(contentHtml)
+        for eachInnerImage in innerImageSources:
+            if not os.path.exists(f"{getWorkingDir()}/cache/{eachInnerImage.split('/')[-1]}"):
+                downloader.downloadFromImage(eachInnerImage, f"{getWorkingDir()}/cache/", eachInnerImage.split('/')[-1])
+                self.announceInnerImageMapping[eachInnerImage] = f"{getWorkingDir()}/cache/{eachInnerImage.split('/')[-1]}"
         if currentAnnounce["banner"]:
             downloader.downloadFromImage(currentAnnounce["banner"], f"{getWorkingDir()}/cache/", announceId + ".jpg") if not os.path.exists(f"{getWorkingDir()}/cache/{announceId}.jpg") else None
             banner = QPixmap(f"{getWorkingDir()}/cache/{announceId}.jpg")
@@ -87,6 +97,7 @@ class AnnouncementFunctions:
             banner = ""
             bannerHeight = 0
 
-        contentHtml = contentHTMLPhaser(self.announceStyle, contentHtml)
+        contentHtml = contentHTMLPhaser(self.announceStyle, contentHtml, self.announceInnerImageMapping)
+        open(f"{getWorkingDir()}/cache/{index}.html", 'w', encoding="utf-8").write(contentHtml)
         return {"announceId": announceId, "bigTitle": bigTitle, "banner": banner, "bannerHeight": bannerHeight,
-                "contentHtml": contentHtml}
+                "contentHtml": f"{index}.html"}

@@ -155,6 +155,13 @@ class OSUtils:
     def getAnnounceIconRequestURL():
         return ANNOUNCE_ICON_REQUEST_URL
 
+    @staticmethod
+    def getDirSize(path):
+        size = 0
+        for root, dirs, files in os.walk(path):
+            size += sum([os.path.getsize(os.path.join(root, name)) for name in files])
+        return round(size / 1024 / 1024, 2)
+
     def getAnnounceData(self):
         try:
             return json.loads(open(f"{self.workingDir}/cache/announce.json", 'r', encoding="utf-8").read())
@@ -172,6 +179,14 @@ class OSUtils:
         for eachLogFile in logDir:
             try:
                 os.remove(f"{self.workingDir}/logs/{eachLogFile}")
+            except PermissionError:
+                continue
+
+    def deleteAllCacheFiles(self):
+        logDir = os.listdir(f"{self.workingDir}/cache")
+        for eachLogFile in logDir:
+            try:
+                os.remove(f"{self.workingDir}/cache/{eachLogFile}")
             except PermissionError:
                 continue
 

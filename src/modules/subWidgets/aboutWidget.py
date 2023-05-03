@@ -113,7 +113,7 @@ class AboutWidget(QFrame):
     def initFrame(self):
         # Top
         # Top - Project Description
-        self.aboutTopProjImage.move(50, 50)
+        self.aboutTopProjImage.move(60, 50)
         self.aboutTopProjImage.setFixedSize(128, 128)
         self.aboutTopProjImage.setPixmap(QtGui.QPixmap(f"{utils.workingDir}/assets/avatar_rounded.png"))
         self.aboutTopProjImage.setScaledContents(True)

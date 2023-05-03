@@ -42,6 +42,7 @@ class Window(FramelessWindow):
         super().__init__()
 
         self.setTitleBar(StandardTitleBar(self))
+        self.setWindowFlags(Qt.WindowType.WindowMinimizeButtonHint | Qt.WindowType.MSWindowsFixedSizeDialogHint)
         setTheme(Theme.DARK)
 
         self.mainHBoxLayout = QHBoxLayout(self)
@@ -85,6 +86,7 @@ class Window(FramelessWindow):
             text=self.tr("Home"),
             onClick=lambda: self.switchTo(self.homeInterface)
         )
+
         self.navigationInterface.addItem(
             routeKey=self.gachaReportInterface.objectName(),
             icon=customIcon.MyFluentIcon.GACHA_REPORT,
