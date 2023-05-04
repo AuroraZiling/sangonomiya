@@ -4,16 +4,18 @@ import os.path
 
 import sys
 
-sys.path.append("../../")
+sys.path.append("../../../")
 from enum import Enum
 
 from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem,
                             ColorConfigItem, OptionsValidator, EnumSerializer, FolderValidator, BoolValidator)
 
-from components.OSUtils import getWorkingDir, getConfigPath
+from modules.Scripts.Utils.ConfigUtils import ConfigUtils
 
-workingDir = getWorkingDir()
-configPath = getConfigPath()
+utils = ConfigUtils()
+
+workingDir = utils.workingDir
+configPath = utils.configPath
 settingsLocal = json.loads(open(f"{workingDir}/configs/application.json", 'r').read())
 appVersion, UIVersion = settingsLocal["application_version"], settingsLocal["ui_version"]
 

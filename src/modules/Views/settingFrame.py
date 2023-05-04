@@ -3,18 +3,20 @@ import sys
 
 sys.path.append("..")
 
-from modules.subWidgetConfigs import settingConfig
-from components import OSUtils, customIcon, infoBars
-from components import logTracker as log
+from modules.Views.ViewConfigs import settingConfig
+from modules.Scripts.UI import customIcon, infoBars
+from modules.Scripts.Utils import ConfigUtils
+from modules.Scripts.Utils import logTracker as log
 from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
                             ComboBoxSettingCard, ExpandLayout, isDarkTheme, Dialog, OptionsSettingCard,
                             SwitchSettingCard)
-from qfluentwidgets import FluentIcon
+from qfluentwidgets import FluentIcon, InfoBarPosition
+from PyQt6 import QtGui
 from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtWidgets import QWidget, QLabel
+from PyQt6.QtWidgets import QWidget, QLabel, QApplication
 
 cfg = settingConfig.cfg
-utils = OSUtils.OSUtils()
+utils = ConfigUtils.ConfigUtils()
 
 
 class SettingWidget(ScrollArea):
@@ -111,7 +113,7 @@ class SettingWidget(ScrollArea):
         )
 
         self.__initWidget()
-        self.setObjectName("SettingWidget")
+        self.setObjectName("SettingFrame")
         log.infoWrite("[SubWidget][Settings] Initialized")
 
     def __initWidget(self):
@@ -176,17 +178,24 @@ class SettingWidget(ScrollArea):
     def __defaultLogDeleteCardClicked(self):
         utils.deleteAllLogFiles()
         log.infoWrite("[SubWidget][Settings] All old logs deleted")
-        infoBars.successBar(self.tr("Success"), self.tr("All old logs deleted"), parent=self.window())
+        infoBars.successBar(self.tr("Success"), self.tr("All old logs deleted"), parent=self.window(), position="br")
+
+    def showEvent(self, a0: QtGui.QShowEvent) -> None:
+        self.__defaultCacheSizeUpdate()
 
     def __defaultCacheDeleteCardClicked(self):
         utils.deleteAllCacheFiles()
         log.infoWrite("[SubWidget][Settings] All cache files deleted")
-        infoBars.successBar(self.tr("Success"), self.tr("All old cache files deleted"), parent=self.window())
+        self.__defaultCacheSizeUpdate()
+        infoBars.successBar(self.tr("Success"), self.tr("All old cache files deleted"), parent=self.window(), position="br")
+
+    def __defaultCacheSizeUpdate(self):
+        self.defaultCacheDeleteCard.titleLabel.setText(f"{self.tr('Delete all cache files')} ({self.tr('About')} {utils.getDirSize(utils.workingDir + '/cache')} MB)")
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
         cfg.appRestartSig.connect(lambda: infoBars.warningBar(self.tr("Warning"), self.tr(
-            "Please restart the application to apply the changes"), parent=self.window()))
+            "Please restart the application to apply the changes"), parent=self.window(), position="b"))
 
         # Storage
         self.storageDataCard.clicked.connect(lambda: utils.openFolder(cfg.get(cfg.storageDataFolders)))

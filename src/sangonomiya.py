@@ -1,7 +1,6 @@
 # coding:utf-8
 import os
 import sys
-
 import ctypes
 import time
 
@@ -9,17 +8,15 @@ from PyQt6.QtCore import Qt, QTranslator
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QStackedWidget, QHBoxLayout
 
-from qfluentwidgets import FluentIcon
-from qfluentwidgets import (NavigationInterface, NavigationItemPosition, setTheme, Theme, Dialog)
+from qfluentwidgets import FluentIcon, NavigationInterface, NavigationItemPosition, setTheme, Theme, Dialog
 from qframelesswindow import FramelessWindow, StandardTitleBar
 
-from modules.subWidgets import homeWidget, gachaReportWidget, linkWidget, announcementWidget, accountWidget, \
-    pluginWidget, \
-    settingWidget, aboutWidget
-from components import themeManager, customIcon, OSUtils
-from components import logTracker as log
+from modules.Views import homeFrame, gachaReportFrame, linkFrame, announcementFrame, accountFrame, \
+    settingFrame, aboutFrame
+from modules.Scripts.UI import customIcon
+from modules.Scripts.Utils import ConfigUtils, logTracker as log
 
-utils = OSUtils.OSUtils()
+utils = ConfigUtils.ConfigUtils()
 
 if not os.path.exists(utils.workingDir + "/logs/"):
     os.mkdir(utils.workingDir + "/logs/")
@@ -46,24 +43,22 @@ class Window(FramelessWindow):
         setTheme(Theme.DARK)
 
         self.mainHBoxLayout = QHBoxLayout(self)
-        self.navigationInterface = NavigationInterface(self, showMenuButton=True, showReturnButton=True)
+        self.navigationInterface = NavigationInterface(self, showMenuButton=True)
         self.mainStackWidget = QStackedWidget(self)
 
-        self.homeInterface = homeWidget.HomeWidget(self)
-        self.gachaReportInterface = gachaReportWidget.GachaReportWidget(self)
-        self.linkInterface = linkWidget.LinkWidget(self)
-        self.announcementInterface = announcementWidget.AnnouncementWidget(self)
-        self.accountInterface = accountWidget.AccountWidget(self)
-        self.pluginInterface = pluginWidget.PluginWidget(self)
-        self.settingInterface = settingWidget.SettingWidget(self)
-        self.aboutInterface = aboutWidget.AboutWidget(self)
+        self.homeInterface = homeFrame.HomeWidget(self)
+        self.gachaReportInterface = gachaReportFrame.GachaReportWidget(self)
+        self.linkInterface = linkFrame.LinkWidget(self)
+        self.announcementInterface = announcementFrame.AnnouncementWidget(self)
+        self.accountInterface = accountFrame.AccountWidget(self)
+        self.settingInterface = settingFrame.SettingWidget(self)
+        self.aboutInterface = aboutFrame.AboutWidget(self)
 
         self.mainStackWidget.addWidget(self.homeInterface)
         self.mainStackWidget.addWidget(self.gachaReportInterface)
         self.mainStackWidget.addWidget(self.linkInterface)
         self.mainStackWidget.addWidget(self.announcementInterface)
         self.mainStackWidget.addWidget(self.accountInterface)
-        self.mainStackWidget.addWidget(self.pluginInterface)
         self.mainStackWidget.addWidget(self.settingInterface)
         self.mainStackWidget.addWidget(self.aboutInterface)
 
@@ -117,14 +112,6 @@ class Window(FramelessWindow):
         )
 
         self.navigationInterface.addItem(
-            routeKey=self.pluginInterface.objectName(),
-            icon=customIcon.MyFluentIcon.PLUGIN,
-            text=self.tr("Plugins"),
-            onClick=lambda: self.switchTo(self.pluginInterface),
-            position=NavigationItemPosition.BOTTOM
-        )
-
-        self.navigationInterface.addItem(
             routeKey=self.settingInterface.objectName(),
             icon=FluentIcon.SETTING,
             text=self.tr("Settings"),
@@ -153,7 +140,7 @@ class Window(FramelessWindow):
         w, h = desktop.width(), desktop.height()
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
 
-        self.setStyleSheet(themeManager.setTheme("dark"))
+        self.setStyleSheet(open(f"{utils.workingDir}/assets/themes/dark.qss", encoding='utf-8').read())
 
     def switchTo(self, widget):
         self.mainStackWidget.setCurrentWidget(widget)

@@ -4,9 +4,9 @@ import time
 import requests
 import sys
 
-sys.path.append("..")
+sys.path.append("../../..")
 
-from components import logTracker as log
+from modules.Scripts.Utils import logTracker as log
 
 
 def getResponse(url):

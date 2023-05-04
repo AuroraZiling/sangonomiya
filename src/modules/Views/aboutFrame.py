@@ -8,10 +8,11 @@ from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
 from qfluentwidgets import HyperlinkCard
 from qfluentwidgets import FluentIcon
 
-from components import OSUtils, customIcon
-from components import logTracker as log
+from modules.Scripts.UI import customIcon
+from modules.Scripts.Utils import ConfigUtils
+from modules.Scripts.Utils import logTracker as log
 
-utils = OSUtils.OSUtils()
+utils = ConfigUtils.ConfigUtils()
 
 
 class AboutWidget(QFrame):
@@ -93,7 +94,7 @@ class AboutWidget(QFrame):
 
         self.aboutVBox.addStretch(1)
 
-        self.setObjectName("AboutWidget")
+        self.setObjectName("AboutFrame")
         self.initGrid()
         self.initFrame()
         log.infoWrite("[SubWidget][About] Initialized")

@@ -1,18 +1,20 @@
 # coding:utf-8
 import sys
+import json
 
 sys.path.append("..")
 
-from components import OSUtils, customIcon, infoBars
-from components import logTracker as log
+from modules.Scripts.UI import customIcon, infoBars, customMsgBox
+from modules.Scripts.Utils import ConfigUtils
+from modules.Scripts.Utils import logTracker as log
 from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, isDarkTheme, Dialog, OptionsSettingCard,
+                            ComboBoxSettingCard, ExpandLayout, isDarkTheme, MessageBox, OptionsSettingCard,
                             SwitchSettingCard, HyperlinkCard)
 from qfluentwidgets import FluentIcon
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import QWidget, QLabel, QFileDialog
 
-utils = OSUtils.OSUtils()
+utils = ConfigUtils.ConfigUtils()
 
 
 class LinkWidget(ScrollArea):
@@ -30,7 +32,7 @@ class LinkWidget(ScrollArea):
         self.importGroup = SettingCardGroup(self.tr("Import"), self.scrollWidget)
         self.importCard = PushSettingCard(
             self.tr("Browse"),
-            FluentIcon.FOLDER,
+            FluentIcon.EMBED,
             self.tr("Import UIGF(Json) File"),
             self.tr("Currently supported standards: Uniformed Interchangeable GachaLog Format standard v2.2"),
             self.importGroup
@@ -40,7 +42,7 @@ class LinkWidget(ScrollArea):
         self.exportGroup = SettingCardGroup(self.tr("Export"), self.scrollWidget)
         self.exportCard = PushSettingCard(
             self.tr("Browse"),
-            FluentIcon.FOLDER,
+            FluentIcon.SHARE,
             self.tr("Export UIGF(Json) File"),
             self.tr("Currently supported standards: Uniformed Interchangeable GachaLog Format standard v2.2"),
             self.exportGroup
@@ -57,7 +59,7 @@ class LinkWidget(ScrollArea):
             self.uigfGroup
         )
 
-        self.setObjectName("LinkWidget")
+        self.setObjectName("LinkFrame")
         self.__initWidget()
 
     def __initWidget(self):
@@ -104,12 +106,22 @@ class LinkWidget(ScrollArea):
             self.setStyleSheet(f.read())
 
     def __showMessageBox(self, title, content):
-        Dialog(title, content, self).exec()
+        MessageBox(title, content, self).exec()
+
+    def __showTextEditMessageBox(self, title, content, text):
+        customMsgBox.TextEditMsgBox(title, content, text, self).exec()
 
     def __importCardClicked(self):
-        filePath = QFileDialog.getOpenFileName(self, self.tr("Open UIGF(json) file"), "./", "UIGF(json) File (*.json)")
-        print(filePath)
+        filePath = QFileDialog.getOpenFileName(self, self.tr("Open UIGF(json) file"), "./", "UIGF(json) File (*.json)")[0]
+        if utils.jsonValidator(filePath, "uigf"):
+            importFile = json.loads(open(filePath, 'r', encoding="utf-8").read())
+            alertMessage = f'''UID: {importFile["info"]["uid"]}
+{self.tr("Language")}: {importFile["info"]["lang"]}
+{self.tr("Export Time")}: {importFile["info"]["export_time"]}  
+{self.tr("Export Application")}: {importFile["info"]["export_app"]}
+{self.tr("Export Application Version")}: {importFile["info"]["export_app_version"]}'''
+
+            self.__showTextEditMessageBox(self.tr("Verify"), self.tr("Please verify the following information:"), alertMessage)
 
     def __connectSignalToSlot(self):
-        """ connect signal to slot """
         self.importCard.clicked.connect(self.__importCardClicked)

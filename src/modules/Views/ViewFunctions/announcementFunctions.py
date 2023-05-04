@@ -5,11 +5,15 @@ import sys
 from PyQt6.QtGui import QIcon, QPixmap
 from PyQt6.QtWidgets import QListWidgetItem
 
-sys.path.append("..")
+sys.path.append("../..")
 
 import requests
-from components import infoBars, downloader
-from components.OSUtils import getWorkingDir, HTML_MODEL
+from modules.Scripts.UI import infoBars
+from modules.Scripts.Utils import downloader
+from modules.Scripts.Utils.ConfigUtils import ConfigUtils
+
+utils = ConfigUtils()
+HTML_MODEL = utils.getHTMLMODEL()
 
 
 def contentHTMLPhaser(css, contentHTML, innerImageUrl = None):
@@ -36,7 +40,7 @@ class AnnouncementFunctions:
         self.announceTitleList = []
         self.announceInnerImageMapping = {}
 
-        self.announceStyle = open(f"{getWorkingDir()}/assets/css/github-markdown-light.css", 'r').read()
+        self.announceStyle = open(f"{utils.workingDir}/assets/css/github-markdown-light.css", 'r').read()
 
         self.getIconsURL()
         self.getTitles()
@@ -49,8 +53,8 @@ class AnnouncementFunctions:
 
     def getIcons(self):
         for eachIconURL in self.announceIconURLList:
-            if not os.path.exists(f"{getWorkingDir()}/cache/{eachIconURL.split('/')[-1]}"):
-                downloader.downloadFromImage(eachIconURL, f"{getWorkingDir()}/cache/", eachIconURL.split('/')[-1])
+            if not os.path.exists(f"{utils.workingDir}/cache/{eachIconURL.split('/')[-1]}"):
+                downloader.downloadFromImage(eachIconURL, f"{utils.workingDir}/cache/", eachIconURL.split('/')[-1])
             else:
                 pass
 
@@ -61,7 +65,7 @@ class AnnouncementFunctions:
     def getItems(self):
         sideBarItems = []
         for eachItem in range(self.announceAmount):
-            sideBarItems.append(QListWidgetItem(QIcon(f"{getWorkingDir()}/cache/{self.announceIconNameList[eachItem]}"),
+            sideBarItems.append(QListWidgetItem(QIcon(f"{utils.workingDir}/cache/{self.announceIconNameList[eachItem]}"),
                                                 self.announceTitleList[eachItem]))
         return sideBarItems
 
@@ -77,27 +81,27 @@ class AnnouncementFunctions:
         contentHtml = currentAnnounce["content"]
         innerImageSources = self.getImageURLFromSource(contentHtml)
         for eachInnerImage in innerImageSources:
-            if not os.path.exists(f"{getWorkingDir()}/cache/{eachInnerImage.split('/')[-1]}"):
-                downloader.downloadFromImage(eachInnerImage, f"{getWorkingDir()}/cache/", eachInnerImage.split('/')[-1])
-                self.announceInnerImageMapping[eachInnerImage] = f"{getWorkingDir()}/cache/{eachInnerImage.split('/')[-1]}"
+            if not os.path.exists(f"{utils.workingDir}/cache/{eachInnerImage.split('/')[-1]}"):
+                downloader.downloadFromImage(eachInnerImage, f"{utils.workingDir}/cache/", eachInnerImage.split('/')[-1])
+                self.announceInnerImageMapping[eachInnerImage] = f"{utils.workingDir}/cache/{eachInnerImage.split('/')[-1]}"
         if currentAnnounce["banner"]:
-            downloader.downloadFromImage(currentAnnounce["banner"], f"{getWorkingDir()}/cache/", announceId + ".jpg") if not os.path.exists(f"{getWorkingDir()}/cache/{announceId}.jpg") else None
-            banner = QPixmap(f"{getWorkingDir()}/cache/{announceId}.jpg")
+            downloader.downloadFromImage(currentAnnounce["banner"], f"{utils.workingDir}/cache/", announceId + ".jpg") if not os.path.exists(f"{utils.workingDir}/cache/{announceId}.jpg") else None
+            banner = QPixmap(f"{utils.workingDir}/cache/{announceId}.jpg")
             bannerSize = banner.rect().getRect()
             if banner.rect().getRect() == (0, 0, 0, 0):
-                os.remove(f"{getWorkingDir()}/cache/{announceId}.jpg")
+                os.remove(f"{utils.workingDir}/cache/{announceId}.jpg")
                 try:
-                    downloader.downloadFromImage(currentAnnounce["banner"], f"{getWorkingDir()}/cache/",
+                    downloader.downloadFromImage(currentAnnounce["banner"], f"{utils.workingDir}/cache/",
                                                  announceId + ".jpg")
                 except requests.exceptions.MissingSchema:
                     pass
-                banner = QPixmap(f"{getWorkingDir()}/cache/{announceId}.jpg")
+                banner = QPixmap(f"{utils.workingDir}/cache/{announceId}.jpg")
             bannerHeight = round(750 / bannerSize[2] * bannerSize[3])
         else:
             banner = ""
             bannerHeight = 0
 
         contentHtml = contentHTMLPhaser(self.announceStyle, contentHtml, self.announceInnerImageMapping)
-        open(f"{getWorkingDir()}/cache/{index}.html", 'w', encoding="utf-8").write(contentHtml)
+        open(f"{utils.workingDir}/cache/{index}.html", 'w', encoding="utf-8").write(contentHtml)
         return {"announceId": announceId, "bigTitle": bigTitle, "banner": banner, "bannerHeight": bannerHeight,
                 "contentHtml": f"{index}.html"}

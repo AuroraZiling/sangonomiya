@@ -1,13 +1,14 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QAbstractItemView, QTextEdit, QHeaderView, QWidget
-from components import OSUtils, downloader, infoBars
+from modules.Scripts.Utils import ConfigUtils, downloader
+from modules.Scripts.UI import infoBars, customMsgBox
 from pyqt6_plugins.examplebuttonplugin import QtGui
-from qfluentwidgets import FluentIcon, RoundMenu, TableWidget, TextEdit, MessageBox, Dialog, InfoBarPosition
+from qfluentwidgets import FluentIcon, RoundMenu, TableWidget, TextEdit, MessageBox, Dialog, InfoBarPosition, ComboBox
 
 from qfluentwidgets import DropDownPushButton
 
-utils = OSUtils.OSUtils()
+utils = ConfigUtils.ConfigUtils()
 
 
 class GachaReportWidget(QFrame):
@@ -16,6 +17,7 @@ class GachaReportWidget(QFrame):
         super().__init__(parent=parent)
 
         self.frameMessageBox = None
+        self.isInteractive = False
 
         self.baseVBox = QVBoxLayout(self)
 
@@ -27,7 +29,9 @@ class GachaReportWidget(QFrame):
         self.headerLeftVBox.addWidget(self.headerLeftGachaReportUIDLabel)
 
         self.headerRightHBox = QHBoxLayout()
+        self.headerRightUIDSelectCombobox = ComboBox(self)
         self.headerRightFullUpdateDropBtn = DropDownPushButton(self.tr("Full update"), self, FluentIcon.UPDATE)
+        self.headerRightHBox.addWidget(self.headerRightUIDSelectCombobox)
         self.headerRightHBox.addWidget(self.headerRightFullUpdateDropBtn)
         self.headerRightFullUpdateDropBtnMenu = RoundMenu(parent=self)
         self.headerHBox.addLayout(self.headerLeftVBox)
@@ -66,22 +70,39 @@ class GachaReportWidget(QFrame):
         self.baseVBox.addLayout(self.headerHBox)
         self.baseVBox.addLayout(self.bottomHBox)
 
-        self.setObjectName("GachaReportWidget")
+        self.setObjectName("GachaReportFrame")
         self.initFrame()
+
+    def __showComboBoxMessageBox(self, title, content, choices):
+        customMsgBox.ComboBoxMsgBox(title, content, choices, self).exec()
+
+    def setInteractive(self, mode):
+        self.bottomLeftGachaTable.setEnabled(mode)
+        self.headerRightUIDSelectCombobox.setEnabled(mode)
+        self.bottomRightBasicLevel5TotalTextEdit.setEnabled(mode)
+        self.bottomRightBasicLevel4TotalTextEdit.setEnabled(mode)
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
         if utils.getAccountUid() == 0:
-            infoBars.warningBar(self.tr("Warning"), self.tr("No account information found"), InfoBarPosition.BOTTOM, self)
+            self.setInteractive(False)
+            infoBars.warningBar(self.tr("Warning"), self.tr("No account information found"), "b", self)
+        else:
+            self.setInteractive(True)
+
+    def __headerRightFullUpdateDropBtnClicked(self):
+        self.__showComboBoxMessageBox("a", "b", ["1", "2"]).exec()
 
     def initFrame(self):
         self.headerLeftGachaReportTitleLabel.setFont(utils.getFont(18))
         self.headerLeftGachaReportTitleLabel.setStyleSheet("color: white;")
         self.headerLeftGachaReportUIDLabel.setStyleSheet("color: grey;")
+        self.headerRightUIDSelectCombobox.setFixedWidth(200)
         self.headerRightFullUpdateDropBtn.setFixedWidth(200)
         self.headerRightFullUpdateDropBtnMenu.addAction(QAction(FluentIcon.ALBUM.icon(), self.tr("Proxy Server Mode")))
         self.headerRightFullUpdateDropBtnMenu.addAction(QAction(FluentIcon.DOCUMENT.icon(), self.tr("Web Cache Mode")))
         self.headerRightFullUpdateDropBtnMenu.addAction(QAction(FluentIcon.ALIGNMENT.icon(), self.tr("URL Mode")))
         self.headerRightFullUpdateDropBtn.setMenu(self.headerRightFullUpdateDropBtnMenu)
+        self.headerRightFullUpdateDropBtn.clicked.connect(self.__headerRightFullUpdateDropBtnClicked)
 
         self.bottomLeftGachaTable.setRowCount(60)
         self.bottomLeftGachaTable.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
@@ -90,7 +111,8 @@ class GachaReportWidget(QFrame):
         self.bottomLeftGachaTable.verticalHeader().setHidden(True)
         self.bottomLeftGachaTable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.bottomLeftGachaTable.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.bottomLeftGachaTable.setHorizontalHeaderLabels([self.tr("ID"), self.tr("Type"), self.tr("Name"), self.tr("Time"), self.tr("Mode")])
+        self.bottomLeftGachaTable.setHorizontalHeaderLabels(
+            [self.tr("ID"), self.tr("Type"), self.tr("Name"), self.tr("Time"), self.tr("Mode")])
 
         self.bottomRightBasicLabel.setStyleSheet("color: white;")
         self.bottomRightBasicLabel.setFont(utils.getFont(14))
