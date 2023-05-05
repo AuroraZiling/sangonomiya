@@ -13,7 +13,7 @@
 
 *由于MiHoYo疑似在3.2版本更改了Authkey格式，将可能会对旧版本(R5及之前)产生影响*
 
-目前状态: **最新正式版本: Release 6** **最新预览版本: Release 7 Development 5** 
+目前状态: **最新正式版本: Release 6** **最新预览版本: Release 7 Development 7** 
 
 ## 功能
 

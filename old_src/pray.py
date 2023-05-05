@@ -579,7 +579,7 @@ class LeftPrayListThread(QThread):
     def __init__(self, parent=None):
         super(LeftPrayListThread, self).__init__(parent)
         self.uid = ""
-
+    # https://webstatic.mihoyo.com/hkrpg/event/e20211215gacha-v2/index.html?authkey_ver=1&sign_type=2&auth_appid=webview_gacha&win_mode=fullscreen&gacha_id=dbebc8d9fbb0d4ffa067423482ce505bc5ea&timestamp=1681910012&region=prod_gf_cn&default_gacha_type=11&lang=zh-cn&authkey=MhGyiCjXwOvg4PgAmts5I1xNN8%2B1jhOZhSNbeHUZvqCf7AYrINYoolHWtihtlLEfA%2BuqJ9Xy%2FZVf73R3KCFWKZJtLNpU06%2Ff5rmnNuk2zE%2BvOSBRlKVQbPlP8vaybME0aELMDGdIJETRgU6UueT8n4Xm6OU6ZSWg3eUXUNuSSvp%2FKotbZXXxQV8cxIr%2FVNNz7aaeE%2F2jAlwMBaM3L%2FKe57t0v8PNrGCx%2BIVjRM39OaWOD7zUzy%2Ft44hsNDf0LJG%2B8SfuCsf4ySOKMUP77q5ThIkNBduC%2FY0PSng1ntOHs05g%2FUlDHfI0RSjByjYALk%2BiLJ6H1qo87IyvHoJRN84LM0vvaJyi9Db9xmQdk8nzcHkJfn4wrHs5nTzO8RA72Fcp3Sd84K3G8vfR4IzkmkPQ4wrNN1Db6R1XUKHULbbSEcphFGco%2BTXX6GZ%2B7p7PQOOT6qVFfQ28xIolZL%2BpeqjFf0SFvJh7Vn9Y4mIbiNKkFZew9HvwyN%2BjDtQN9Jpir6bpJBh2kQ6kpoOg1uPQGQ2DDeTmVZjyasaSaaeDg3%2BPVdhTEp0nsphkmLdg2g3XFp1aH2ykMuj%2Fvq5CK%2BE0lbuD2fHW8787q%2FS8%2BIqEub4uIa23%2FLCbmy4JBICHt%2FR8X0ZUUknRKA0%2F9FjkKspvqOTvhDz264sKyGRyT4e16C4nzJU%3D&game_biz=hkrpg_cn&os_system=Windows%2011%20%20%2810.0.22000%29%2064bit&device_model=OMEN%20Laptop%2015-ek0xxx%20%28HP%29&plat_type=pc
     def run(self):
         export_data_list = []
         json_export_data = export_data

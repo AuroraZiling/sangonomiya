@@ -1,2 +1,3 @@
 PyQt6~=6.4.2
-PyQt6-Fluent-Widgets~=0.8.2
+PyQt6-Fluent-Widgets~=0.8.4
+requests

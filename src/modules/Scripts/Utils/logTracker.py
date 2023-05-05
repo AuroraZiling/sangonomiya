@@ -1,6 +1,7 @@
 import logging
+import os.path
 import time
-from modules.Scripts.Utils.ConfigUtils import ConfigUtils
+from ..Utils.ConfigUtils import ConfigUtils
 
 utils = ConfigUtils()
 
@@ -26,6 +27,8 @@ def errorWrite(content):
 
 
 logDirPath = utils.workingDir + "/logs"
+if not os.path.exists(logDirPath):
+    os.mkdir(logDirPath)
 if utils.getConfigAutoDeleteLog():
     utils.deleteFiles(logDirPath)
 logFileName = "Sangonomiya " + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + ".log"

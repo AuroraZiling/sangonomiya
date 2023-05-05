@@ -1,19 +1,13 @@
-import os.path
-import sys
-import time
 import webbrowser
-
-sys.path.append("..")
-
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QListWidget, QVBoxLayout, QSizePolicy
 from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit, PushButton, StateToolTip, InfoBarPosition
 
-from modules.Scripts.UI import infoBars
-from modules.Scripts.Utils import downloader
-from modules.Scripts.Utils.ConfigUtils import ConfigUtils
-from modules.Scripts.Utils import logTracker as log
-from modules.Views.ViewFunctions import announcementFunctions
+from ..Scripts.UI import infoBars
+from ..Scripts.Utils import downloader
+from ..Scripts.Utils.ConfigUtils import ConfigUtils
+from ..Scripts.Utils import logTracker as log
+from .ViewFunctions import announcementFunctions
 
 utils = ConfigUtils()
 
@@ -149,7 +143,6 @@ class AnnouncementWidget(QFrame):
                                     "announce_icons.json")
         self.announceData = utils.getAnnounceData()
         self.announceIconData = utils.getAnnounceIconData()
-        self.isAnnounceDataAvailable = False if (self.announceData is None) or (self.announceIconData is None) else True
         self.initAnnounce()
         infoBars.successBar(self.tr("Success"), self.tr("Announcement Updated"), "t", self)
 

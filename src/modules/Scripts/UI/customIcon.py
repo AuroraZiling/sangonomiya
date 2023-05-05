@@ -1,12 +1,8 @@
-import sys
-
-sys.path.append("../../..")
-
 from enum import Enum
 
 from qfluentwidgets import getIconColor, Theme, FluentIconBase
 
-from modules.Scripts.Utils import ConfigUtils
+from ..Utils import ConfigUtils
 
 utils = ConfigUtils.ConfigUtils()
 

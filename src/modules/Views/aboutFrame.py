@@ -1,16 +1,12 @@
-import sys
-
-sys.path.append("..")
-
 from PyQt6 import QtGui, QtWidgets
 from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
 
 from qfluentwidgets import HyperlinkCard
 from qfluentwidgets import FluentIcon
 
-from modules.Scripts.UI import customIcon
-from modules.Scripts.Utils import ConfigUtils
-from modules.Scripts.Utils import logTracker as log
+from ..Scripts.UI import customIcon
+from ..Scripts.Utils import ConfigUtils
+from ..Scripts.Utils import logTracker as log
 
 utils = ConfigUtils.ConfigUtils()
 

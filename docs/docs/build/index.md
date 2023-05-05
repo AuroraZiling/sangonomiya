@@ -1,7 +1,7 @@
 ## 运行环境 / Environment
 
-1. Python: `3.8`
-2. OS: `Windows 10+ / MacOS`
+1. Python: `3.10`
+2. OS: `Windows 10+`
 
 ## 安装 / Installation
 
@@ -16,19 +16,9 @@ pip install PyQt6-Frameless-Window
 
 ## 打包 / Packaging
 
-安装`pyinstaller`
+安装`nuitka`
 ```commandline
-pip install pyinstaller
+pip install nuitka
 ```
 
-### Windows
-
-```commandline
-pyinstaller sangonomiya_win32.spec
-```
-
-### MacOS
-
-```commandline
-pyinstaller sangonomiya_macOS.spec
-```
+找到`build-development.bat`并运行

@@ -10,7 +10,7 @@
 
 <p align="center">
   <a style="text-decoration:none">
-    <img src="https://img.shields.io/badge/Platform-Windows%20|%20macOS-lightgreen?style=flat-square" alt="Platform Win32 | Linux | macOS"/>
+    <img src="https://img.shields.io/badge/Platform-Windows%20-lightgreen?style=flat-square" alt="Platform Win32 | Linux | macOS"/>
   </a>
 
   <a style="text-decoration:none">
@@ -29,11 +29,9 @@
 
 正在重写UI(顺便重构了)，内容更新放缓(基于[PyQt-Fluent-Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets))
 
-本项目目前不可用，部分内容(如原神3.2版本及以后的武器更新等)将暂时无法识别
+本项目目前不可用
 
 ---
-
-*该项目更新频率将在2023.7之前放缓，上学中*
 
 **文档(Github Pages): [Sangonomiya Documents](https://auroraziling.github.io/sangonomiya/)** 
 
@@ -41,23 +39,12 @@
 
 ## 下载 / Download
 
-注：均为自释放压缩包
-
-*历史版本见上文提到的文档*
-
-*如果你使用了较新的Microsoft Edge, 访问蓝奏云下载会出现(您可能拼写错误)的问题，[如何解决?](https://www.bilibili.com/video/BV1i24y197X7)*
-
-### Release 6
-
-[阿里云盘](https://www.aliyundrive.com/s/ay3Y7WJbJho)
-
-[蓝奏云](https://auroraziling.lanzouv.com/b02juwo3g)
+暂不开放
 
 ## 卸载 / Uninstall
 
-由于是绿色软件，不会在其他位置留下任何文件
-
-删除整个文件夹即可
+1. 程序所在文件夹，即`sangonomiya.exe`所在的文件夹
+2. AppData文件夹，即`C:\Users\[Username]\AppData\Roaming\Python\sangonomiya`文件夹
 
 ## 已实现功能 / Implemented Features
 
@@ -72,22 +59,6 @@
 ## 更新日志 / Changelog
 
 [Change Log](https://auroraziling.github.io/sangonomiya/dev_logs/r7/)
-
-## 使用须知 / Notice
-
-1. 在清除代理设置时，会操作注册表
-> 有关键值:
-> HKEY_CURRENT_USER/Software/Microsoft/Windows/CurrentVersion/Internet Settings -> ProxyEnable
-> HKEY_CURRENT_USER/Software/Microsoft/Windows/CurrentVersion/Internet Settings -> ProxyServer
-
-## 已知Bug
-
-1. [无影响]关于`qdarkstyle`的Warning:
-   >No QCoreApplication instance found. Application patches not applied. You have to call load_stylesheet function after instantiation of QApplication to take effect.
-2. 占用空间过大(约150MB~320MB):
-   >蓝奏云不好传，原因是游戏内公告显示的内置浏览器模块
-3. [3.1]对于提那里的判断失效
-   >目前统一视作歪出来的
 
 ## 状态 / Status
 

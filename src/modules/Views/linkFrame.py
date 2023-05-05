@@ -1,12 +1,7 @@
 # coding:utf-8
-import sys
 import json
-
-sys.path.append("..")
-
-from modules.Scripts.UI import customIcon, infoBars, customMsgBox
-from modules.Scripts.Utils import ConfigUtils
-from modules.Scripts.Utils import logTracker as log
+from ..Scripts.UI import customMsgBox
+from ..Scripts.Utils import ConfigUtils
 from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
                             ComboBoxSettingCard, ExpandLayout, isDarkTheme, MessageBox, OptionsSettingCard,
                             SwitchSettingCard, HyperlinkCard)

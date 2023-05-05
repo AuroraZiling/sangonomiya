@@ -1,16 +1,12 @@
 import os
 import re
-import sys
 
 from PyQt6.QtGui import QIcon, QPixmap
 from PyQt6.QtWidgets import QListWidgetItem
 
-sys.path.append("../..")
-
 import requests
-from modules.Scripts.UI import infoBars
-from modules.Scripts.Utils import downloader
-from modules.Scripts.Utils.ConfigUtils import ConfigUtils
+from ...Scripts.Utils import downloader
+from ...Scripts.Utils.ConfigUtils import ConfigUtils
 
 utils = ConfigUtils()
 HTML_MODEL = utils.getHTMLMODEL()

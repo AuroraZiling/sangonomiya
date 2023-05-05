@@ -1,12 +1,8 @@
 # coding:utf-8
-import sys
-
-sys.path.append("..")
-
-from modules.Views.ViewConfigs import settingConfig
-from modules.Scripts.UI import customIcon, infoBars
-from modules.Scripts.Utils import ConfigUtils
-from modules.Scripts.Utils import logTracker as log
+from .ViewConfigs import settingConfig
+from ..Scripts.UI import customIcon, infoBars
+from ..Scripts.Utils import ConfigUtils
+from ..Scripts.Utils import logTracker as log
 from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
                             ComboBoxSettingCard, ExpandLayout, isDarkTheme, Dialog, OptionsSettingCard,
                             SwitchSettingCard)

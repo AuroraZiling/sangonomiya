@@ -1,12 +1,8 @@
 import json
 import time
-
 import requests
-import sys
 
-sys.path.append("../../..")
-
-from modules.Scripts.Utils import logTracker as log
+from ..Utils import logTracker as log
 
 
 def getResponse(url):

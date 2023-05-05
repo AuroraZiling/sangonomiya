@@ -1,9 +1,9 @@
+from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QAbstractItemView, QTextEdit, QHeaderView, QWidget
-from modules.Scripts.Utils import ConfigUtils, downloader
-from modules.Scripts.UI import infoBars, customMsgBox
-from pyqt6_plugins.examplebuttonplugin import QtGui
+from ..Scripts.Utils import ConfigUtils
+from ..Scripts.UI import infoBars, customMsgBox
 from qfluentwidgets import FluentIcon, RoundMenu, TableWidget, TextEdit, MessageBox, Dialog, InfoBarPosition, ComboBox
 
 from qfluentwidgets import DropDownPushButton

@@ -16,7 +16,7 @@
 
 <input type="checkbox" disabled="true" checked/> [已于Release 6 Development 7实装] UIGF(Json) 导入/导出支持
 
-<input type="checkbox" disabled="true"/> UI重写并兼容Windows和MacOS平台 *预计在Release 7实现*
+<input type="checkbox" disabled="true"/> UI重写 *预计在Release 7实现*
 
 <input type="checkbox" disabled="true"/> 角色/武器图鉴在线更新 *预计在Release 8实现*
 

@@ -14,7 +14,7 @@
 ### 第三方库
 
 1. [qdarkstyle](https://github.com/ColinDuquesnoy/QDarkStyleSheet) **MIT License**
-2. [PySide6](https://www.riverbankcomputing.com/software/pyqt/) **LGPL**
+2. [PyQt6](https://www.riverbankcomputing.com/software/pyqt/) **LGPL**
 3. [PyQt-Fluent-Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets) **GPL-3.0**
 
 ## C Sharp

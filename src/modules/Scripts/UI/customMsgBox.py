@@ -1,6 +1,5 @@
 from PyQt6.QtCore import Qt, pyqtSignal, QEvent
 from PyQt6.QtGui import QColor
-from PyQt6.QtWidgets import QLabel, QFrame, QPushButton, QVBoxLayout, QHBoxLayout
 from qfluentwidgets import MessageBox, TextEdit, PrimaryPushButton, TextWrap, FluentStyleSheet, ComboBox
 from qfluentwidgets.components.dialog_box.dialog import Ui_MessageBox
 

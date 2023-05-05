@@ -1,6 +1,6 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout
-from modules.Scripts.Utils import ConfigUtils
+from ..Scripts.Utils import ConfigUtils
 
 utils = ConfigUtils.ConfigUtils()
 
