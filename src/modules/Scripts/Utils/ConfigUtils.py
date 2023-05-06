@@ -53,7 +53,8 @@ class ConfigUtils(Tools):
     def __fileCheck(self):
         pathlib.Path(self.configPath).mkdir(parents=True, exist_ok=True)
         if not os.path.exists(f"{self.configPath}/account.json"):
-            shutil.copyfile(f"{self.workingDir}/assets/configs/modelFiles/account.json", f"{self.configPath}/account.json")
+            shutil.copyfile(f"{self.workingDir}/assets/configs/modelFiles/account.json",
+                            f"{self.configPath}/account.json")
 
     def __settings(self):
         if os.path.exists(f"{self.configPath}/settings.json"):
@@ -116,7 +117,14 @@ class ConfigUtils(Tools):
         self.accountInfo = json.loads(open(f"{self.configPath}/account.json", 'r', encoding="utf-8").read())
         return self.accountInfo["name"]
 
-    def getHTMLMODEL(self):
+    def getVersionType(self):
+        return "dev" if "Dev" in self.appVersion else "release"
+
+    def getLanguage(self):
+        return self.language
+
+    @staticmethod
+    def getHTMLMODEL():
         return HTML_MODEL
 
     @staticmethod

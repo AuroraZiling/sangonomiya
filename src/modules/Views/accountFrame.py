@@ -18,4 +18,3 @@ class AccountWidget(QFrame):
 
     def initFrame(self):
         self.label.setFont(utils.getFont(40))
-        self.label.setStyleSheet("color: white;")

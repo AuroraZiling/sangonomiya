@@ -1,9 +1,12 @@
 import webbrowser
+
+from PyQt6 import QtGui
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QListWidget, QVBoxLayout, QSizePolicy
-from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit, PushButton, StateToolTip, InfoBarPosition
+from qfluentwidgets import PrimaryPushButton, FluentIcon, InfoBar, PushButton, StateToolTip, InfoBarPosition, \
+    isDarkTheme
 
-from ..Scripts.UI import infoBars
+from ..Scripts.UI.styleSheet import StyleSheet
 from ..Scripts.Utils import downloader
 from ..Scripts.Utils.ConfigUtils import ConfigUtils
 from ..Scripts.Utils import logTracker as log
@@ -73,6 +76,7 @@ class AnnouncementWidget(QFrame):
         self.initAnnounce()
 
         self.setObjectName("AnnouncementFrame")
+        StyleSheet.ANNOUNCEMENT_FRAME.apply(self)
 
         self.initFrame()
 
@@ -80,19 +84,15 @@ class AnnouncementWidget(QFrame):
         # Top - Left
         self.headerLeftAnnounceTitleLabel.setText(self.tr("Announcement"))
         self.headerLeftAnnounceTitleLabel.setFont(utils.getFont(18))
-        self.headerLeftAnnounceTitleLabel.setStyleSheet("color: #FFFFFF;")
         self.headerLeftContentTitleLabel.setText(self.tr("Have not selected any announcement"))
         self.headerLeftContentTitleLabel.setFont(utils.getFont(10))
-        self.headerLeftContentTitleLabel.setStyleSheet("color: grey;")
         # Top - Right
         self.headerRightRefreshBtn.setFixedWidth(100)
         self.headerRightAnnounceDateLabel.setText(self.tr("Updated on ") + utils.getFileDate(f"{utils.workingDir}/cache/announce.json"))
-        self.headerRightAnnounceDateLabel.setStyleSheet("color: #FFFFFF;")
         self.headerRightAnnounceDateLabel.setFont(utils.getFont(10))
         # List
         self.announceListBox.resize(200, 200)
         self.announceListBox.setFrameShape(QFrame.Shape.NoFrame)
-        self.announceListBox.setStyleSheet("background-color: #272727; color: #FFFFFF;")
         self.announceListBox.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.announceListBox.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.announceListBox.currentItemChanged.connect(self.__announceListBoxItemChanged)
@@ -104,15 +104,19 @@ class AnnouncementWidget(QFrame):
         self.contentNoBanner.setFont(utils.getFont(24))
         self.contentNoBanner.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.contentNoBanner.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.contentNoBanner.setStyleSheet("color: #FFFFFF;")
         self.contentHTMLBtn.setText(self.tr("Details"))
         self.contentHTMLBtn.setFixedSize(750, 30)
         self.contentHTMLBtn.clicked.connect(self.openAnnounce)
         # Refresh
         self.headerRightRefreshBtn.clicked.connect(self.refreshAnnounce)
 
+    def showEvent(self, a0: QtGui.QShowEvent) -> None:
+        if isDarkTheme():
+            self.announceListBox.setStyleSheet("background-color: rgb(39, 39, 39); color: white;")
+
     def __announceListBoxItemChanged(self):
         currentAnnounceData = self.announceFunc.getCurrentAnnounce(self.announceListBox.currentIndex().row())
+        log.infoWrite(f"[Sangonomiya][Announcement] Announcement Changed: {currentAnnounceData['bigTitle']}")
         self.headerLeftContentTitleLabel.setText(currentAnnounceData["bigTitle"])
         self.contentBanner.hide()
         if currentAnnounceData["banner"]:
@@ -136,15 +140,16 @@ class AnnouncementWidget(QFrame):
 
     def refreshAnnounce(self):
         self.announceListBox.clear()
-        log.infoWrite("[SubWidget][Announcement] Get announce.json")
+        log.infoWrite("[Sangonomiya][Announcement] Get announce.json")
         downloader.downloadFromJson(utils.getAnnounceRequestURL(), utils.workingDir + "/cache/", "announce.json")
-        log.infoWrite("[SubWidget][Announcement] Get announce_icon.json")
+        log.infoWrite("[Sangonomiya][Announcement] Get announce_icon.json")
         downloader.downloadFromJson(utils.getAnnounceIconRequestURL(), utils.workingDir + "/cache/",
                                     "announce_icons.json")
         self.announceData = utils.getAnnounceData()
         self.announceIconData = utils.getAnnounceIconData()
         self.initAnnounce()
-        infoBars.successBar(self.tr("Success"), self.tr("Announcement Updated"), "t", self)
+        log.infoWrite("[Sangonomiya][Announcement] Announcement Updated")
+        InfoBar.success(self.tr("Success"), self.tr("Announcement Updated"), position=InfoBarPosition.TOP, parent=self)
 
     def openAnnounce(self):
         webbrowser.open(f"{utils.workingDir}/cache/{self.announceListBox.currentRow()}.html")

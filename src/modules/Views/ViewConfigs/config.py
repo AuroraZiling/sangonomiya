@@ -1,11 +1,14 @@
 # coding:utf-8
 import json
-import os
 from enum import Enum
-from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem,
-                            ColorConfigItem, OptionsValidator, EnumSerializer, FolderValidator, BoolValidator)
+
+from PyQt6.QtCore import QLocale
+from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
+                            OptionsValidator, RangeConfigItem, RangeValidator,
+                            FolderListValidator, EnumSerializer, FolderValidator, ConfigSerializer, __version__, Theme)
 
 from ...Scripts.Utils.ConfigUtils import ConfigUtils
+from ...Core.GachaReport.gachaReportUtils import getDefaultGameDataPath
 
 utils = ConfigUtils()
 
@@ -23,12 +26,27 @@ class Language(Enum):
     AUTO = "Auto"
 
 
+class LanguageSerializer(ConfigSerializer):
+    """ Language serializer """
+
+    def serialize(self, language):
+        return language.value.name() if language != Language.AUTO else "Auto"
+
+    def deserialize(self, value: str):
+        return Language(QLocale(value)) if value != "Auto" else Language.AUTO
+
+
 class Config(QConfig):
+
     """ Config of application """
 
     # General
     ConfigItem("Versions", "application", appVersion)
     ConfigItem("Versions", "ui", UIVersion)
+
+    # Game
+    gameDataFolder = ConfigItem(
+        "Folders", "GameData", getDefaultGameDataPath(), FolderValidator())
 
     # Storage
     storageDataFolders = ConfigItem(
@@ -41,13 +59,8 @@ class Config(QConfig):
     # Customize
     customizeLanguage = OptionsConfigItem(
         "Customize", "language", Language.AUTO, OptionsValidator(Language), EnumSerializer(Language), restart=True)
-    customizeThemeColor = ColorConfigItem("Customize", "themeColor", "#009faa")
     customizeAutoDeleteLog = ConfigItem("Customize", "autoDeleteLog", False, BoolValidator(), restart=True)
 
 
 cfg = Config()
 qconfig.load(f"{configPath}/settings.json", cfg)
-
-if not os.path.exists(f"{configPath}/account.json"):
-    modelFile = open(f"{workingDir}/configs/modelFiles/account.json", encoding="utf-8").read()
-    open(f"{configPath}/account.json", 'w', encoding="utf-8").write(modelFile)

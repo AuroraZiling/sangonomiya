@@ -2,8 +2,12 @@ Widget > QLabel {
     font: 24px 'Segoe UI', 'Microsoft YaHei';
 }
 
+QLabel {
+    color: black;
+}
+
 Widget {
-    border: 1px solid rgb(229, 229, 229);
+    border: 1px solid rgb(249, 249, 249);
     border-right: none;
     border-bottom: none;
     border-top-left-radius: 10px;
@@ -11,6 +15,6 @@ Widget {
 }
 
 Window {
-    background-color: rgb(243, 243, 243);
+    background-color: rgb(249, 249, 249);
 }
 

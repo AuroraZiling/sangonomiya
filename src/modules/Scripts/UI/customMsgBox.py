@@ -1,5 +1,7 @@
 from PyQt6.QtCore import Qt, pyqtSignal, QEvent
 from PyQt6.QtGui import QColor
+from PyQt6.QtWidgets import QFrame
+
 from qfluentwidgets import MessageBox, TextEdit, PrimaryPushButton, TextWrap, FluentStyleSheet, ComboBox
 from qfluentwidgets.components.dialog_box.dialog import Ui_MessageBox
 
@@ -27,37 +29,6 @@ class TextEditMsgBox(MaskDialogBase, Ui_MessageBox):
         self.textEditWidget.setTextInteractionFlags(Qt.TextInteractionFlag.NoTextInteraction)
         self.textEditWidget.setFixedWidth(500)
         self.vBoxLayout.insertWidget(1, self.textEditWidget)
-
-        self.buttonGroup.setMinimumWidth(280)
-        self.widget.setFixedSize(500, 350)
-
-    def eventFilter(self, obj, e: QEvent):
-        if obj is self.window():
-            if e.type() == QEvent.Type.Resize:
-                self._adjustText()
-
-        return super().eventFilter(obj, e)
-
-
-class ComboBoxMsgBox(MaskDialogBase, Ui_MessageBox):
-    """ Message box """
-
-    yesSignal = pyqtSignal()
-    cancelSignal = pyqtSignal()
-
-    def __init__(self, title: str, content: str, choices: list, parent=None):
-        super().__init__(parent=parent)
-        self._setUpUi(title, content, self.widget)
-
-        self.setShadowEffect(60, (0, 10), QColor(0, 0, 0, 50))
-        self.setMaskColor(QColor(0, 0, 0, 76))
-        self._hBoxLayout.removeWidget(self.widget)
-        self._hBoxLayout.addWidget(self.widget, 1, Qt.AlignmentFlag.AlignCenter)
-
-        self.comboBoxWidget = ComboBox()
-        self.comboBoxWidget.addItems(choices)
-        self.comboBoxWidget.setFixedWidth(300)
-        self.vBoxLayout.insertWidget(1, self.comboBoxWidget)
 
         self.buttonGroup.setMinimumWidth(280)
         self.widget.setFixedSize(500, 350)

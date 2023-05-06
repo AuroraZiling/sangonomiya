@@ -1,28 +1,31 @@
-Widget > QLabel {
-    font: 24px 'Microsoft YaHei';
-}
-
-Widget {
+StackedWidget {
     border: 1px solid rgb(29, 29, 29);
-    background-color: rgb(39, 39, 39);
-    border-top-left-radius: 10px;
     border-right: none;
     border-bottom: none;
+    border-top-left-radius: 10px;
+    background-color: rgb(229, 229, 229);
 }
 
-Window {
-    background-color: rgb(39, 39, 39);
+
+MainWindow {
+    background-color: rgb(249, 249, 249);
 }
 
-StandardTitleBar {
-    background-color: rgb(39, 39, 39);
+CustomTitleBar {
+    background-color: transparent;
 }
 
-StandardTitleBar > QLabel,
+CustomTitleBar > QLabel,
 Widget > QLabel {
     color: white;
 }
 
+
+CustomTitleBar>QLabel#titleLabel {
+    background: transparent;
+    font: 13px 'Segoe UI';
+    padding: 0 4px
+}
 
 MinimizeButton {
     qproperty-normalColor: white;

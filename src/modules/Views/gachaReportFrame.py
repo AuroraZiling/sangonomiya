@@ -1,10 +1,13 @@
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QAbstractItemView, QTextEdit, QHeaderView, QWidget
 from ..Scripts.Utils import ConfigUtils
-from ..Scripts.UI import infoBars, customMsgBox
-from qfluentwidgets import FluentIcon, RoundMenu, TableWidget, TextEdit, MessageBox, Dialog, InfoBarPosition, ComboBox
+from ..Core.GachaReport.gachaReportThread import GachaReportThread
+from ..Scripts.UI.styleSheet import StyleSheet
+from ..Core.GachaReport.gachaReportUtils import getDefaultGameDataPath, convertAPI
+from ..Core.GachaReport.MihoyoAPI import byWebCache
+from qfluentwidgets import FluentIcon, RoundMenu, TableWidget, TextEdit, MessageBox, Dialog, InfoBarPosition, ComboBox, \
+    Action, InfoBar, PushButton, StateToolTip
 
 from qfluentwidgets import DropDownPushButton
 
@@ -19,6 +22,10 @@ class GachaReportWidget(QFrame):
         self.frameMessageBox = None
         self.isInteractive = False
 
+        # Gacha Report Thread
+        self.gachaReportThreadStateTooltip = None
+        self.gachaReportThread = None
+
         self.baseVBox = QVBoxLayout(self)
 
         self.headerHBox = QHBoxLayout()
@@ -31,6 +38,8 @@ class GachaReportWidget(QFrame):
         self.headerRightHBox = QHBoxLayout()
         self.headerRightUIDSelectCombobox = ComboBox(self)
         self.headerRightFullUpdateDropBtn = DropDownPushButton(self.tr("Full update"), self, FluentIcon.UPDATE)
+        self.headerRightFullUpdateDropBtnWebCacheAction = Action(FluentIcon.DOCUMENT.icon(), self.tr("Web Cache Mode"))
+        self.headerRightFullUpdateDropBtnURLAction = Action(FluentIcon.ALIGNMENT.icon(), self.tr("URL Mode"))
         self.headerRightHBox.addWidget(self.headerRightUIDSelectCombobox)
         self.headerRightHBox.addWidget(self.headerRightFullUpdateDropBtn)
         self.headerRightFullUpdateDropBtnMenu = RoundMenu(parent=self)
@@ -53,6 +62,7 @@ class GachaReportWidget(QFrame):
         self.bottomRightAnalysisLabel = QLabel(self.tr("Guarantee"))
         self.bottomRightWeaponAlertLabel = QLabel(self.tr("Analysis of weapons may be incomplete"))
         self.bottomRightAnalysisGuaranteeLabel = QLabel(self.tr("Unknown"))
+        self.bottomRightGraphBtn = PushButton(self.tr("Graph"), self)
         self.bottomRightVBox.addWidget(self.bottomRightBasicLabel)
         self.bottomRightVBox.addWidget(self.bottomRightBasicTotalLabel)
         self.bottomRightVBox.addWidget(self.bottomRightBasicLevel5TotalLabel)
@@ -63,6 +73,7 @@ class GachaReportWidget(QFrame):
         self.bottomRightVBox.addWidget(self.bottomRightAnalysisLabel)
         self.bottomRightVBox.addWidget(self.bottomRightWeaponAlertLabel)
         self.bottomRightVBox.addWidget(self.bottomRightAnalysisGuaranteeLabel)
+        self.bottomRightVBox.addWidget(self.bottomRightGraphBtn)
 
         self.bottomHBox.addLayout(self.bottomLeftVBox)
         self.bottomHBox.addLayout(self.bottomRightVBox)
@@ -71,38 +82,73 @@ class GachaReportWidget(QFrame):
         self.baseVBox.addLayout(self.bottomHBox)
 
         self.setObjectName("GachaReportFrame")
+        StyleSheet.GACHA_REPORT_FRAME.apply(self)
+        self.initHeaderRightFullUpdateDropBtnActions()
         self.initFrame()
 
-    def __showComboBoxMessageBox(self, title, content, choices):
-        customMsgBox.ComboBoxMsgBox(title, content, choices, self).exec()
+    def __gachaReportThreadStateTooltipClosed(self):
+        self.gachaReportThread.exit(0)
+        self.gachaReportStatusChanged((1, "Operation cancelled"))
+        InfoBar.warning(self.tr("Operation interrupted"), self.tr("You have terminated data reading"),
+                        position=InfoBarPosition.BOTTOM, parent=self)
+
+    def gachaReportStatusChanged(self, msg: tuple):
+        if msg and self.gachaReportThreadStateTooltip:
+            self.gachaReportThreadStateTooltip.setContent(msg[1])
+            if msg[0] == 1:
+                self.gachaReportThreadStateTooltip.setState(True)
+                self.gachaReportThreadStateTooltip = None
+                self.headerRightFullUpdateDropBtn.setEnabled(True)
+        else:
+            self.headerRightFullUpdateDropBtn.setEnabled(True)
+
+    def __headerRightFullUpdateDropBtnWebCache(self):
+        gachaURL = convertAPI(byWebCache.getURL(getDefaultGameDataPath()))
+        if gachaURL:
+            resp = MessageBox(self.tr("Detected"), self.tr("Request has been acquired.\nUpdate data or not?"), self)
+            if resp.exec():
+                self.headerRightFullUpdateDropBtn.setEnabled(False)
+                self.gachaReportThread = GachaReportThread(gachaURL)
+                self.gachaReportThreadStateTooltip = StateToolTip(self.tr("Fetching"), self.tr("Start fetching data"),
+                                                                  self)
+                self.gachaReportThreadStateTooltip.closedSignal.connect(self.__gachaReportThreadStateTooltipClosed)
+                self.gachaReportThreadStateTooltip.move(5, 5)
+                self.gachaReportThreadStateTooltip.show()
+                self.gachaReportThread.start()
+                self.gachaReportThread.trigger.connect(self.gachaReportStatusChanged)
+        else:
+            MessageBox(self.tr("Undetected"), self.tr("Unable to fetch requests from the game web cache."), self)
+
+    def __headerRightFullUpdateDropBtnURL(self):
+        print(3)
+
+    def initHeaderRightFullUpdateDropBtnActions(self):
+        self.headerRightFullUpdateDropBtnWebCacheAction.triggered.connect(self.__headerRightFullUpdateDropBtnWebCache)
+        self.headerRightFullUpdateDropBtnURLAction.triggered.connect(self.__headerRightFullUpdateDropBtnURL)
+        self.headerRightFullUpdateDropBtnMenu.addAction(self.headerRightFullUpdateDropBtnWebCacheAction)
+        self.headerRightFullUpdateDropBtnMenu.addAction(self.headerRightFullUpdateDropBtnURLAction)
 
     def setInteractive(self, mode):
         self.bottomLeftGachaTable.setEnabled(mode)
         self.headerRightUIDSelectCombobox.setEnabled(mode)
         self.bottomRightBasicLevel5TotalTextEdit.setEnabled(mode)
         self.bottomRightBasicLevel4TotalTextEdit.setEnabled(mode)
+        self.bottomRightGraphBtn.setEnabled(mode)
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
         if utils.getAccountUid() == 0:
             self.setInteractive(False)
-            infoBars.warningBar(self.tr("Warning"), self.tr("No account information found"), "b", self)
+            InfoBar.warning(self.tr("Warning"), self.tr("No account information found"),
+                            position=InfoBarPosition.BOTTOM_RIGHT, parent=self)
         else:
             self.setInteractive(True)
 
-    def __headerRightFullUpdateDropBtnClicked(self):
-        self.__showComboBoxMessageBox("a", "b", ["1", "2"]).exec()
-
     def initFrame(self):
         self.headerLeftGachaReportTitleLabel.setFont(utils.getFont(18))
-        self.headerLeftGachaReportTitleLabel.setStyleSheet("color: white;")
         self.headerLeftGachaReportUIDLabel.setStyleSheet("color: grey;")
         self.headerRightUIDSelectCombobox.setFixedWidth(200)
         self.headerRightFullUpdateDropBtn.setFixedWidth(200)
-        self.headerRightFullUpdateDropBtnMenu.addAction(QAction(FluentIcon.ALBUM.icon(), self.tr("Proxy Server Mode")))
-        self.headerRightFullUpdateDropBtnMenu.addAction(QAction(FluentIcon.DOCUMENT.icon(), self.tr("Web Cache Mode")))
-        self.headerRightFullUpdateDropBtnMenu.addAction(QAction(FluentIcon.ALIGNMENT.icon(), self.tr("URL Mode")))
         self.headerRightFullUpdateDropBtn.setMenu(self.headerRightFullUpdateDropBtnMenu)
-        self.headerRightFullUpdateDropBtn.clicked.connect(self.__headerRightFullUpdateDropBtnClicked)
 
         self.bottomLeftGachaTable.setRowCount(60)
         self.bottomLeftGachaTable.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
@@ -114,23 +160,15 @@ class GachaReportWidget(QFrame):
         self.bottomLeftGachaTable.setHorizontalHeaderLabels(
             [self.tr("ID"), self.tr("Type"), self.tr("Name"), self.tr("Time"), self.tr("Mode")])
 
-        self.bottomRightBasicLabel.setStyleSheet("color: white;")
         self.bottomRightBasicLabel.setFont(utils.getFont(14))
-        self.bottomRightBasicTotalLabel.setStyleSheet("color: white;")
         self.bottomRightBasicTotalLabel.setFont(utils.getFont(12))
-        self.bottomRightBasicLevel5TotalLabel.setStyleSheet("color: white;")
         self.bottomRightBasicLevel5TotalLabel.setFont(utils.getFont(10))
-        self.bottomRightBasicLevel4TotalLabel.setStyleSheet("color: white;")
         self.bottomRightBasicLevel4TotalLabel.setFont(utils.getFont(10))
-        self.bottomRightBasicLevel3TotalLabel.setStyleSheet("color: white;")
         self.bottomRightBasicLevel3TotalLabel.setFont(utils.getFont(10))
         self.bottomRightBasicLevel5TotalTextEdit.setReadOnly(True)
         self.bottomRightBasicLevel4TotalTextEdit.setReadOnly(True)
 
-        self.bottomRightAnalysisLabel.setStyleSheet("color: white;")
         self.bottomRightAnalysisLabel.setFont(utils.getFont(14))
-        self.bottomRightWeaponAlertLabel.setStyleSheet("color: white;")
         self.bottomRightWeaponAlertLabel.setFont(utils.getFont(10))
         self.bottomRightWeaponAlertLabel.setVisible(False)
-        self.bottomRightAnalysisGuaranteeLabel.setStyleSheet("color: white;")
         self.bottomRightAnalysisGuaranteeLabel.setFont(utils.getFont(10))

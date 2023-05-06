@@ -1,0 +1,13 @@
+QLabel#homeFrameTitle {
+    font: 42px 'Segoe UI', 'Microsoft YaHei';
+    background-color: transparent;
+    color: white;
+    padding-left: 10px;
+}
+
+QLabel#homeFrameAnnounceTitle {
+    font: 28px 'Segoe UI', 'Microsoft YaHei';
+    background-color: transparent;
+    color: grey;
+    padding-left: 10px;
+}

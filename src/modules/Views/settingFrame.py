@@ -1,17 +1,18 @@
 # coding:utf-8
-from .ViewConfigs import settingConfig
-from ..Scripts.UI import customIcon, infoBars
+from .ViewConfigs.config import cfg
+from ..Core.GachaReport.gachaReportUtils import getDefaultGameDataPath
+from ..Scripts.UI import customIcon
+from ..Scripts.UI.styleSheet import StyleSheet
 from ..Scripts.Utils import ConfigUtils
 from ..Scripts.Utils import logTracker as log
 from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
                             ComboBoxSettingCard, ExpandLayout, isDarkTheme, Dialog, OptionsSettingCard,
-                            SwitchSettingCard)
-from qfluentwidgets import FluentIcon, InfoBarPosition
+                            SwitchSettingCard, setTheme, Theme, InfoBar)
+from qfluentwidgets import FluentIcon, InfoBarPosition, qconfig
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtWidgets import QWidget, QLabel, QApplication
+from PyQt6.QtWidgets import QWidget, QLabel, QApplication, QFileDialog
 
-cfg = settingConfig.cfg
 utils = ConfigUtils.ConfigUtils()
 
 
@@ -25,6 +26,24 @@ class SettingWidget(ScrollArea):
         self.settingLabel = QLabel(self.tr("Settings"), self)
 
         self.configPath = utils.configPath
+
+        # Game
+
+        self.gameGroup = SettingCardGroup(self.tr("Game"), self.scrollWidget)
+        self.gameDataCard = PushSettingCard(
+            self.tr("Browse"),
+            FluentIcon.FOLDER,
+            self.tr("Game Folder"),
+            cfg.get(cfg.gameDataFolder),
+            self.gameGroup
+        )
+        self.gameDataResetCard = PushSettingCard(
+            self.tr("Reset"),
+            FluentIcon.CLOSE,
+            self.tr("Reset the game folder location"),
+            self.tr("If you specified the game path incorrectly, reset."),
+            self.gameGroup
+        )
 
         # Storage
         self.storageGroup = SettingCardGroup(self.tr("Storage"), self.scrollWidget)
@@ -80,6 +99,18 @@ class SettingWidget(ScrollArea):
         # Customize
         self.customizeGroup = SettingCardGroup(self.tr("Customize"), self.scrollWidget)
 
+        self.customizeThemeSetting = OptionsSettingCard(
+            qconfig.themeMode,
+            FluentIcon.BRUSH,
+            self.tr('Application theme'),
+            self.tr("Change the appearance of your application"),
+            texts=[
+                self.tr('Light'), self.tr('Dark'),
+                self.tr('Use system setting')
+            ],
+            parent=self.customizeGroup
+        )
+
         self.customizeLanguageSetting = ComboBoxSettingCard(
             cfg.customizeLanguage,
             FluentIcon.LANGUAGE,
@@ -129,6 +160,11 @@ class SettingWidget(ScrollArea):
     def initLayout(self):
         self.settingLabel.move(60, 63)
 
+        # Game
+
+        self.gameGroup.addSettingCard(self.gameDataCard)
+        self.gameGroup.addSettingCard(self.gameDataResetCard)
+
         # Storage
 
         self.storageGroup.addSettingCard(self.storageDataCard)
@@ -143,6 +179,7 @@ class SettingWidget(ScrollArea):
 
         # Customize
 
+        self.customizeGroup.addSettingCard(self.customizeThemeSetting)
         self.customizeGroup.addSettingCard(self.customizeLanguageSetting)
         self.customizeGroup.addSettingCard(self.customizeAutoDeleteLogSetting)
 
@@ -153,6 +190,7 @@ class SettingWidget(ScrollArea):
         # add setting card group to layout
         self.expandLayout.setSpacing(28)
         self.expandLayout.setContentsMargins(60, 10, 60, 0)
+        self.expandLayout.addWidget(self.gameGroup)
         self.expandLayout.addWidget(self.storageGroup)
         self.expandLayout.addWidget(self.defaultGroup)
         self.expandLayout.addWidget(self.customizeGroup)
@@ -163,35 +201,50 @@ class SettingWidget(ScrollArea):
         self.scrollWidget.setObjectName('scrollWidget')
         self.settingLabel.setObjectName('settingLabel')
 
-        theme = 'dark' if isDarkTheme() else 'light'
-        with open(f"{utils.workingDir}/assets/themes/{theme}_setting_interface.qss",
-                  encoding='utf-8') as f:
-            self.setStyleSheet(f.read())
+        StyleSheet.SETTING_FRAME.apply(self)
 
     def __showMessageBox(self, title, content):
         Dialog(title, content, self).exec()
 
+    def __gameDataCardClicked(self):
+        folder = QFileDialog.getExistingDirectory(
+            self, self.tr("Choose Genshin Impact folder"), "./")
+        if not folder or cfg.get(cfg.gameDataFolder) == folder:
+            return
+
+        cfg.set(cfg.gameDataFolder, folder)
+        self.gameDataCard.setContent(folder)
+
+    def __gameDataResetCardClicked(self):
+        cfg.set(cfg.gameDataFolder, getDefaultGameDataPath())
+        self.gameDataCard.setContent(getDefaultGameDataPath())
+
     def __defaultLogDeleteCardClicked(self):
         utils.deleteAllLogFiles()
-        log.infoWrite("[SubWidget][Settings] All old logs deleted")
-        infoBars.successBar(self.tr("Success"), self.tr("All old logs deleted"), parent=self.window(), position="br")
+        log.infoWrite("[Sangonomiya][Settings] All old logs deleted")
+        InfoBar.success(self.tr("Success"), self.tr("All old logs deleted"), InfoBarPosition.TOP_RIGHT, parent=self.window())
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
         self.__defaultCacheSizeUpdate()
 
     def __defaultCacheDeleteCardClicked(self):
         utils.deleteAllCacheFiles()
-        log.infoWrite("[SubWidget][Settings] All cache files deleted")
+        log.infoWrite("[Sangonomiya][Settings] All cache files deleted")
         self.__defaultCacheSizeUpdate()
-        infoBars.successBar(self.tr("Success"), self.tr("All old cache files deleted"), parent=self.window(), position="br")
+        InfoBar.success(self.tr("Success"), self.tr("All old cache files deleted"),InfoBarPosition.TOP_RIGHT, parent=self.window())
 
     def __defaultCacheSizeUpdate(self):
         self.defaultCacheDeleteCard.titleLabel.setText(f"{self.tr('Delete all cache files')} ({self.tr('About')} {utils.getDirSize(utils.workingDir + '/cache')} MB)")
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
-        cfg.appRestartSig.connect(lambda: infoBars.warningBar(self.tr("Warning"), self.tr(
-            "Please restart the application to apply the changes"), parent=self.window(), position="b"))
+        cfg.appRestartSig.connect(lambda: InfoBar.warning(self.tr("Warning"), self.tr(
+            "Please restart the application to apply the changes"), parent=self.window(), position=InfoBarPosition.TOP_RIGHT))
+        cfg.themeChanged.connect(setTheme)
+
+        # Game
+        self.gameDataCard.clicked.connect(self.__gameDataCardClicked)
+        self.gameDataResetCard.clicked.connect(self.__gameDataResetCardClicked)
 
         # Storage
         self.storageDataCard.clicked.connect(lambda: utils.openFolder(cfg.get(cfg.storageDataFolders)))

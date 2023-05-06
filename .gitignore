@@ -12,3 +12,4 @@
 *.pyc
 */__pycache__
 /old_src/requestUrl.txt
+/src/data/

@@ -1,7 +1,8 @@
 # coding:utf-8
 import json
 from ..Scripts.UI import customMsgBox
-from ..Scripts.Utils import ConfigUtils
+from ..Scripts.UI.styleSheet import StyleSheet
+from ..Scripts.Utils import ConfigUtils, logTracker as log
 from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
                             ComboBoxSettingCard, ExpandLayout, isDarkTheme, MessageBox, OptionsSettingCard,
                             SwitchSettingCard, HyperlinkCard)
@@ -95,10 +96,7 @@ class LinkWidget(ScrollArea):
         self.scrollWidget.setObjectName('scrollWidget')
         self.linkLabel.setObjectName('linkLabel')
 
-        theme = 'dark' if isDarkTheme() else 'light'
-        with open(f"{utils.workingDir}/assets/themes/{theme}_link_interface.qss",
-                  encoding='utf-8') as f:
-            self.setStyleSheet(f.read())
+        StyleSheet.LINK_FRAME.apply(self)
 
     def __showMessageBox(self, title, content):
         MessageBox(title, content, self).exec()
@@ -109,13 +107,13 @@ class LinkWidget(ScrollArea):
     def __importCardClicked(self):
         filePath = QFileDialog.getOpenFileName(self, self.tr("Open UIGF(json) file"), "./", "UIGF(json) File (*.json)")[0]
         if utils.jsonValidator(filePath, "uigf"):
+            log.infoWrite(f"[Sangonomiya][Link] UIGF Import File Path: {filePath}")
             importFile = json.loads(open(filePath, 'r', encoding="utf-8").read())
             alertMessage = f'''UID: {importFile["info"]["uid"]}
 {self.tr("Language")}: {importFile["info"]["lang"]}
 {self.tr("Export Time")}: {importFile["info"]["export_time"]}  
 {self.tr("Export Application")}: {importFile["info"]["export_app"]}
 {self.tr("Export Application Version")}: {importFile["info"]["export_app_version"]}'''
-
             self.__showTextEditMessageBox(self.tr("Verify"), self.tr("Please verify the following information:"), alertMessage)
 
     def __connectSignalToSlot(self):

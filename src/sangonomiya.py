@@ -8,12 +8,14 @@ from PyQt6.QtCore import Qt, QTranslator
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QStackedWidget, QHBoxLayout
 
-from qfluentwidgets import FluentIcon, NavigationInterface, NavigationItemPosition, setTheme, Theme, Dialog
-from qframelesswindow import FramelessWindow, StandardTitleBar
+from qfluentwidgets import FluentIcon, NavigationInterface, NavigationItemPosition, setTheme, Theme, isDarkTheme
+from qframelesswindow import FramelessWindow
 
-from modules.Views import homeFrame, gachaReportFrame, linkFrame, announcementFrame, accountFrame, \
+from modules.Views import homeFrame, gachaReportFrame, linkFrame, announcementFrame, \
     settingFrame, aboutFrame
 from modules.Scripts.UI import customIcon
+from modules.Scripts.UI.titleBar import CustomTitleBar
+from modules.Scripts.UI.styleSheet import StyleSheet
 from modules.Scripts.Utils import ConfigUtils, logTracker as log
 
 utils = ConfigUtils.ConfigUtils()
@@ -38,9 +40,8 @@ class Window(FramelessWindow):
     def __init__(self):
         super().__init__()
 
-        self.setTitleBar(StandardTitleBar(self))
+        self.setTitleBar(CustomTitleBar(self))
         self.setWindowFlags(Qt.WindowType.WindowMinimizeButtonHint | Qt.WindowType.MSWindowsFixedSizeDialogHint)
-        setTheme(Theme.DARK)
 
         self.mainHBoxLayout = QHBoxLayout(self)
         self.navigationInterface = NavigationInterface(self, showMenuButton=True)
@@ -50,7 +51,6 @@ class Window(FramelessWindow):
         self.gachaReportInterface = gachaReportFrame.GachaReportWidget(self)
         self.linkInterface = linkFrame.LinkWidget(self)
         self.announcementInterface = announcementFrame.AnnouncementWidget(self)
-        self.accountInterface = accountFrame.AccountWidget(self)
         self.settingInterface = settingFrame.SettingWidget(self)
         self.aboutInterface = aboutFrame.AboutWidget(self)
 
@@ -58,7 +58,6 @@ class Window(FramelessWindow):
         self.mainStackWidget.addWidget(self.gachaReportInterface)
         self.mainStackWidget.addWidget(self.linkInterface)
         self.mainStackWidget.addWidget(self.announcementInterface)
-        self.mainStackWidget.addWidget(self.accountInterface)
         self.mainStackWidget.addWidget(self.settingInterface)
         self.mainStackWidget.addWidget(self.aboutInterface)
 
@@ -104,14 +103,6 @@ class Window(FramelessWindow):
         self.navigationInterface.addSeparator()
 
         self.navigationInterface.addItem(
-            routeKey=self.accountInterface.objectName(),
-            icon=customIcon.MyFluentIcon.USER,
-            text=self.tr("Account"),
-            onClick=lambda: self.switchTo(self.accountInterface),
-            position=NavigationItemPosition.BOTTOM
-        )
-
-        self.navigationInterface.addItem(
             routeKey=self.settingInterface.objectName(),
             icon=FluentIcon.SETTING,
             text=self.tr("Settings"),
@@ -140,7 +131,7 @@ class Window(FramelessWindow):
         w, h = desktop.width(), desktop.height()
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
 
-        self.setStyleSheet(open(f"{utils.workingDir}/assets/themes/dark.qss", encoding='utf-8').read())
+        StyleSheet.MAIN_WINDOW.apply(self)
 
     def switchTo(self, widget):
         self.mainStackWidget.setCurrentWidget(widget)
@@ -148,13 +139,7 @@ class Window(FramelessWindow):
     def onCurrentInterfaceChanged(self, index):
         widget = self.mainStackWidget.widget(index)
         self.navigationInterface.setCurrentItem(widget.objectName())
-
-    def showMessageBox(self, title, content):
-        dialog = Dialog(title, content, self)
-        if dialog.exec():
-            print('Yes button is pressed')
-        else:
-            print('Cancel button is pressed')
+        log.infoWrite(f"[Sangonomiya] Current frame: {widget.objectName()}")
 
 
 if __name__ == '__main__':

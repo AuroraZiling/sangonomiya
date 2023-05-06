@@ -6,7 +6,6 @@ import time
 from pathlib import Path
 from PyQt6.QtCore import QStandardPaths
 
-
 class Tools:
     def __init__(self):
         self.workingDir = self.getWorkingDir()
