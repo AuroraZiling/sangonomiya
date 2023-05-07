@@ -104,14 +104,6 @@ class Window(FramelessWindow):
 
         self.navigationInterface.addItem(
             routeKey=self.settingInterface.objectName(),
-            icon=customIcon.MyFluentIcon.USER,
-            text="账户",
-            onClick=lambda: self.switchTo(self.settingInterface),
-            position=NavigationItemPosition.BOTTOM
-        )
-
-        self.navigationInterface.addItem(
-            routeKey=self.settingInterface.objectName(),
             icon=FluentIcon.SETTING,
             text="设置",
             onClick=lambda: self.switchTo(self.settingInterface),
