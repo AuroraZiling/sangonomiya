@@ -1,8 +1,8 @@
 import webbrowser
 
-from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QListWidget, QVBoxLayout, QSizePolicy
+from PySide6 import QtGui
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QListWidget, QVBoxLayout, QSizePolicy
 from qfluentwidgets import PrimaryPushButton, FluentIcon, InfoBar, PushButton, StateToolTip, InfoBarPosition, \
     isDarkTheme
 
@@ -44,7 +44,7 @@ class AnnouncementWidget(QFrame):
         self.headerHBox.addStretch(1)
 
         self.headerRightVBox = QVBoxLayout(self)
-        self.headerRightRefreshBtn = PrimaryPushButton(self.tr("Refresh"), self, FluentIcon.SYNC)
+        self.headerRightRefreshBtn = PrimaryPushButton("刷新", self, FluentIcon.SYNC)
         self.headerRightAnnounceDateLabel = QLabel(self)
         self.headerRightVBox.addSpacing(3)
         self.headerRightVBox.addWidget(self.headerRightRefreshBtn, 0, Qt.AlignmentFlag.AlignRight)
@@ -61,7 +61,7 @@ class AnnouncementWidget(QFrame):
 
         self.contentVBox = QVBoxLayout(self)
         self.contentBanner = QLabel(self)
-        self.contentNoBanner = QLabel(self.tr("This announcement has no cover"), self)
+        self.contentNoBanner = QLabel("此公告没有封面", self)
         self.contentHTMLBtn = PushButton(self)
         self.contentVBox.addWidget(self.contentBanner)
         self.contentVBox.addStretch(1)
@@ -82,13 +82,13 @@ class AnnouncementWidget(QFrame):
 
     def initFrame(self):
         # Top - Left
-        self.headerLeftAnnounceTitleLabel.setText(self.tr("Announcement"))
+        self.headerLeftAnnounceTitleLabel.setText("公告")
         self.headerLeftAnnounceTitleLabel.setFont(utils.getFont(18))
-        self.headerLeftContentTitleLabel.setText(self.tr("Have not selected any announcement"))
+        self.headerLeftContentTitleLabel.setText("尚未选择公告")
         self.headerLeftContentTitleLabel.setFont(utils.getFont(10))
         # Top - Right
         self.headerRightRefreshBtn.setFixedWidth(100)
-        self.headerRightAnnounceDateLabel.setText(self.tr("Updated on ") + utils.getFileDate(f"{utils.workingDir}/cache/announce.json"))
+        self.headerRightAnnounceDateLabel.setText("于" + utils.getFileDate(f"{utils.workingDir}/cache/announce.json") + "更新")
         self.headerRightAnnounceDateLabel.setFont(utils.getFont(10))
         # List
         self.announceListBox.resize(200, 200)
@@ -104,7 +104,7 @@ class AnnouncementWidget(QFrame):
         self.contentNoBanner.setFont(utils.getFont(24))
         self.contentNoBanner.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.contentNoBanner.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.contentHTMLBtn.setText(self.tr("Details"))
+        self.contentHTMLBtn.setText("详情")
         self.contentHTMLBtn.setFixedSize(750, 30)
         self.contentHTMLBtn.clicked.connect(self.openAnnounce)
         # Refresh
@@ -130,8 +130,7 @@ class AnnouncementWidget(QFrame):
 
     def initAnnounce(self):
         self.announceFunc.getIcons()
-        self.headerRightAnnounceDateLabel.setText(
-            self.tr("Updated on ") + utils.getFileDate(f"{utils.workingDir}/cache/announce.json"))
+        self.headerRightAnnounceDateLabel.setText("于" + utils.getFileDate(f"{utils.workingDir}/cache/announce.json") + "更新")
         for index, item in enumerate(self.announceFunc.getItems()):
             self.announceListBox.addItem(item)
             self.announceListBox.item(index).setSizeHint(QSize(300, 30))
@@ -149,7 +148,7 @@ class AnnouncementWidget(QFrame):
         self.announceIconData = utils.getAnnounceIconData()
         self.initAnnounce()
         log.infoWrite("[Sangonomiya][Announcement] Announcement Updated")
-        InfoBar.success(self.tr("Success"), self.tr("Announcement Updated"), position=InfoBarPosition.TOP, parent=self)
+        InfoBar.success("成功", "公告已更新", position=InfoBarPosition.TOP, parent=self)
 
     def openAnnounce(self):
         webbrowser.open(f"{utils.workingDir}/cache/{self.announceListBox.currentRow()}.html")

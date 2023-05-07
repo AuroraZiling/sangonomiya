@@ -9,132 +9,123 @@ from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
                             ComboBoxSettingCard, ExpandLayout, isDarkTheme, Dialog, OptionsSettingCard,
                             SwitchSettingCard, setTheme, Theme, InfoBar)
 from qfluentwidgets import FluentIcon, InfoBarPosition, qconfig
-from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtWidgets import QWidget, QLabel, QApplication, QFileDialog
+from PySide6 import QtGui
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import QWidget, QLabel, QApplication, QFileDialog
 
 utils = ConfigUtils.ConfigUtils()
 
 
 class SettingWidget(ScrollArea):
-    checkUpdateSig = pyqtSignal()
+    checkUpdateSig = Signal()
 
     def __init__(self, parent):
         super().__init__(parent=parent)
         self.scrollWidget = QWidget()
         self.expandLayout = ExpandLayout(self.scrollWidget)
-        self.settingLabel = QLabel(self.tr("Settings"), self)
+        self.settingLabel = QLabel("设置", self)
 
         self.configPath = utils.configPath
 
         # Game
 
-        self.gameGroup = SettingCardGroup(self.tr("Game"), self.scrollWidget)
+        self.gameGroup = SettingCardGroup("游戏", self.scrollWidget)
         self.gameDataCard = PushSettingCard(
-            self.tr("Browse"),
+            "浏览",
             FluentIcon.FOLDER,
-            self.tr("Game Folder"),
+            "游戏文件夹",
             cfg.get(cfg.gameDataFolder),
             self.gameGroup
         )
         self.gameDataResetCard = PushSettingCard(
-            self.tr("Reset"),
+            "重置",
             FluentIcon.CLOSE,
-            self.tr("Reset the game folder location"),
-            self.tr("If you specified the game path incorrectly, reset."),
+            "刷新游戏目录位置",
+            "如果你错误地选择了游戏目录，此处可重置",
             self.gameGroup
         )
 
         # Storage
-        self.storageGroup = SettingCardGroup(self.tr("Storage"), self.scrollWidget)
+        self.storageGroup = SettingCardGroup("存储", self.scrollWidget)
         self.storageDataCard = PushSettingCard(
-            self.tr("Open"),
+            "打开",
             FluentIcon.FOLDER,
-            self.tr("Data Folder"),
+            "数据文件夹",
             cfg.get(cfg.storageDataFolders),
             self.storageGroup
         )
         self.storageCacheCard = PushSettingCard(
-            self.tr("Open"),
+            "打开",
             FluentIcon.FOLDER,
-            self.tr("Cache Folder"),
+            "缓存文件夹",
             cfg.get(cfg.storageCacheFolders),
             self.storageGroup
         )
         self.storageLogCard = PushSettingCard(
-            self.tr("Open"),
+            "打开",
             FluentIcon.FOLDER,
-            self.tr("Log Folder"),
+            "日志文件夹",
             cfg.get(cfg.storageLogFolders),
             self.storageGroup
         )
         self.storageConfigCard = PushSettingCard(
-            self.tr("Open"),
+            "打开",
             FluentIcon.FOLDER,
-            self.tr("Config Folder"),
+            "配置文件",
             self.configPath,
             self.storageGroup
         )
 
         # Default
 
-        self.defaultGroup = SettingCardGroup(self.tr("Default"), self.scrollWidget)
+        self.defaultGroup = SettingCardGroup("操作", self.scrollWidget)
 
         self.defaultLogDeleteCard = PushSettingCard(
-            self.tr("Delete"),
+            "删除",
             customIcon.MyFluentIcon.DELETE,
-            self.tr("Delete all log files"),
-            f"All logs in {utils.workingDir + '/logs'} will be deleted",
+            "清空日志文件",
+            f"{utils.workingDir + '/logs'} 文件夹内的日志将被清空",
             self.defaultGroup
         )
 
         self.defaultCacheDeleteCard = PushSettingCard(
-            self.tr("Delete"),
+            "删除",
             customIcon.MyFluentIcon.DELETE,
-            f"{self.tr('Delete all cache files')} ({self.tr('About')} {utils.getDirSize(utils.workingDir + '/cache')} MB)",
-            f"All cache files in {utils.workingDir + '/cache'} will be deleted",
+            f"清空缓存文件 (大概 {utils.getDirSize(utils.workingDir + '/cache')} MB)",
+            f"存放在 {utils.workingDir + '/cache'} 的缓存文件将被删除",
             self.defaultGroup
         )
 
         # Customize
-        self.customizeGroup = SettingCardGroup(self.tr("Customize"), self.scrollWidget)
+        self.customizeGroup = SettingCardGroup("个性化", self.scrollWidget)
 
         self.customizeThemeSetting = OptionsSettingCard(
             qconfig.themeMode,
             FluentIcon.BRUSH,
-            self.tr('Application theme'),
-            self.tr("Change the appearance of your application"),
+            "主题色",
+            "改变应用的明暗主题",
             texts=[
-                self.tr('Light'), self.tr('Dark'),
-                self.tr('Use system setting')
+                "白昼", "黑夜",
+                "采用系统设置"
             ],
-            parent=self.customizeGroup
-        )
-
-        self.customizeLanguageSetting = ComboBoxSettingCard(
-            cfg.customizeLanguage,
-            FluentIcon.LANGUAGE,
-            self.tr("Language"),
-            self.tr("Set the language"),
-            texts=['简体中文', 'English', self.tr('Use system setting')],
             parent=self.customizeGroup
         )
 
         self.customizeAutoDeleteLogSetting = SwitchSettingCard(
             FluentIcon.DELETE,
-            self.tr('Automatically delete old logs'),
-            self.tr("Delete all previous logs each time the application is started"),
+            "自动删除旧日志",
+            "程序启动后，旧日志将被删除",
             configItem=cfg.customizeAutoDeleteLog,
             parent=self.customizeGroup
         )
 
         # Update
-        self.updateSoftwareGroup = SettingCardGroup(self.tr("Software Update"), self.scrollWidget)
+        self.updateSoftwareGroup = SettingCardGroup("软件更新", self.scrollWidget)
 
         self.updateCheckCard = PushSettingCard(
-            self.tr("Check"),
+            "检查",
             FluentIcon.UPDATE,
-            self.tr("Find available updates"),
+            "寻找可用的更新",
             "",
             self.updateSoftwareGroup
         )
@@ -180,7 +171,6 @@ class SettingWidget(ScrollArea):
         # Customize
 
         self.customizeGroup.addSettingCard(self.customizeThemeSetting)
-        self.customizeGroup.addSettingCard(self.customizeLanguageSetting)
         self.customizeGroup.addSettingCard(self.customizeAutoDeleteLogSetting)
 
         # Update
@@ -208,7 +198,7 @@ class SettingWidget(ScrollArea):
 
     def __gameDataCardClicked(self):
         folder = QFileDialog.getExistingDirectory(
-            self, self.tr("Choose Genshin Impact folder"), "./")
+            self, "选择原神游戏目录", "./")
         if not folder or cfg.get(cfg.gameDataFolder) == folder:
             return
 
@@ -222,7 +212,7 @@ class SettingWidget(ScrollArea):
     def __defaultLogDeleteCardClicked(self):
         utils.deleteAllLogFiles()
         log.infoWrite("[Sangonomiya][Settings] All old logs deleted")
-        InfoBar.success(self.tr("Success"), self.tr("All old logs deleted"), InfoBarPosition.TOP_RIGHT, parent=self.window())
+        InfoBar.success("成功", "旧日志文件已清空", InfoBarPosition.TOP_RIGHT, parent=self.window())
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
         self.__defaultCacheSizeUpdate()
@@ -231,15 +221,15 @@ class SettingWidget(ScrollArea):
         utils.deleteAllCacheFiles()
         log.infoWrite("[Sangonomiya][Settings] All cache files deleted")
         self.__defaultCacheSizeUpdate()
-        InfoBar.success(self.tr("Success"), self.tr("All old cache files deleted"),InfoBarPosition.TOP_RIGHT, parent=self.window())
+        InfoBar.success("成功", "缓存已清空", InfoBarPosition.TOP_RIGHT, parent=self.window())
 
     def __defaultCacheSizeUpdate(self):
-        self.defaultCacheDeleteCard.titleLabel.setText(f"{self.tr('Delete all cache files')} ({self.tr('About')} {utils.getDirSize(utils.workingDir + '/cache')} MB)")
+        self.defaultCacheDeleteCard.titleLabel.setText(f"清空缓存文件 (大概 {utils.getDirSize(utils.workingDir + '/cache')} MB)")
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
-        cfg.appRestartSig.connect(lambda: InfoBar.warning(self.tr("Warning"), self.tr(
-            "Please restart the application to apply the changes"), parent=self.window(), position=InfoBarPosition.TOP_RIGHT))
+        cfg.appRestartSig.connect(lambda: InfoBar.warning("警告", self.tr(
+            "更改将在应用重启后更新"), parent=self.window(), position=InfoBarPosition.TOP_RIGHT))
         cfg.themeChanged.connect(setTheme)
 
         # Game
@@ -257,4 +247,4 @@ class SettingWidget(ScrollArea):
         self.defaultCacheDeleteCard.clicked.connect(self.__defaultCacheDeleteCardClicked)
 
         # Update
-        self.updateCheckCard.clicked.connect(lambda: self.__showMessageBox(self.tr("Oops!"), self.tr("This feature is not available yet!")))
+        self.updateCheckCard.clicked.connect(lambda: self.__showMessageBox("Oops", "该功能尚未实现"))

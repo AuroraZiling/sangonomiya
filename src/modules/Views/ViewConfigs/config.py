@@ -2,7 +2,7 @@
 import json
 from enum import Enum
 
-from PyQt6.QtCore import QLocale
+from PySide6.QtCore import QLocale
 from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
                             OptionsValidator, RangeConfigItem, RangeValidator,
                             FolderListValidator, EnumSerializer, FolderValidator, ConfigSerializer, __version__, Theme)
@@ -57,9 +57,11 @@ class Config(QConfig):
         "Folders", "Log", "logs", FolderValidator())
 
     # Customize
-    customizeLanguage = OptionsConfigItem(
-        "Customize", "language", Language.AUTO, OptionsValidator(Language), EnumSerializer(Language), restart=True)
     customizeAutoDeleteLog = ConfigItem("Customize", "autoDeleteLog", False, BoolValidator(), restart=True)
+
+    # Gacha Report
+    gachaReportLastUID = ConfigItem(
+        "GachaReport", "lastUID", "")
 
 
 cfg = Config()

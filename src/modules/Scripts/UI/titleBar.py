@@ -1,7 +1,7 @@
 # coding: utf-8
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout
 from qframelesswindow import TitleBar
 
 from .styleSheet import StyleSheet

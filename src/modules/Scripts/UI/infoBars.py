@@ -1,4 +1,4 @@
-from PyQt6.QtCore import Qt
+from PySide6.QtCore import Qt
 from qfluentwidgets import InfoBar, InfoBarPosition
 
 INFOBAR_POSITION_MAPPING = {

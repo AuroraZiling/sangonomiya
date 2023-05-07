@@ -4,7 +4,9 @@ import shutil
 import json
 import time
 from pathlib import Path
-from PyQt6.QtCore import QStandardPaths
+
+import win32clipboard
+from PySide6.QtCore import QStandardPaths
 
 class Tools:
     def __init__(self):
@@ -76,3 +78,8 @@ class Tools:
     @staticmethod
     def getFileDate(path):
         return time.strftime("%Y.%m.%d", time.localtime(os.stat(path).st_mtime))
+
+    @staticmethod
+    def getClipboardText():
+        win32clipboard.OpenClipboard()
+        return win32clipboard.GetClipboardData(win32clipboard.CF_UNICODETEXT)

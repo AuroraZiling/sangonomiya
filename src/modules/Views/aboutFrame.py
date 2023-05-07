@@ -1,5 +1,5 @@
-from PyQt6 import QtGui, QtWidgets
-from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
+from PySide6 import QtGui, QtWidgets
+from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
 
 from qfluentwidgets import HyperlinkCard, isDarkTheme, TextEdit
 from qfluentwidgets import FluentIcon
@@ -42,7 +42,7 @@ class AboutWidget(QFrame):
         self.aboutTopUIDesVBox = QVBoxLayout(self)
         self.aboutTopUIDesDesignLabel = QLabel("UI Design", self)
         self.aboutTopUIDesLabel = QLabel("PyQt-Fluent-Widgets", self)
-        self.aboutTopUIDesVersion = QLabel(f"{utils.UIVersion} for PyQt6", self)
+        self.aboutTopUIDesVersion = QLabel(f"{utils.UIVersion} for PySide6", self)
         self.aboutTopUIDesGithub = QLabel("https://github.com/zhiyiYo/PyQt-Fluent-Widgets", self)
         self.aboutTopUIDesVBox.addWidget(self.aboutTopUIDesDesignLabel)
         self.aboutTopUIDesVBox.addWidget(self.aboutTopUIDesLabel)
@@ -54,34 +54,34 @@ class AboutWidget(QFrame):
         self.aboutVBox.addLayout(self.aboutTopHBox)
 
         self.aboutOpenSourceVBox = QVBoxLayout(self)
-        self.aboutOpenSourceLabel = QLabel(self.tr("Open Source License"), self)
+        self.aboutOpenSourceLabel = QLabel("开放源代码许可", self)
         self.aboutOpenSourceTextEdit = TextEdit(self)
         self.aboutOpenSourceVBox.addWidget(self.aboutOpenSourceLabel)
         self.aboutOpenSourceVBox.addWidget(self.aboutOpenSourceTextEdit)
         self.aboutVBox.addLayout(self.aboutOpenSourceVBox)
 
         self.aboutFeedbackVBox = QVBoxLayout(self)
-        self.aboutFeedbackLabel = QLabel(self.tr("Feedback"), self)
+        self.aboutFeedbackLabel = QLabel("反馈", self)
         self.aboutFeedbackDocumentHyperlink = HyperlinkCard(
             url='https://auroraziling.github.io/sangonomiya/',
-            text=self.tr('Open'),
+            text="访问",
             parent=self,
             icon=FluentIcon.GLOBE,
-            title=self.tr('Sangonomiya Documents')
+            title="Sangonomiya 文档"
         )
         self.aboutFeedbackGithubIssueHyperlink = HyperlinkCard(
             url='https://github.com/AuroraZiling/sangonomiya/issues',
-            text=self.tr('Submit'),
+            text="提交",
             parent=self,
             icon=customIcon.MyFluentIcon.GITHUB,
-            title=self.tr('Github Issue')
+            title="Github Issue"
         )
         self.aboutFeedbackGithubPullRequestHyperlink = HyperlinkCard(
             url='https://github.com/AuroraZiling/sangonomiya/pulls',
-            text=self.tr('Submit'),
+            text="提交",
             parent=self,
             icon=customIcon.MyFluentIcon.GITHUB,
-            title=self.tr('Github Pull Request')
+            title="Github Pull Request"
         )
         self.aboutFeedbackVBox.addWidget(self.aboutFeedbackLabel)
         self.aboutFeedbackVBox.addWidget(self.aboutFeedbackDocumentHyperlink)

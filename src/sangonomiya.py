@@ -4,9 +4,9 @@ import sys
 import ctypes
 import time
 
-from PyQt6.QtCore import Qt, QTranslator
-from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import QApplication, QStackedWidget, QHBoxLayout
+from PySide6.QtCore import Qt, QTranslator
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QApplication, QStackedWidget, QHBoxLayout
 
 from qfluentwidgets import FluentIcon, NavigationInterface, NavigationItemPosition, setTheme, Theme, isDarkTheme
 from qframelesswindow import FramelessWindow
@@ -77,26 +77,26 @@ class Window(FramelessWindow):
         self.navigationInterface.addItem(
             routeKey=self.homeInterface.objectName(),
             icon=FluentIcon.HOME,
-            text=self.tr("Home"),
+            text="主页",
             onClick=lambda: self.switchTo(self.homeInterface)
         )
 
         self.navigationInterface.addItem(
             routeKey=self.gachaReportInterface.objectName(),
             icon=customIcon.MyFluentIcon.GACHA_REPORT,
-            text=self.tr("Gacha Report"),
+            text="祈愿记录",
             onClick=lambda: self.switchTo(self.gachaReportInterface)
         )
         self.navigationInterface.addItem(
             routeKey=self.linkInterface.objectName(),
             icon=customIcon.MyFluentIcon.DATA,
-            text=self.tr("Import & Export Data"),
+            text="UIGF",
             onClick=lambda: self.switchTo(self.linkInterface)
         )
         self.navigationInterface.addItem(
             routeKey=self.announcementInterface.objectName(),
             icon=customIcon.MyFluentIcon.ANNOUNCEMENT,
-            text=self.tr("Announcement"),
+            text="公告",
             onClick=lambda: self.switchTo(self.announcementInterface)
         )
 
@@ -104,8 +104,16 @@ class Window(FramelessWindow):
 
         self.navigationInterface.addItem(
             routeKey=self.settingInterface.objectName(),
+            icon=customIcon.MyFluentIcon.USER,
+            text="账户",
+            onClick=lambda: self.switchTo(self.settingInterface),
+            position=NavigationItemPosition.BOTTOM
+        )
+
+        self.navigationInterface.addItem(
+            routeKey=self.settingInterface.objectName(),
             icon=FluentIcon.SETTING,
-            text=self.tr("Settings"),
+            text="设置",
             onClick=lambda: self.switchTo(self.settingInterface),
             position=NavigationItemPosition.BOTTOM
         )
@@ -113,7 +121,7 @@ class Window(FramelessWindow):
         self.navigationInterface.addItem(
             routeKey=self.aboutInterface.objectName(),
             icon=customIcon.MyFluentIcon.ABOUT,
-            text=self.tr("About"),
+            text="关于",
             onClick=lambda: self.switchTo(self.aboutInterface),
             position=NavigationItemPosition.BOTTOM
         )
@@ -146,20 +154,6 @@ if __name__ == '__main__':
     log.infoWrite("[Sangonomiya] Main process starting")
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon(f"{utils.workingDir}/assets/avatar.png"))
-    try:
-        if not utils.language == 'en_US':
-            translator = QTranslator()
-            if utils.language == "Auto":
-                translator.load(f"{utils.workingDir}/languages/{utils.systemLanguage}.qm")
-            else:
-                translator.load(f"{utils.workingDir}/languages/{utils.language}.qm")
-            app.installTranslator(translator)
-    except FileNotFoundError:
-        log.warningWrite(f"[Sangonomiya] Config file not found, using default language (en_US)")
-        translator = QTranslator()
-        translator.load(f"{utils.workingDir}/languages/{utils.systemLanguage}.qm")
-        app.installTranslator(translator)
-    log.infoWrite("[Sangonomiya] Language loaded")
     w = Window()
     w.show()
     app.exec()

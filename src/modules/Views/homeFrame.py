@@ -1,13 +1,12 @@
 import asyncio
 
 import requests
-from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtWidgets import QFrame, QLabel, QHBoxLayout, QListWidget, QVBoxLayout, QSizePolicy
+from PySide6 import QtGui
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QListWidget, QVBoxLayout, QSizePolicy
 from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit, PushButton, StateToolTip, InfoBarPosition, \
     isDarkTheme, InfoBar, InfoBarIcon
 
-from ..Scripts.Utils.SoftwareAnnouncement import getAnnouncement
 from ..Scripts.UI.styleSheet import StyleSheet
 from ..Scripts.Utils.ConfigUtils import ConfigUtils
 
@@ -23,14 +22,14 @@ class HomeWidget(QFrame):
 
         self.topHBox = QHBoxLayout(self)
 
-        self.topTitleLabel = QLabel(self.tr("Sangonomiya"), self)
-        self.topRefreshBtn = PrimaryPushButton(self.tr("Refresh"), self, FluentIcon.SYNC)
+        self.topTitleLabel = QLabel("Sangonomiya", self)
+        self.topRefreshBtn = PrimaryPushButton("刷新", self, FluentIcon.SYNC)
 
         self.topHBox.addWidget(self.topTitleLabel)
         self.topHBox.addWidget(self.topRefreshBtn)
         self.baseVBox.addLayout(self.topHBox)
 
-        self.announceTitleLabel = QLabel(self.tr("Announcement"), self)
+        self.announceTitleLabel = QLabel("公告", self)
         self.announceTextBox = TextEdit(self)
 
         self.baseVBox.addWidget(self.announceTitleLabel)

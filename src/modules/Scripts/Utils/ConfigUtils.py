@@ -5,8 +5,8 @@ import shutil
 import sys
 
 sys.path.append("../../..")
-from PyQt6.QtCore import QLocale
-from PyQt6.QtGui import QFont
+from PySide6.QtCore import QLocale
+from PySide6.QtGui import QFont
 from ..Utils.tools import Tools
 
 ANNOUNCE_REQUEST_URL = "https://hk4e-api-static.mihoyo.com/common/hk4e_cn/announcement/api/getAnnContent?game=hk4e&game_biz=hk4e_cn&lang=zh-cn&bundle_id=hk4e_cn&platform=pc&region=cn_gf01&level=60&channel_id=1"
@@ -37,9 +37,7 @@ class ConfigUtils(Tools):
         self.license = open(f"{self.workingDir}/assets/configs/license", 'r').read()
         self.openSourceLicense = open(f"{self.workingDir}/assets/configs/open_source", 'r').read()
         self.configPath = super().getConfigPath()
-        self.language = "Auto"
         self.systemLanguage = QLocale().system().name()
-        self.languageFiles = []
         self.themeColor = "#009faa"
         self.accountInfo = {}
 
@@ -59,8 +57,6 @@ class ConfigUtils(Tools):
     def __settings(self):
         if os.path.exists(f"{self.configPath}/settings.json"):
             self.settings = json.loads(open(f"{self.configPath}/settings.json", 'r').read())
-            with open(f"{self.configPath}/settings.json", 'r') as f:
-                self.language = json.loads(f.read())["Customize"]["language"]
         self.settingsLocal = json.loads(open(f"{self.workingDir}/assets/configs/application.json", 'r').read())
         self.accountInfo = json.loads(open(f"{self.configPath}/account.json", 'r', encoding="utf-8").read())
         self.appVersion = self.settingsLocal["application_version"]

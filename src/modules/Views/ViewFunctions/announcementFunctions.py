@@ -1,8 +1,8 @@
 import os
 import re
 
-from PyQt6.QtGui import QIcon, QPixmap
-from PyQt6.QtWidgets import QListWidgetItem
+from PySide6.QtGui import QIcon, QPixmap
+from PySide6.QtWidgets import QListWidgetItem
 
 import requests
 from ...Scripts.Utils import downloader

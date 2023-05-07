@@ -5,7 +5,7 @@ import pickle
 import time
 
 import requests
-from PyQt6.QtCore import QThread, pyqtSignal
+from PySide6.QtCore import QThread, Signal
 from ..UIGF.support import UIGF_VERSION, UIGF_GACHATYPE, UIGF_DATA_MODEL, GACHATYPE
 from ..UIGF.converter import originalToUIGFListUnit
 from .gachaReportUtils import updateAPI
@@ -16,7 +16,7 @@ gachaTarget = ""
 
 
 class GachaReportThread(QThread):
-    trigger = pyqtSignal(tuple)
+    trigger = Signal(tuple)
 
     def __init__(self, gachaUrl, parent=None):
         super(GachaReportThread, self).__init__(parent)
@@ -38,7 +38,7 @@ class GachaReportThread(QThread):
                 if not len(gachaPerResponse):
                     break
                 self.uid = responsePerUnit['data']["list"][0]['uid']
-                self.trigger.emit((0, f"{self.tr('Fetching: ')}{str(page)} | {self.tr('Gacha type: ')}{key}"))
+                self.trigger.emit((0, f"正在获取第{str(page)}页 | 祈愿类型:{key}", self.uid))
                 for i in gachaPerResponse:
                     gachaList.append(originalToUIGFListUnit(i, UIGF_GACHATYPE[GACHATYPE[key]]))
                 end_id = responsePerUnit["data"]["list"][-1]["id"]
@@ -56,4 +56,4 @@ class GachaReportThread(QThread):
             json.dumps(UIGFExportJsonData, indent=2, sort_keys=True, ensure_ascii=False))
         with open(f"{utils.workingDir}/data/{self.uid}/{self.uid}_data.pickle", 'wb') as f:
             pickle.dump(UIGFExportJsonData, f)
-        self.trigger.emit((1, self.tr("GachaLog Update Completed")))
+        self.trigger.emit((1, "祈愿记录更新完毕", self.uid))

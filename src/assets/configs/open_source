@@ -1,11 +1,11 @@
-PyQt6
-Copyright (c) Riverbank Computing Limited
-Homepage (Under GPL v3): https://www.riverbankcomputing.com/software/pyqt/
+PySide6
+Copyright (c) Qt
+Homepage (Under LGPL): https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3)
 
-PyQt6-Fluent-Widgets
+PySide6-Fluent-Widgets
 Copyright (c) 2021 zhiyiYo
 Homepage (Under GPL v3): https://github.com/zhiyiYo/PyQt-Fluent-Widgets
 
-PyQt6-Frameless-Window
+PySideSix-Frameless-Window
 Copyright (c) 2021 zhiyiYo
 Homepage (Under GPL v3): https://github.com/zhiyiYo/PyQt-Frameless-Window

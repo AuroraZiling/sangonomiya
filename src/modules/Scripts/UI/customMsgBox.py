@@ -1,8 +1,8 @@
-from PyQt6.QtCore import Qt, pyqtSignal, QEvent
-from PyQt6.QtGui import QColor
-from PyQt6.QtWidgets import QFrame
+from PySide6.QtCore import Qt, Signal, QEvent
+from PySide6.QtGui import QColor
+from PySide6.QtWidgets import QFrame
 
-from qfluentwidgets import MessageBox, TextEdit, PrimaryPushButton, TextWrap, FluentStyleSheet, ComboBox
+from qfluentwidgets import MessageBox, TextEdit, PrimaryPushButton, TextWrap, FluentStyleSheet, ComboBox, PushButton
 from qfluentwidgets.components.dialog_box.dialog import Ui_MessageBox
 
 from qfluentwidgets.components.dialog_box.mask_dialog_base import MaskDialogBase
@@ -11,8 +11,8 @@ from qfluentwidgets.components.dialog_box.mask_dialog_base import MaskDialogBase
 class TextEditMsgBox(MaskDialogBase, Ui_MessageBox):
     """ Message box """
 
-    yesSignal = pyqtSignal()
-    cancelSignal = pyqtSignal()
+    yesSignal = Signal()
+    cancelSignal = Signal()
 
     def __init__(self, title: str, content: str, text: str, parent=None, isReadOnly=True):
         super().__init__(parent=parent)

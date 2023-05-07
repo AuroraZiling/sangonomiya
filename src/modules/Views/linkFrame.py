@@ -1,57 +1,59 @@
 # coding:utf-8
 import json
+
 from ..Scripts.UI import customMsgBox
 from ..Scripts.UI.styleSheet import StyleSheet
 from ..Scripts.Utils import ConfigUtils, logTracker as log
+from ..Core.UIGF.importSupport import ImportSupport
 from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
                             ComboBoxSettingCard, ExpandLayout, isDarkTheme, MessageBox, OptionsSettingCard,
                             SwitchSettingCard, HyperlinkCard)
 from qfluentwidgets import FluentIcon
-from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtWidgets import QWidget, QLabel, QFileDialog
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 
 utils = ConfigUtils.ConfigUtils()
 
 
 class LinkWidget(ScrollArea):
-    checkUpdateSig = pyqtSignal()
+    checkUpdateSig = Signal()
 
     def __init__(self, parent):
         super().__init__(parent=parent)
         self.scrollWidget = QWidget()
         self.expandLayout = ExpandLayout(self.scrollWidget)
-        self.linkLabel = QLabel(self.tr("UIGF Import & Export"), self)
+        self.linkLabel = QLabel("UIGF 导入和导出", self)
 
         self.configPath = utils.configPath
 
         # Import
-        self.importGroup = SettingCardGroup(self.tr("Import"), self.scrollWidget)
+        self.importGroup = SettingCardGroup("导入", self.scrollWidget)
         self.importCard = PushSettingCard(
-            self.tr("Browse"),
+            "浏览",
             FluentIcon.EMBED,
-            self.tr("Import UIGF(Json) File"),
-            self.tr("Currently supported standards: Uniformed Interchangeable GachaLog Format standard v2.2"),
+            "导入 UIGF(Json) 文件",
+            "目前支持的标准: Uniformed Interchangeable GachaLog Format standard v2.2",
             self.importGroup
         )
 
         # Export
-        self.exportGroup = SettingCardGroup(self.tr("Export"), self.scrollWidget)
+        self.exportGroup = SettingCardGroup("导出", self.scrollWidget)
         self.exportCard = PushSettingCard(
-            self.tr("Browse"),
+            "浏览",
             FluentIcon.SHARE,
-            self.tr("Export UIGF(Json) File"),
-            self.tr("Currently supported standards: Uniformed Interchangeable GachaLog Format standard v2.2"),
+            "导出 UIGF(Json) 文件",
+            "目前支持的标准: Uniformed Interchangeable GachaLog Format standard v2.2",
             self.exportGroup
         )
 
         # AboutUIGF
-        self.uigfGroup = SettingCardGroup(self.tr("About UIGF"), self.scrollWidget)
+        self.uigfGroup = SettingCardGroup("关于 UIGF", self.scrollWidget)
         self.uigfCard = HyperlinkCard(
-            f"https://uigf.org/{self.tr('en')}/",
-            self.tr("Open UIGF Official WebSite"),
+            f"https://uigf.org/zh/",
+            "打开 UIGF 官网",
             FluentIcon.HELP,
-            self.tr('What is UIGF?'),
-            self.tr("Unified Standardized GenshinData Format"),
+            "什么是UIGF?",
+            "Unified Standardized GenshinData Format",
             self.uigfGroup
         )
 
@@ -105,16 +107,24 @@ class LinkWidget(ScrollArea):
         customMsgBox.TextEditMsgBox(title, content, text, self).exec()
 
     def __importCardClicked(self):
-        filePath = QFileDialog.getOpenFileName(self, self.tr("Open UIGF(json) file"), "./", "UIGF(json) File (*.json)")[0]
+        filePath = QFileDialog.getOpenFileName(self, "打开 UIGF(Json) 文件", "./", "UIGF(json) File (*.json)")[0]
         if utils.jsonValidator(filePath, "uigf"):
             log.infoWrite(f"[Sangonomiya][Link] UIGF Import File Path: {filePath}")
             importFile = json.loads(open(filePath, 'r', encoding="utf-8").read())
-            alertMessage = f'''UID: {importFile["info"]["uid"]}
-{self.tr("Language")}: {importFile["info"]["lang"]}
-{self.tr("Export Time")}: {importFile["info"]["export_time"]}  
-{self.tr("Export Application")}: {importFile["info"]["export_app"]}
-{self.tr("Export Application Version")}: {importFile["info"]["export_app_version"]}'''
-            self.__showTextEditMessageBox(self.tr("Verify"), self.tr("Please verify the following information:"), alertMessage)
+            tmp_uid = importFile["info"]["uid"]
+            tmp_language = importFile["info"]["lang"]
+            tmp_export_time = importFile["info"].get("export_time", "Unknown")
+            tmp_export_application = importFile["info"]["export_app"]
+            tmp_application_version = importFile["info"]["export_app_version"]
+            alertMessage = f'''UID: {tmp_uid}
+语言: {tmp_language}
+导出时间: {tmp_export_time}  
+导出应用: {tmp_export_application}
+导出应用版本: {tmp_application_version}'''
+            self.__showTextEditMessageBox("验证", "请验证如下信息:", alertMessage)
+            importSupport = ImportSupport(tmp_uid, tmp_language, tmp_export_time, tmp_export_application, tmp_application_version)
+            importSupport.UIGFSave(importFile)
+
 
     def __connectSignalToSlot(self):
         self.importCard.clicked.connect(self.__importCardClicked)
