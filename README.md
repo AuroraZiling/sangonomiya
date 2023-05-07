@@ -20,6 +20,10 @@
   <a style="text-decoration:none">
     <img src=https://img.shields.io/badge/License-GPLv3-orange?style=flat-square alt="GPL-3.0"/>
   </a>
+
+  <a style="text-decoration:none">
+    <img src=https://img.shields.io/badge/交流群-603155398-red?style=flat-square alt="GPL-3.0"/>
+  </a>
 </p>
 
 
