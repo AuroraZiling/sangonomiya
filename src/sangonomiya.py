@@ -4,7 +4,7 @@ import sys
 import ctypes
 import time
 
-from PySide6.QtCore import Qt, QTranslator
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QStackedWidget, QHBoxLayout
 
@@ -12,7 +12,7 @@ from qfluentwidgets import FluentIcon, NavigationInterface, NavigationItemPositi
 from qframelesswindow import FramelessWindow
 
 from modules.Views import homeFrame, gachaReportFrame, linkFrame, announcementFrame, \
-    settingFrame, aboutFrame
+    settingFrame, aboutFrame, metaDataFrame
 from modules.Scripts.UI import customIcon
 from modules.Scripts.UI.titleBar import CustomTitleBar
 from modules.Scripts.UI.styleSheet import StyleSheet
@@ -51,6 +51,7 @@ class Window(FramelessWindow):
         self.gachaReportInterface = gachaReportFrame.GachaReportWidget(self)
         self.linkInterface = linkFrame.LinkWidget(self)
         self.announcementInterface = announcementFrame.AnnouncementWidget(self)
+        self.metaDataInterface = metaDataFrame.MetaDataWidget(self)
         self.settingInterface = settingFrame.SettingWidget(self)
         self.aboutInterface = aboutFrame.AboutWidget(self)
 
@@ -58,6 +59,7 @@ class Window(FramelessWindow):
         self.mainStackWidget.addWidget(self.gachaReportInterface)
         self.mainStackWidget.addWidget(self.linkInterface)
         self.mainStackWidget.addWidget(self.announcementInterface)
+        self.mainStackWidget.addWidget(self.metaDataInterface)
         self.mainStackWidget.addWidget(self.settingInterface)
         self.mainStackWidget.addWidget(self.aboutInterface)
 
@@ -101,6 +103,14 @@ class Window(FramelessWindow):
         )
 
         self.navigationInterface.addSeparator()
+
+        self.navigationInterface.addItem(
+            routeKey=self.metaDataInterface.objectName(),
+            icon=FluentIcon.CODE,
+            text="元数据",
+            onClick=lambda: self.switchTo(self.metaDataInterface),
+            position=NavigationItemPosition.BOTTOM
+        )
 
         self.navigationInterface.addItem(
             routeKey=self.settingInterface.objectName(),

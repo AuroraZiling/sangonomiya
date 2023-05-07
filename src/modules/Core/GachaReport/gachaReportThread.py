@@ -38,7 +38,7 @@ class GachaReportThread(QThread):
                 if not len(gachaPerResponse):
                     break
                 self.uid = responsePerUnit['data']["list"][0]['uid']
-                self.trigger.emit((0, f"正在获取第{str(page)}页 | 祈愿类型:{key}", self.uid))
+                self.trigger.emit((0, f"正在获取第{str(page + 1)}页 | {key}", self.uid))
                 for i in gachaPerResponse:
                     gachaList.append(originalToUIGFListUnit(i, UIGF_GACHATYPE[GACHATYPE[key]]))
                 end_id = responsePerUnit["data"]["list"][-1]["id"]

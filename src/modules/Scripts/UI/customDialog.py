@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt, Signal, QEvent
 from PySide6.QtGui import QColor
-from PySide6.QtWidgets import QFrame
+from PySide6.QtWidgets import QHBoxLayout
 
 from qfluentwidgets import MessageBox, TextEdit, PrimaryPushButton, TextWrap, FluentStyleSheet, ComboBox, PushButton, \
     InfoBar
@@ -10,6 +10,7 @@ from qfluentwidgets.components.dialog_box.mask_dialog_base import MaskDialogBase
 
 from ..Utils.tools import Tools
 from ...Core.GachaReport.gachaReportUtils import extractAPI
+from ...Core.GachaReport.gachaReportRead import getUIDList
 
 utils = Tools()
 
@@ -50,3 +51,39 @@ class URLDialog(MaskDialogBase, Ui_MessageBox):
     def __yesButtonClicked(self):
         self.accept()
         self.returnSignal.emit(self.textEditWidget.toPlainText())
+
+
+class ComboboxDialog(MaskDialogBase, Ui_MessageBox):
+    """ Message box """
+
+    returnSignal = Signal(str)
+    cancelSignal = Signal()
+
+    def __init__(self, title: str, content: str, parent=None):
+        super().__init__(parent=parent)
+        self._setUpUi(title, content, self.widget)
+
+        self.setShadowEffect(60, (0, 10), QColor(0, 0, 0, 50))
+        self.setMaskColor(QColor(0, 0, 0, 76))
+        self._hBoxLayout.removeWidget(self.widget)
+        self._hBoxLayout.addWidget(self.widget, 1, Qt.AlignmentFlag.AlignCenter)
+
+        self.customHBox = QHBoxLayout(self)
+        self.comboboxWidget = ComboBox(self)
+        self.comboboxWidget.setFixedWidth(240)
+        self.comboboxWidget.addItems(getUIDList())
+        if getUIDList():
+            self.comboboxWidget.setCurrentIndex(0)
+        self.comboboxWidget.setContentsMargins(24, 24, 24, 24)
+        self.customHBox.addWidget(self.comboboxWidget)
+        self.vBoxLayout.insertSpacing(1, 10)
+        self.vBoxLayout.insertLayout(1, self.customHBox)
+
+        self.buttonGroup.setMinimumWidth(280)
+        self.widget.setFixedSize(500, 350)
+
+        self.yesButton.clicked.connect(self.__yesButtonClicked)
+
+    def __yesButtonClicked(self):
+        self.accept()
+        self.returnSignal.emit(self.comboboxWidget.currentText())

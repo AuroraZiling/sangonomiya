@@ -63,6 +63,11 @@ class Config(QConfig):
     gachaReportLastUID = ConfigItem(
         "GachaReport", "lastUID", "")
 
+    # MetaData
+    metaDataUpdateAtStartUp = ConfigItem(
+        "MetaData", "metaDataUpdateAtStartUp", True, BoolValidator()
+    )
+
 
 cfg = Config()
 qconfig.load(f"{configPath}/settings.json", cfg)

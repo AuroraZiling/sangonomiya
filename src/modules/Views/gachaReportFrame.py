@@ -121,6 +121,7 @@ class GachaReportWidget(QFrame):
                 self.headerRightGachaTypeCombobox.setEnabled(True)
                 self.initData()
                 self.headerRightUIDSelectCombobox.setCurrentText(msg[2])
+                self.__headerRightUIDSelectComboboxChanged()
         else:
             self.headerRightFullUpdateDropBtn.setEnabled(True)
 
@@ -187,9 +188,9 @@ class GachaReportWidget(QFrame):
         self.headerRightGachaTypeCombobox.addItems(["角色活动祈愿", "武器祈愿", "常驻祈愿"])
         self.headerRightGachaTypeCombobox.setEnabled(False)
         self.headerRightGachaTypeCombobox.currentIndexChanged.connect(self.__headerRightGachaTypeComboboxChanged)
-        self.headerRightUIDSelectCombobox.setFixedWidth(200)
+        self.headerRightUIDSelectCombobox.setFixedWidth(175)
         self.headerRightUIDSelectCombobox.currentIndexChanged.connect(self.__headerRightUIDSelectComboboxChanged)
-        self.headerRightFullUpdateDropBtn.setFixedWidth(200)
+        self.headerRightFullUpdateDropBtn.setFixedWidth(175)
         self.headerRightFullUpdateDropBtn.setMenu(self.headerRightFullUpdateDropBtnMenu)
 
         self.bottomLeftGachaTable.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)

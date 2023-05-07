@@ -1,10 +1,11 @@
 # coding:utf-8
 import json
 
-from ..Scripts.UI import customMsgBox
+from ..Scripts.UI import customMsgBox, customDialog
 from ..Scripts.UI.styleSheet import StyleSheet
 from ..Scripts.Utils import ConfigUtils, logTracker as log
 from ..Core.UIGF.importSupport import ImportSupport
+from ..Core.UIGF.exportSupport import ExportSupport
 from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
                             ComboBoxSettingCard, ExpandLayout, isDarkTheme, MessageBox, OptionsSettingCard,
                             SwitchSettingCard, HyperlinkCard)
@@ -125,6 +126,18 @@ class LinkWidget(ScrollArea):
             importSupport = ImportSupport(tmp_uid, tmp_language, tmp_export_time, tmp_export_application, tmp_application_version)
             importSupport.UIGFSave(importFile)
 
+    def __exportCardReturnSignal(self, uid):
+        filePath = QFileDialog.getSaveFileName(self, "保存 UIGF(Json) 文件", f"./{uid}_export_data.json", "UIGF(json) File (*.json)")[0]
+        exportSupport = ExportSupport(uid)
+        exportSupport.UIGFSave(filePath)
+
+
+    def __exportCardClicked(self):
+        w = customDialog.ComboboxDialog("导出", "选择需要导出的UID", self)
+        w.returnSignal.connect(self.__exportCardReturnSignal)
+        w.exec()
+
 
     def __connectSignalToSlot(self):
         self.importCard.clicked.connect(self.__importCardClicked)
+        self.exportCard.clicked.connect(self.__exportCardClicked)

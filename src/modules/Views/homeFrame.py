@@ -1,11 +1,5 @@
-import asyncio
-
-import requests
-from PySide6 import QtGui
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QListWidget, QVBoxLayout, QSizePolicy
-from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit, PushButton, StateToolTip, InfoBarPosition, \
-    isDarkTheme, InfoBar, InfoBarIcon
+from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
+from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit
 
 from ..Scripts.UI.styleSheet import StyleSheet
 from ..Scripts.Utils.ConfigUtils import ConfigUtils
@@ -49,6 +43,7 @@ class HomeWidget(QFrame):
         self.announceTextBox.setObjectName("homeFrameAnnounce")
         self.announceTextBox.setReadOnly(True)
         self.announceTextBox.setFrameShape(QFrame.Shape.NoFrame)
+        self.announceTextBox.setContentsMargins(5, 5, 5, 5)
 
     def getAnnouncementFromMetaData(self):
         content = f'''Sangonomiya Version is {utils.appVersion}

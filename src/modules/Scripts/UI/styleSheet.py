@@ -18,6 +18,7 @@ class StyleSheet(StyleSheetBase, Enum):
     HOME_FRAME = "home_frame"
     SETTING_FRAME = "setting_frame"
     ABOUT_FRAME = "general"
+    METADATA_FRAME = "metadata_frame"
 
     def path(self, theme=Theme.AUTO):
         theme = qconfig.theme if theme == Theme.AUTO else theme

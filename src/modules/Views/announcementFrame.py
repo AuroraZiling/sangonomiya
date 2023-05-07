@@ -2,9 +2,9 @@ import webbrowser
 
 from PySide6 import QtGui
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QListWidget, QVBoxLayout, QSizePolicy
+from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QSizePolicy
 from qfluentwidgets import PrimaryPushButton, FluentIcon, InfoBar, PushButton, StateToolTip, InfoBarPosition, \
-    isDarkTheme
+    isDarkTheme, ListWidget
 
 from ..Scripts.UI.styleSheet import StyleSheet
 from ..Scripts.Utils import downloader
@@ -56,7 +56,7 @@ class AnnouncementWidget(QFrame):
 
         self.announceHBox = QHBoxLayout(self)
 
-        self.announceListBox = QListWidget(self)
+        self.announceListBox = ListWidget(self)
         self.announceHBox.addWidget(self.announceListBox)
 
         self.contentVBox = QVBoxLayout(self)
