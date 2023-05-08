@@ -2,16 +2,20 @@ import os
 import re
 from urllib import parse
 
+from ...Scripts.Utils import log_recorder as log
+
 GAME_LOG_PATH = os.environ["userprofile"] + '/AppData/LocalLow/miHoYo/原神/output_log.txt.last'
 
 
 def getDefaultGameDataPath():
     if not os.path.exists(GAME_LOG_PATH):
+        log.infoWrite(f"[GachaReport.utils] Game Path not found")
         return 0, "Game Log Not found"
     with open(GAME_LOG_PATH, 'r', encoding='utf-8') as f:
-        log = f.read()
-    res = re.search("([A-Z]:/.+(GenshinImpact_Data|YuanShen_Data))", log)
+        logFile = f.read()
+    res = re.search("([A-Z]:/.+(GenshinImpact_Data|YuanShen_Data))", logFile)
     game_path = res.group() if res else None
+    log.infoWrite(f"[GachaReport.utils] Game Path get: {game_path}")
     return game_path
 
 

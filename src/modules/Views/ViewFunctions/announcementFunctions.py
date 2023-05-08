@@ -5,14 +5,20 @@ from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtWidgets import QListWidgetItem
 
 import requests
-from ...Scripts.Utils import downloader
-from ...Scripts.Utils.ConfigUtils import ConfigUtils
+from ...Scripts.Utils import downloader, config_utils, log_recorder as log
+from ...constant import HTML_MODEL
 
-utils = ConfigUtils()
-HTML_MODEL = utils.getHTMLMODEL()
+utils = config_utils.ConfigUtils()
 
 
-def contentHTMLPhaser(css, contentHTML, innerImageUrl = None):
+def getImageURLFromSource(source):
+    pattern = re.compile(r'https://webstatic.mihoyo.com/upload/ann/[^\s]+.jpg')
+    url_lst = pattern.findall(source)
+    log.infoWrite("[Announcement] Inner image URLs extracted")
+    return url_lst
+
+
+def contentHTMLPhaser(css, contentHTML, innerImageUrl=None):
     contentHTML = contentHTML.replace('''style="color:rgba(85,85,85,1)"''', "")
     contentHTML = contentHTML.replace('''style="background-color: rgb(255, 215, 185);"''', "")
     contentHTML = contentHTML.replace('''style="background-color: rgb(254, 245, 231);"''', "")
@@ -23,6 +29,7 @@ def contentHTMLPhaser(css, contentHTML, innerImageUrl = None):
     if innerImageUrl:
         for eachInnerImage in innerImageUrl.keys():
             contentHTML = contentHTML.replace(eachInnerImage, innerImageUrl[eachInnerImage])
+    log.infoWrite("[Announcement][contentHTMLPhaser] HTML Generated")
     return contentHTML
 
 
@@ -46,6 +53,7 @@ class AnnouncementFunctions:
             for second_level in first_level["list"]:
                 self.announceIconURLList.append(second_level["tag_icon"])
                 self.announceIconNameList.append(second_level["tag_icon"].split("/")[-1])
+        log.infoWrite("[Announcement] Icon URLs of announcement got")
 
     def getIcons(self):
         for eachIconURL in self.announceIconURLList:
@@ -53,35 +61,37 @@ class AnnouncementFunctions:
                 downloader.downloadFromImage(eachIconURL, f"{utils.workingDir}/cache/", eachIconURL.split('/')[-1])
             else:
                 pass
+        log.infoWrite("[Announcement] Icons of announcement downloaded")
 
     def getTitles(self):
         for eachAnnounce in self.announceData["list"]:
             self.announceTitleList.append(eachAnnounce["subtitle"].replace("<br>", ""))
+        log.infoWrite("[Announcement] Titles of announcement got")
 
     def getItems(self):
         sideBarItems = []
         for eachItem in range(self.announceAmount):
-            sideBarItems.append(QListWidgetItem(QIcon(f"{utils.workingDir}/cache/{self.announceIconNameList[eachItem]}"),
-                                                self.announceTitleList[eachItem]))
+            sideBarItems.append(
+                QListWidgetItem(QIcon(f"{utils.workingDir}/cache/{self.announceIconNameList[eachItem]}"),
+                                self.announceTitleList[eachItem]))
         return sideBarItems
-
-    def getImageURLFromSource(self, source):
-        pattern = re.compile(r'https://webstatic.mihoyo.com/upload/ann/[^\s]+.jpg')
-        url_lst = pattern.findall(source)
-        return url_lst
 
     def getCurrentAnnounce(self, index):
         currentAnnounce = self.announceData["list"][index]
         announceId = str(currentAnnounce["ann_id"])
         bigTitle = currentAnnounce["title"]
         contentHtml = currentAnnounce["content"]
-        innerImageSources = self.getImageURLFromSource(contentHtml)
+        innerImageSources = getImageURLFromSource(contentHtml)
         for eachInnerImage in innerImageSources:
             if not os.path.exists(f"{utils.workingDir}/cache/{eachInnerImage.split('/')[-1]}"):
-                downloader.downloadFromImage(eachInnerImage, f"{utils.workingDir}/cache/", eachInnerImage.split('/')[-1])
-                self.announceInnerImageMapping[eachInnerImage] = f"{utils.workingDir}/cache/{eachInnerImage.split('/')[-1]}"
+                downloader.downloadFromImage(eachInnerImage, f"{utils.workingDir}/cache/",
+                                             eachInnerImage.split('/')[-1])
+                self.announceInnerImageMapping[
+                    eachInnerImage] = f"{utils.workingDir}/cache/{eachInnerImage.split('/')[-1]}"
         if currentAnnounce["banner"]:
-            downloader.downloadFromImage(currentAnnounce["banner"], f"{utils.workingDir}/cache/", announceId + ".jpg") if not os.path.exists(f"{utils.workingDir}/cache/{announceId}.jpg") else None
+            downloader.downloadFromImage(currentAnnounce["banner"], f"{utils.workingDir}/cache/",
+                                         announceId + ".jpg") if not os.path.exists(
+                f"{utils.workingDir}/cache/{announceId}.jpg") else None
             banner = QPixmap(f"{utils.workingDir}/cache/{announceId}.jpg")
             bannerSize = banner.rect().getRect()
             if banner.rect().getRect() == (0, 0, 0, 0):
@@ -96,8 +106,9 @@ class AnnouncementFunctions:
         else:
             banner = ""
             bannerHeight = 0
-
         contentHtml = contentHTMLPhaser(self.announceStyle, contentHtml, self.announceInnerImageMapping)
         open(f"{utils.workingDir}/cache/{index}.html", 'w', encoding="utf-8").write(contentHtml)
-        return {"announceId": announceId, "bigTitle": bigTitle, "banner": banner, "bannerHeight": bannerHeight,
+        data = {"announceId": announceId, "bigTitle": bigTitle, "banner": banner, "bannerHeight": bannerHeight,
                 "contentHtml": f"{index}.html"}
+        log.infoWrite(f"[Announcement] Current announcement: {data}")
+        return data

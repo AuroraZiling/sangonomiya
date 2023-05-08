@@ -4,14 +4,16 @@ import shutil
 import json
 import time
 from pathlib import Path
-
 import win32clipboard
+
 from PySide6.QtCore import QStandardPaths
+
 
 class Tools:
     def __init__(self):
         self.workingDir = self.getWorkingDir()
         self.OSName = self.getOSName()
+        self.logDir = self.workingDir + "/logs"
 
     @staticmethod
     def getWorkingDir():
@@ -50,10 +52,16 @@ class Tools:
             os.system(f"open {path}")
 
     @staticmethod
-    def deleteFiles(filePaths):
+    def deleteDir(filePaths):
         if os.path.exists(filePaths):
-            shutil.rmtree(filePaths)
+            try:
+                shutil.rmtree(filePaths)
+            except PermissionError:
+                return
         os.mkdir(filePaths)
+
+    def getLogAmount(self):
+        return len(os.listdir(self.logDir))
 
     @staticmethod
     def getDirSize(path):

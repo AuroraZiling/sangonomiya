@@ -3,12 +3,10 @@ import json
 from enum import Enum
 
 from PySide6.QtCore import QLocale
-from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
-                            OptionsValidator, RangeConfigItem, RangeValidator,
-                            FolderListValidator, EnumSerializer, FolderValidator, ConfigSerializer, __version__, Theme)
+from qfluentwidgets import qconfig, QConfig, ConfigItem, BoolValidator, FolderValidator, ConfigSerializer
 
-from ...Scripts.Utils.ConfigUtils import ConfigUtils
-from ...Core.GachaReport.gachaReportUtils import getDefaultGameDataPath
+from ...Scripts.Utils.config_utils import ConfigUtils
+from ...Core.GachaReport.gacha_report_utils import getDefaultGameDataPath
 
 utils = ConfigUtils()
 

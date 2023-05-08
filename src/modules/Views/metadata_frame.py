@@ -1,16 +1,13 @@
-from PySide6 import QtGui, QtWidgets
-from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
+from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
 
-from qfluentwidgets import HyperlinkCard, isDarkTheme, TextEdit, SwitchSettingCard, PushSettingCard
+from qfluentwidgets import SwitchSettingCard, PushSettingCard, InfoBar, InfoBarPosition
 from qfluentwidgets import FluentIcon
+
 from .ViewConfigs.config import cfg
+from ..Scripts.Utils import metadata_utils, config_utils, log_recorder as log
+from ..Scripts.UI.style_sheet import StyleSheet
 
-from ..Scripts.UI import customIcon
-from ..Scripts.UI.styleSheet import StyleSheet
-from ..Scripts.Utils import ConfigUtils
-from ..Scripts.Utils import logTracker as log
-
-utils = ConfigUtils.ConfigUtils()
+utils = config_utils.ConfigUtils()
 
 
 class MetaDataWidget(QFrame):
@@ -53,7 +50,17 @@ class MetaDataWidget(QFrame):
         self.initFrame()
         StyleSheet.METADATA_FRAME.apply(self)
 
+        log.infoWrite("[Settings] All cache files deleted")
+
+    def __metaDataCharacterWeaponUpdateCardClicked(self):
+        metadata_utils.updateMetaData("character")
+        metadata_utils.updateMetaData("weapon")
+        InfoBar.success("成功", "角色/武器元数据列表已更新", position=InfoBarPosition.TOP_RIGHT, parent=self)
+        log.infoWrite(f"[Metadata] Character and weapon metadata updated")
+
     def initFrame(self):
         self.metaDataTitleLabel.setObjectName("metaDataTitleLabel")
         self.metaDataAutoUpdateLabel.setFont(utils.getFont(18))
         self.metaDataCharacterWeaponUpdateLabel.setFont(utils.getFont(18))
+
+        self.metaDataCharacterWeaponUpdateCard.clicked.connect(self.__metaDataCharacterWeaponUpdateCardClicked)

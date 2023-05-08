@@ -3,8 +3,8 @@ import pathlib
 import pickle
 import time
 
-from ...Scripts.Utils.ConfigUtils import ConfigUtils
-from .support import UIGF_VERSION
+from ...Scripts.Utils.config_utils import ConfigUtils
+from ...constant import UIGF_VERSION
 
 utils = ConfigUtils()
 

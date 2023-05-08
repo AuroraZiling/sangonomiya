@@ -3,14 +3,14 @@ import pathlib
 import pickle
 import time
 
-from ...Scripts.Utils.ConfigUtils import ConfigUtils
-from .support import UIGF_DATA_MODEL, UIGF_VERSION
+from ...Scripts.Utils.config_utils import ConfigUtils
+from ...constant import UIGF_DATA_MODEL, UIGF_VERSION
 
 utils = ConfigUtils()
 
 
 class ImportSupport:
-    def __init__(self, UID, language, export_time, export_app, export_app_version):
+    def __init__(self, UID, language, export_time):
         self.uid = UID
         self.language = language
         self.export_time = export_time

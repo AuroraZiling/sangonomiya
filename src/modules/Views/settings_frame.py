@@ -1,19 +1,21 @@
 # coding:utf-8
-from .ViewConfigs.config import cfg
-from ..Core.GachaReport.gachaReportUtils import getDefaultGameDataPath
-from ..Scripts.UI import customIcon
-from ..Scripts.UI.styleSheet import StyleSheet
-from ..Scripts.Utils import ConfigUtils
-from ..Scripts.Utils import logTracker as log
-from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, isDarkTheme, Dialog, OptionsSettingCard,
-                            SwitchSettingCard, setTheme, Theme, InfoBar)
-from qfluentwidgets import FluentIcon, InfoBarPosition, qconfig
 from PySide6 import QtGui
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QWidget, QLabel, QApplication, QFileDialog
+from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 
-utils = ConfigUtils.ConfigUtils()
+from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea, ExpandLayout, isDarkTheme, Dialog,
+                            OptionsSettingCard,
+                            SwitchSettingCard, setTheme, InfoBar, MessageBox)
+from qfluentwidgets import FluentIcon, InfoBarPosition, qconfig
+
+from .ViewConfigs.config import cfg
+from ..Core.GachaReport.gacha_report_utils import getDefaultGameDataPath
+from ..Scripts.UI import custom_icon
+from ..Scripts.UI.style_sheet import StyleSheet
+from ..Scripts.Utils import config_utils, log_recorder as log
+from ..Scripts.Updater import check_update
+
+utils = config_utils.ConfigUtils()
 
 
 class SettingWidget(ScrollArea):
@@ -82,7 +84,7 @@ class SettingWidget(ScrollArea):
 
         self.defaultLogDeleteCard = PushSettingCard(
             "删除",
-            customIcon.MyFluentIcon.DELETE,
+            custom_icon.MyFluentIcon.DELETE,
             "清空日志文件",
             f"{utils.workingDir + '/logs'} 文件夹内的日志将被清空",
             self.defaultGroup
@@ -90,8 +92,8 @@ class SettingWidget(ScrollArea):
 
         self.defaultCacheDeleteCard = PushSettingCard(
             "删除",
-            customIcon.MyFluentIcon.DELETE,
-            f"清空缓存文件 (大概 {utils.getDirSize(utils.workingDir + '/cache')} MB)",
+            custom_icon.MyFluentIcon.DELETE,
+            f"清空缓存文件 (约 {utils.getDirSize(utils.workingDir + '/cache')} MB)",
             f"存放在 {utils.workingDir + '/cache'} 的缓存文件将被删除",
             self.defaultGroup
         )
@@ -114,7 +116,7 @@ class SettingWidget(ScrollArea):
         self.customizeAutoDeleteLogSetting = SwitchSettingCard(
             FluentIcon.DELETE,
             "自动删除旧日志",
-            "程序启动后，旧日志将被删除",
+            "程序启动后，若旧日志存在三个及以上，则全部删除",
             configItem=cfg.customizeAutoDeleteLog,
             parent=self.customizeGroup
         )
@@ -132,7 +134,7 @@ class SettingWidget(ScrollArea):
 
         self.__initWidget()
         self.setObjectName("SettingFrame")
-        log.infoWrite("[SubWidget][Settings] Initialized")
+        log.infoWrite("[Settings] UI Initialized")
 
     def __initWidget(self):
         self.resize(1000, 800)
@@ -204,14 +206,15 @@ class SettingWidget(ScrollArea):
 
         cfg.set(cfg.gameDataFolder, folder)
         self.gameDataCard.setContent(folder)
+        log.infoWrite(f"[Settings] Game path changed: {folder}")
 
     def __gameDataResetCardClicked(self):
         cfg.set(cfg.gameDataFolder, getDefaultGameDataPath())
         self.gameDataCard.setContent(getDefaultGameDataPath())
+        log.infoWrite(f"[Settings] Game path reset")
 
     def __defaultLogDeleteCardClicked(self):
         utils.deleteAllLogFiles()
-        log.infoWrite("[Sangonomiya][Settings] All old logs deleted")
         InfoBar.success("成功", "旧日志文件已清空", InfoBarPosition.TOP_RIGHT, parent=self.window())
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
@@ -219,12 +222,20 @@ class SettingWidget(ScrollArea):
 
     def __defaultCacheDeleteCardClicked(self):
         utils.deleteAllCacheFiles()
-        log.infoWrite("[Sangonomiya][Settings] All cache files deleted")
         self.__defaultCacheSizeUpdate()
         InfoBar.success("成功", "缓存已清空", InfoBarPosition.TOP_RIGHT, parent=self.window())
 
     def __defaultCacheSizeUpdate(self):
-        self.defaultCacheDeleteCard.titleLabel.setText(f"清空缓存文件 (大概 {utils.getDirSize(utils.workingDir + '/cache')} MB)")
+        self.defaultCacheDeleteCard.titleLabel.setText(
+            f"清空缓存文件 (约 {utils.getDirSize(utils.workingDir + '/cache')} MB)")
+
+    def __updateCheckCardClicked(self):
+        latestVersion = check_update.findLatestVersion()
+        if check_update.compareVersion(utils.appVersion, latestVersion):
+            w = MessageBox("发现新版本", latestVersion["version"], self)
+            print(w.exec())
+        else:
+            MessageBox("更新", "暂无可用更新", self).exec()
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
@@ -247,4 +258,4 @@ class SettingWidget(ScrollArea):
         self.defaultCacheDeleteCard.clicked.connect(self.__defaultCacheDeleteCardClicked)
 
         # Update
-        self.updateCheckCard.clicked.connect(lambda: self.__showMessageBox("Oops", "该功能尚未实现"))
+        self.updateCheckCard.clicked.connect(self.__updateCheckCardClicked)

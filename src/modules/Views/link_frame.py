@@ -1,19 +1,19 @@
 # coding:utf-8
 import json
 
-from ..Scripts.UI import customMsgBox, customDialog
-from ..Scripts.UI.styleSheet import StyleSheet
-from ..Scripts.Utils import ConfigUtils, logTracker as log
-from ..Core.UIGF.importSupport import ImportSupport
-from ..Core.UIGF.exportSupport import ExportSupport
-from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, isDarkTheme, MessageBox, OptionsSettingCard,
-                            SwitchSettingCard, HyperlinkCard)
-from qfluentwidgets import FluentIcon
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 
-utils = ConfigUtils.ConfigUtils()
+from qfluentwidgets import SettingCardGroup, PushSettingCard, ScrollArea, ExpandLayout, MessageBox, HyperlinkCard
+from qfluentwidgets import FluentIcon
+
+from ..Scripts.UI import custom_msgBox, custom_dialog
+from ..Scripts.UI.style_sheet import StyleSheet
+from ..Scripts.Utils import config_utils, log_recorder as log
+from ..Core.UIGF.import_support import ImportSupport
+from ..Core.UIGF.export_support import ExportSupport
+
+utils = config_utils.ConfigUtils()
 
 
 class LinkWidget(ScrollArea):
@@ -61,6 +61,8 @@ class LinkWidget(ScrollArea):
         self.setObjectName("LinkFrame")
         self.__initWidget()
 
+        log.infoWrite(f"[Link] UI Initialized")
+
     def __initWidget(self):
         self.resize(1000, 800)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -105,10 +107,11 @@ class LinkWidget(ScrollArea):
         MessageBox(title, content, self).exec()
 
     def __showTextEditMessageBox(self, title, content, text):
-        customMsgBox.TextEditMsgBox(title, content, text, self).exec()
+        custom_msgBox.TextEditMsgBox(title, content, text, self).exec()
 
     def __importCardClicked(self):
         filePath = QFileDialog.getOpenFileName(self, "打开 UIGF(Json) 文件", "./", "UIGF(json) File (*.json)")[0]
+        log.infoWrite(f"[Link][Import] Get UIGF File: {filePath}")
         if utils.jsonValidator(filePath, "uigf"):
             log.infoWrite(f"[Sangonomiya][Link] UIGF Import File Path: {filePath}")
             importFile = json.loads(open(filePath, 'r', encoding="utf-8").read())
@@ -123,20 +126,21 @@ class LinkWidget(ScrollArea):
 导出应用: {tmp_export_application}
 导出应用版本: {tmp_application_version}'''
             self.__showTextEditMessageBox("验证", "请验证如下信息:", alertMessage)
-            importSupport = ImportSupport(tmp_uid, tmp_language, tmp_export_time, tmp_export_application, tmp_application_version)
+            importSupport = ImportSupport(tmp_uid, tmp_language, tmp_export_time)
             importSupport.UIGFSave(importFile)
+            log.infoWrite(f"[Link][Import] Imported ({tmp_uid} from {tmp_export_application})")
 
     def __exportCardReturnSignal(self, uid):
-        filePath = QFileDialog.getSaveFileName(self, "保存 UIGF(Json) 文件", f"./{uid}_export_data.json", "UIGF(json) File (*.json)")[0]
+        filePath = QFileDialog.getSaveFileName(self, "保存 UIGF(Json) 文件", f"./{uid}_export_data.json",
+                                               "UIGF(json) File (*.json)")[0]
         exportSupport = ExportSupport(uid)
         exportSupport.UIGFSave(filePath)
-
+        log.infoWrite(f"[Link][Export] Exported ({uid} to {filePath})")
 
     def __exportCardClicked(self):
-        w = customDialog.ComboboxDialog("导出", "选择需要导出的UID", self)
+        w = custom_dialog.ComboboxDialog("导出", "选择需要导出的UID", self)
         w.returnSignal.connect(self.__exportCardReturnSignal)
         w.exec()
-
 
     def __connectSignalToSlot(self):
         self.importCard.clicked.connect(self.__importCardClicked)

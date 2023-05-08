@@ -1,10 +1,8 @@
 from PySide6.QtCore import Qt, Signal, QEvent
 from PySide6.QtGui import QColor
-from PySide6.QtWidgets import QFrame
 
-from qfluentwidgets import MessageBox, TextEdit, PrimaryPushButton, TextWrap, FluentStyleSheet, ComboBox, PushButton
+from qfluentwidgets import TextEdit
 from qfluentwidgets.components.dialog_box.dialog import Ui_MessageBox
-
 from qfluentwidgets.components.dialog_box.mask_dialog_base import MaskDialogBase
 
 

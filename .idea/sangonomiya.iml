@@ -10,6 +10,7 @@
     <orderEntry type="module" module-name="PyQt6-Fluent-Widgets" />
     <orderEntry type="module" module-name="asta" />
     <orderEntry type="module" module-name="SangonomiyaMetadata" />
+    <orderEntry type="module" module-name="sangonomiya.Metadata" />
   </component>
   <component name="PyNamespacePackagesService">
     <option name="namespacePackageFolders">

@@ -2,9 +2,9 @@ from enum import Enum
 
 from qfluentwidgets import getIconColor, Theme, FluentIconBase
 
-from ..Utils import ConfigUtils
+from ..Utils import config_utils
 
-utils = ConfigUtils.ConfigUtils()
+utils = config_utils.ConfigUtils()
 
 
 class MyFluentIcon(FluentIconBase, Enum):

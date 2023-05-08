@@ -1,10 +1,11 @@
 from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
+
 from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit
 
-from ..Scripts.UI.styleSheet import StyleSheet
-from ..Scripts.Utils.ConfigUtils import ConfigUtils
+from ..Scripts.UI.style_sheet import StyleSheet
+from ..Scripts.Utils import config_utils, log_recorder as log
 
-utils = ConfigUtils()
+utils = config_utils.ConfigUtils()
 
 
 class HomeWidget(QFrame):
@@ -35,6 +36,8 @@ class HomeWidget(QFrame):
         self.initFrame()
         self.getAnnouncementFromMetaData()
 
+        log.infoWrite("[Home] UI Initialized")
+
     def initFrame(self):
         self.topTitleLabel.setObjectName("homeFrameTitle")
         self.topRefreshBtn.setFixedWidth(100)
@@ -50,3 +53,4 @@ class HomeWidget(QFrame):
 PyQt-fluent-widgets Version is {utils.UIVersion}
 Sangonomiya is working at {utils.workingDir}'''
         self.announceTextBox.setText(content)
+        log.infoWrite("[Home] Announcement Set")

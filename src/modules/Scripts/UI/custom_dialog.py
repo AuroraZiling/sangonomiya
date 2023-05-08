@@ -1,16 +1,14 @@
-from PySide6.QtCore import Qt, Signal, QEvent
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QHBoxLayout
 
-from qfluentwidgets import MessageBox, TextEdit, PrimaryPushButton, TextWrap, FluentStyleSheet, ComboBox, PushButton, \
-    InfoBar
-from qfluentwidgets.components.dialog_box.dialog import Dialog, Ui_MessageBox
+from qfluentwidgets import TextEdit, ComboBox, PushButton
+from qfluentwidgets.components.dialog_box.dialog import Ui_MessageBox
 
 from qfluentwidgets.components.dialog_box.mask_dialog_base import MaskDialogBase
 
 from ..Utils.tools import Tools
-from ...Core.GachaReport.gachaReportUtils import extractAPI
-from ...Core.GachaReport.gachaReportRead import getUIDList
+from ...Core.GachaReport import gacha_report_read
 
 utils = Tools()
 
@@ -44,7 +42,7 @@ class URLDialog(MaskDialogBase, Ui_MessageBox):
         self.getFromClipboardBtn.clicked.connect(self.__getFromClipboardBtnClicked)
 
     def __getFromClipboardBtnClicked(self):
-        clipboardText = extractAPI(utils.getClipboardText())
+        clipboardText = gacha_report_read.extractAPI(utils.getClipboardText())
         if clipboardText:
             self.textEditWidget.setText(clipboardText)
 
@@ -71,8 +69,8 @@ class ComboboxDialog(MaskDialogBase, Ui_MessageBox):
         self.customHBox = QHBoxLayout(self)
         self.comboboxWidget = ComboBox(self)
         self.comboboxWidget.setFixedWidth(240)
-        self.comboboxWidget.addItems(getUIDList())
-        if getUIDList():
+        self.comboboxWidget.addItems(gacha_report_read.getUIDList())
+        if gacha_report_read.getUIDList():
             self.comboboxWidget.setCurrentIndex(0)
         self.comboboxWidget.setContentsMargins(24, 24, 24, 24)
         self.customHBox.addWidget(self.comboboxWidget)

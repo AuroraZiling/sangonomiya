@@ -1,10 +1,9 @@
 from pathlib import Path
 from urllib import parse
-
 from win32api import GetTempFileName, GetTempPath, CopyFile
 
 from ....Scripts.Utils.tools import Tools
-from ..gachaReportUtils import extractAPI
+from ..gacha_report_utils import extractAPI
 
 utils = Tools()
 

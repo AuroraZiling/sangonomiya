@@ -4,12 +4,11 @@ from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
 from qfluentwidgets import HyperlinkCard, isDarkTheme, TextEdit
 from qfluentwidgets import FluentIcon
 
-from ..Scripts.UI import customIcon
-from ..Scripts.UI.styleSheet import StyleSheet
-from ..Scripts.Utils import ConfigUtils
-from ..Scripts.Utils import logTracker as log
+from ..Scripts.UI import custom_icon
+from ..Scripts.UI.style_sheet import StyleSheet
+from ..Scripts.Utils import config_utils, log_recorder as log
 
-utils = ConfigUtils.ConfigUtils()
+utils = config_utils.ConfigUtils()
 
 
 class AboutWidget(QFrame):
@@ -73,14 +72,14 @@ class AboutWidget(QFrame):
             url='https://github.com/AuroraZiling/sangonomiya/issues',
             text="提交",
             parent=self,
-            icon=customIcon.MyFluentIcon.GITHUB,
+            icon=custom_icon.MyFluentIcon.GITHUB,
             title="Github Issue"
         )
         self.aboutFeedbackGithubPullRequestHyperlink = HyperlinkCard(
             url='https://github.com/AuroraZiling/sangonomiya/pulls',
             text="提交",
             parent=self,
-            icon=customIcon.MyFluentIcon.GITHUB,
+            icon=custom_icon.MyFluentIcon.GITHUB,
             title="Github Pull Request"
         )
         self.aboutFeedbackVBox.addWidget(self.aboutFeedbackLabel)
@@ -95,7 +94,7 @@ class AboutWidget(QFrame):
         self.initGrid()
         self.initFrame()
         StyleSheet.ABOUT_FRAME.apply(self)
-        log.infoWrite("[SubWidget][About] Initialized")
+        log.infoWrite("[About] UI initialized")
 
     def initGrid(self):
         # Top

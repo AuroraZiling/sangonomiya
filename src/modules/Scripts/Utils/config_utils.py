@@ -2,42 +2,18 @@ import json
 import os
 import pathlib
 import shutil
-import sys
 
-sys.path.append("../../..")
-from PySide6.QtCore import QLocale
 from PySide6.QtGui import QFont
-from ..Utils.tools import Tools
 
-ANNOUNCE_REQUEST_URL = "https://hk4e-api-static.mihoyo.com/common/hk4e_cn/announcement/api/getAnnContent?game=hk4e&game_biz=hk4e_cn&lang=zh-cn&bundle_id=hk4e_cn&platform=pc&region=cn_gf01&level=60&channel_id=1"
-ANNOUNCE_ICON_REQUEST_URL = "https://hk4e-api.mihoyo.com/common/hk4e_cn/announcement/api/getAnnList?game=hk4e&game_biz=hk4e_cn&lang=zh-cn&auth_appid=announcement&authkey_ver=1&bundle_id=hk4e_cn&channel_id=1&level=60&platform=pc&region=cn_gf01&sdk_presentation_style=fullscreen&sdk_screen_transparent=true&sign_type=2&uid=1"
-HTML_MODEL = '''
-<!DOCTYPE html>
-<html>
-  <head>
-  <style>
-    body::-webkit-scrollbar {display: none;}
-    {css}
-  </style>
-  </head>
-  <body style="background-color: transparent;">
-    <article class="markdown-body" style="background-color: transparent;">
-        {content}
-    </article>
-  </body>
-</html>
-'''
+from ..Utils import tools, log_recorder as log
 
 
-class ConfigUtils(Tools):
+class ConfigUtils(tools.Tools):
     def __init__(self):
         super().__init__()
-        self.OSName = super().getOSName()
-        self.workingDir = super().getWorkingDir()
         self.license = open(f"{self.workingDir}/assets/configs/license", 'r').read()
         self.openSourceLicense = open(f"{self.workingDir}/assets/configs/open_source", 'r').read()
         self.configPath = super().getConfigPath()
-        self.systemLanguage = QLocale().system().name()
         self.themeColor = "#009faa"
         self.accountInfo = {}
 
@@ -96,6 +72,7 @@ class ConfigUtils(Tools):
                 os.remove(f"{self.workingDir}/logs/{eachLogFile}")
             except PermissionError:
                 continue
+        log.infoWrite("[ConfigUtils] All old logs deleted")
 
     def deleteAllCacheFiles(self):
         logDir = os.listdir(f"{self.workingDir}/cache")
@@ -104,29 +81,17 @@ class ConfigUtils(Tools):
                 os.remove(f"{self.workingDir}/cache/{eachLogFile}")
             except PermissionError:
                 continue
+        log.infoWrite("[ConfigUtils] All cache files deleted")
 
     def getAccountUid(self):
         self.accountInfo = json.loads(open(f"{self.configPath}/account.json", 'r', encoding="utf-8").read())
+        log.infoWrite(f"[ConfigUtils] UID Get: {self.accountInfo['uid']}")
         return self.accountInfo["uid"]
 
     def getAccountName(self):
         self.accountInfo = json.loads(open(f"{self.configPath}/account.json", 'r', encoding="utf-8").read())
+        log.infoWrite(f"[ConfigUtils] Name Get: {self.accountInfo['name']}")
         return self.accountInfo["name"]
 
     def getVersionType(self):
         return "dev" if "Dev" in self.appVersion else "release"
-
-    def getLanguage(self):
-        return self.language
-
-    @staticmethod
-    def getHTMLMODEL():
-        return HTML_MODEL
-
-    @staticmethod
-    def getAnnounceIconRequestURL():
-        return ANNOUNCE_ICON_REQUEST_URL
-
-    @staticmethod
-    def getAnnounceRequestURL():
-        return ANNOUNCE_REQUEST_URL

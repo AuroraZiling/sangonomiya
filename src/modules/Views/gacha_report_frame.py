@@ -1,22 +1,22 @@
 from PySide6 import QtGui
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QAbstractItemView, QTextEdit, QHeaderView, \
-    QWidget, QTableWidgetItem
-from .ViewConfigs.config import cfg
-from ..Scripts.Utils import ConfigUtils
-from ..Core.GachaReport.gachaReportThread import GachaReportThread
-from ..Scripts.UI.styleSheet import StyleSheet
-from ..Scripts.UI.customDialog import URLDialog
-from ..Core.GachaReport.gachaReportUtils import getDefaultGameDataPath, convertAPI
-from ..Core.GachaReport import gachaReportRead
-from ..Core.GachaReport.Analysis import tableCompletion
-from ..Core.GachaReport.MihoyoAPI import byWebCache
-from qfluentwidgets import FluentIcon, RoundMenu, TableWidget, TextEdit, MessageBox, Dialog, InfoBarPosition, ComboBox, \
-    Action, InfoBar, PushButton, StateToolTip
+from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QAbstractItemView, QHeaderView, QTableWidgetItem
 
+from qfluentwidgets import FluentIcon, RoundMenu, TableWidget, TextEdit, MessageBox, InfoBarPosition, ComboBox, \
+    Action, InfoBar, PushButton, StateToolTip
 from qfluentwidgets import DropDownPushButton
 
-utils = ConfigUtils.ConfigUtils()
+from .ViewConfigs.config import cfg
+from ..Scripts.Utils import config_utils, log_recorder as log
+from ..Core.GachaReport.gacha_report_thread import GachaReportThread
+from ..Scripts.UI.style_sheet import StyleSheet
+from ..Scripts.UI.custom_dialog import URLDialog
+from ..Core.GachaReport.gacha_report_utils import getDefaultGameDataPath, convertAPI
+from ..Core.GachaReport import gacha_report_read
+from ..Core.GachaReport.Analysis import table_completion
+from ..Core.GachaReport.MihoyoAPI import by_web_cache
+
+utils = config_utils.ConfigUtils()
 
 GACHATYPE_TO_CODE = {"角色活动祈愿": "301", "武器祈愿": "302", "常驻祈愿": "200"}
 
@@ -93,6 +93,8 @@ class GachaReportWidget(QFrame):
         self.baseVBox.addLayout(self.headerHBox)
         self.baseVBox.addLayout(self.bottomHBox)
 
+        log.infoWrite("[GachaReport] UI Initialized")
+
         self.setObjectName("GachaReportFrame")
         StyleSheet.GACHA_REPORT_FRAME.apply(self)
         self.initHeaderRightFullUpdateDropBtnActions()
@@ -126,7 +128,7 @@ class GachaReportWidget(QFrame):
             self.headerRightFullUpdateDropBtn.setEnabled(True)
 
     def __headerRightFullUpdateDropBtnWebCache(self):
-        gachaURL = convertAPI(byWebCache.getURL(getDefaultGameDataPath()))
+        gachaURL = convertAPI(by_web_cache.getURL(getDefaultGameDataPath()))
         if gachaURL:
             resp = MessageBox("成功", "请求已被获取，是否更新数据?", self)
             if resp.exec():
@@ -173,7 +175,7 @@ class GachaReportWidget(QFrame):
         self.bottomRightGraphBtn.setEnabled(mode)
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
-        if not gachaReportRead.getUIDList():
+        if not gacha_report_read.getUIDList():
             self.setInteractive(False)
             InfoBar.warning("警告", "找不到UID",
                             position=InfoBarPosition.BOTTOM_RIGHT, parent=self)
@@ -221,12 +223,14 @@ class GachaReportWidget(QFrame):
                 self.bottomLeftGachaTable.setItem(index, eachColumn, QTableWidgetItem())
                 self.bottomLeftGachaTable.setRowHeight(index, 40)
                 self.bottomLeftGachaTable.item(index, eachColumn).setText(each[eachColumn])
+        log.infoWrite(f"[GachaReport] Gacha table updated")
 
     def __headerRightGachaTypeComboboxChanged(self):
+        log.infoWrite(f"[GachaReport] Gacha type selection changed")
         if not self.completedOriginalTableData:
             self.currentUID = self.headerRightUIDSelectCombobox.currentText()
-            tableOriginalData = gachaReportRead.convertDataToTable(gachaReportRead.getDataFromUID(self.currentUID))
-            self.completedOriginalTableData = tableCompletion.originalTableDataToComplete(tableOriginalData)
+            tableOriginalData = gacha_report_read.convertDataToTable(gacha_report_read.getDataFromUID(self.currentUID))
+            self.completedOriginalTableData = table_completion.originalTableDataToComplete(tableOriginalData)
         currentTableData = self.completedOriginalTableData[
             GACHATYPE_TO_CODE[self.headerRightGachaTypeCombobox.currentText()]]
         self.bottomLeftGachaTable.setRowCount(len(currentTableData))
@@ -235,10 +239,11 @@ class GachaReportWidget(QFrame):
     def __headerRightUIDSelectComboboxChanged(self):
         currentUID = self.headerRightUIDSelectCombobox.currentText()
         if currentUID:
+            log.infoWrite(f"[GachaReport] UID Selected: {currentUID}")
             self.headerLeftGachaReportUIDLabel.setText(currentUID)
             self.headerRightGachaTypeCombobox.setEnabled(True)
-            tableOriginalData = gachaReportRead.convertDataToTable(gachaReportRead.getDataFromUID(currentUID))
-            self.completedOriginalTableData = tableCompletion.originalTableDataToComplete(tableOriginalData)
+            tableOriginalData = gacha_report_read.convertDataToTable(gacha_report_read.getDataFromUID(currentUID))
+            self.completedOriginalTableData = table_completion.originalTableDataToComplete(tableOriginalData)
 
             if not self.headerRightGachaTypeCombobox.currentText():
                 self.headerRightGachaTypeCombobox.setCurrentIndex(0)
@@ -250,8 +255,9 @@ class GachaReportWidget(QFrame):
 
     def initData(self):
         self.headerRightUIDSelectCombobox.clear()
-        self.headerRightUIDSelectCombobox.addItems(gachaReportRead.getUIDList())
+        self.headerRightUIDSelectCombobox.addItems(gacha_report_read.getUIDList())
         self.currentUID = cfg.gachaReportLastUID.value
         if self.currentUID:
             self.headerRightUIDSelectCombobox.setCurrentText(self.currentUID)
             self.__headerRightUIDSelectComboboxChanged()
+        log.infoWrite("[GachaReport] Data initialized")

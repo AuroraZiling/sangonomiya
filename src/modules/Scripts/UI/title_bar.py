@@ -2,9 +2,10 @@
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout
+
 from qframelesswindow import TitleBar
 
-from .styleSheet import StyleSheet
+from .style_sheet import StyleSheet
 
 
 class CustomTitleBar(TitleBar):
