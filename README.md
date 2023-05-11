@@ -29,21 +29,17 @@
 
 ---
 
-## 注意
-
-正在重写UI(顺便重构了)，内容更新放缓(基于[PyQt-Fluent-Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets))
-
-本项目目前不可用
-
----
-
-**文档(Github Pages): [Sangonomiya Documents](https://auroraziling.github.io/sangonomiya/)** 
-
-**文档(Netlify): [Sangonomiya Documents](https://sangonomiya.netlify.app/)** [![Netlify Status](https://api.netlify.com/api/v1/badges/41a6827f-3fdb-4026-a374-542a46df6461/deploy-status)](https://app.netlify.com/sites/sangonomiya/deploys)
+**文档: [Sangonomiya Documents](https://sangonomiya.netlify.app/)** [![Netlify Status](https://api.netlify.com/api/v1/badges/41a6827f-3fdb-4026-a374-542a46df6461/deploy-status)](https://app.netlify.com/sites/sangonomiya/deploys)
 
 ## 下载 / Download
 
-暂不开放
+### Coding Artifact (Pre-release Only)
+
+https://sangonomiya.coding.net/public-artifacts/sangonomiya/pre-release/packages
+
+### GitHub Release
+
+https://github.com/AuroraZiling/sangonomiya/releases
 
 ## 卸载 / Uninstall
 

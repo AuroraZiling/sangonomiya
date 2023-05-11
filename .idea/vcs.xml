@@ -2,8 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../SangonomiyaMetadata" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../asta" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../sangonomiya.Metadata" vcs="Git" />
   </component>
 </project>

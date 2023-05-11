@@ -1,11 +1,6 @@
 一个原神祈愿导出工具
 
-## 注意
-
-截至目前，本工具暂无数据自动更新功能，仅靠工具版本更新是低效的，故目前所有正式版都是过期的。
-
-项目重构中，重写UI(基于[PyQt-Fluent-Widgets
-](https://github.com/zhiyiYo/PyQt-Fluent-Widgets))
+交流群: 603155398
 
 ---
 

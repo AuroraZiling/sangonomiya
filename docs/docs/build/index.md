@@ -5,13 +5,12 @@
 
 ## 安装 / Installation
 
-需安装库: `PyQt6, PyQt6-Fluent-Widgets[full], PyQt6-Frameless-Window`
+需安装库: `PySide6, requests, PySide6-Fluent-Widgets[full], PySideSix-Frameless-Window`
 
-对应脚本:
+确保运行路径在`sangonomiya`文件夹下
+
 ```commandline
-pip install PyQt6
-pip install "PyQt6-Fluent-Widgets[full]" 
-pip install PyQt6-Frameless-Window
+pip install -r requirements.txt
 ```
 
 ## 打包 / Packaging
