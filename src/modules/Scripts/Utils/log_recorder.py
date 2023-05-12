@@ -1,4 +1,5 @@
 import logging
+import os
 import time
 
 from ..Utils.tools import Tools
@@ -26,6 +27,8 @@ def errorWrite(content):
     logging.error(content)
 
 
+if not os.path.exists(f"{utils.workingDir}/logs"):
+    os.mkdir(f"{utils.workingDir}/logs")
 logFileName = "Sangonomiya " + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + ".log"
 logging.basicConfig(
     level=logging.DEBUG,

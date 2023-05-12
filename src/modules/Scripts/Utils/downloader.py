@@ -2,7 +2,7 @@ import json
 import time
 import requests
 
-from ..Utils import log_recorder as log
+from ..Utils import metadata_utils, log_recorder as log
 
 
 def downloadFromJson(url, dstDir, dstName):

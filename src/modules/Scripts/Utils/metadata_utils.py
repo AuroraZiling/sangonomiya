@@ -14,6 +14,8 @@ def updateMetaData(dataType, data=None):
         data = character_list.categoryCharacterInStar()
     elif dataType == "weapon" and not data:
         data = weapon_list.categoryWeaponInStar()
+    elif dataType == "permanent" and not data:
+        data = character_list.getPermanentCharacter()
     if not os.path.exists(f"{utils.getConfigPath()}/metadata/"):
         os.mkdir(f"{utils.getConfigPath()}/metadata/")
     open(f"{utils.getConfigPath()}/metadata/{dataType}.json", 'w', encoding="utf-8").write(json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False))

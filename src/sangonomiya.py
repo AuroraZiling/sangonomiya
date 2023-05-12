@@ -1,8 +1,8 @@
 # coding:utf-8
-import os
 import sys
 import ctypes
 import time
+import os
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
@@ -17,7 +17,7 @@ from modules.Views import home_frame, gacha_report_frame, link_frame, announceme
 from modules.Scripts.UI import custom_icon
 from modules.Scripts.UI.title_bar import CustomTitleBar
 from modules.Scripts.UI.style_sheet import StyleSheet
-from modules.Scripts.Utils import file_verification, metadata_utils, config_utils, log_recorder as log
+from modules.Scripts.Utils import file_verification, metadata_utils, config_utils, downloader, log_recorder as log
 from modules.Metadata import character_list, weapon_list
 
 utils = config_utils.ConfigUtils()
@@ -69,13 +69,12 @@ class Window(FramelessWindow):
         self.mainStackWidget.addWidget(self.mainSettingInterface)
         self.mainStackWidget.addWidget(self.mainAboutInterface)
 
-        startUp()
-
         self.initMetaData()
 
         self.initLayout()
         self.initNavigation()
         self.initWindow()
+        startUp()
         log.infoWrite("[Main] UI Initialized")
 
     def initMetaData(self):
@@ -84,6 +83,12 @@ class Window(FramelessWindow):
             metadata_utils.updateMetaData("character", characterData)
             log.infoWrite("[MetaData] 角色元数据列表已更新")
             InfoBar.success("成功", "角色元数据列表已更新", position=InfoBarPosition.BOTTOM_RIGHT, parent=self)
+
+        if not metadata_utils.readMetaData("permanent"):
+            characterData = character_list.getPermanentCharacter()
+            metadata_utils.updateMetaData("permanent", characterData)
+            log.infoWrite("[MetaData] 常驻角色元数据列表已更新")
+            InfoBar.success("成功", "常驻角色元数据列表已更新", position=InfoBarPosition.BOTTOM_RIGHT, parent=self)
 
         if not metadata_utils.readMetaData("weapon"):
             weaponData = weapon_list.categoryWeaponInStar()

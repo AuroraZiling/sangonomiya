@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 from qfluentwidgets import SettingCardGroup, PushSettingCard, ScrollArea, ExpandLayout, MessageBox, HyperlinkCard
 from qfluentwidgets import FluentIcon
 
+from ..Core.GachaReport import gacha_report_read
 from ..Scripts.UI import custom_msgBox, custom_dialog
 from ..Scripts.UI.style_sheet import StyleSheet
 from ..Scripts.Utils import config_utils, log_recorder as log
@@ -138,7 +139,7 @@ class LinkWidget(ScrollArea):
         log.infoWrite(f"[Link][Export] Exported ({uid} to {filePath})")
 
     def __exportCardClicked(self):
-        w = custom_dialog.ComboboxDialog("导出", "选择需要导出的UID", self)
+        w = custom_dialog.ComboboxDialog("导出", "选择需要导出的UID", gacha_report_read.getUIDList(), self)
         w.returnSignal.connect(self.__exportCardReturnSignal)
         w.exec()
 

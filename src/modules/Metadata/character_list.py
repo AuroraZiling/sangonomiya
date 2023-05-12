@@ -1,7 +1,10 @@
 import requests
 from lxml import etree
+from ..constant import CHARACTER_URL, PERMANENT_CHARACTER_URL
 
-CHARACTER_URL = "https://wiki.biligame.com/ys/%E8%A7%92%E8%89%B2%E7%AD%9B%E9%80%89"
+
+def getPermanentCharacter():
+    return requests.get(PERMANENT_CHARACTER_URL).json()["permanent"]
 
 
 def categoryCharacterInStar():

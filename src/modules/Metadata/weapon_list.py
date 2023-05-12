@@ -1,7 +1,7 @@
 import requests
 from lxml import etree
+from ..constant import WEAPON_URL
 
-WEAPON_URL = "https://wiki.biligame.com/ys/%E6%AD%A6%E5%99%A8%E5%9B%BE%E9%89%B4"
 
 
 def categoryWeaponInStar():

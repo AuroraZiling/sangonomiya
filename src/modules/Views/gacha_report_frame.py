@@ -113,7 +113,7 @@ class GachaReportWidget(QFrame):
             self.setInteractive(False)
             self.headerRightGachaTypeCombobox.setEnabled(False)
             self.gachaReportThreadStateTooltip.setContent(msg[1])
-            if len(msg) == 3:
+            if len(msg) == 3 and not msg[0] == -1:
                 self.gachaReportThreadStateTooltip.setTitle(f"更新数据中 | {msg[2]}")
             if msg[0] == 1:
                 self.setInteractive(True)
@@ -124,6 +124,13 @@ class GachaReportWidget(QFrame):
                 self.initData()
                 self.headerRightUIDSelectCombobox.setCurrentText(msg[2])
                 self.__headerRightUIDSelectComboboxChanged()
+            elif msg[0] == -1:
+                self.setInteractive(True)
+                self.gachaReportThreadStateTooltip.setState(True)
+                self.gachaReportThreadStateTooltip = None
+                self.headerRightFullUpdateDropBtn.setEnabled(True)
+                self.headerRightGachaTypeCombobox.setEnabled(True)
+                MessageBox("错误", msg[2], self).exec()
         else:
             self.headerRightFullUpdateDropBtn.setEnabled(True)
 
@@ -238,7 +245,8 @@ class GachaReportWidget(QFrame):
 
     def __headerRightUIDSelectComboboxChanged(self):
         currentUID = self.headerRightUIDSelectCombobox.currentText()
-        if currentUID:
+        UIDList = gacha_report_read.getUIDList()
+        if currentUID and currentUID in UIDList:
             log.infoWrite(f"[GachaReport] UID Selected: {currentUID}")
             self.headerLeftGachaReportUIDLabel.setText(currentUID)
             self.headerRightGachaTypeCombobox.setEnabled(True)
@@ -251,6 +259,7 @@ class GachaReportWidget(QFrame):
 
             cfg.set(cfg.gachaReportLastUID, currentUID)
         else:
+            self.currentUID = ""
             cfg.set(cfg.gachaReportLastUID, "")
 
     def initData(self):

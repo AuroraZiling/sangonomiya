@@ -5,6 +5,27 @@ QLabel#homeFrameTitle {
     padding-left: 10px;
 }
 
+QLabel#currentUPTitleLabel {
+    font: 28px 'Segoe UI', 'Microsoft YaHei';
+    background-color: transparent;
+    color: grey;
+    padding-left: 10px;
+}
+
+QLabel#currentUPCharacterLabel {
+    font: 20px 'Segoe UI', 'Microsoft YaHei';
+    background-color: transparent;
+    color: white;
+    padding-left: 10px;
+}
+
+QLabel#currentUPWeaponLabel {
+    font: 20px 'Segoe UI', 'Microsoft YaHei';
+    background-color: transparent;
+    color: white;
+    padding-left: 10px;
+}
+
 QLabel#homeFrameAnnounceTitle {
     font: 28px 'Segoe UI', 'Microsoft YaHei';
     background-color: transparent;

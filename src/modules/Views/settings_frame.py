@@ -9,8 +9,9 @@ from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea, Expan
 from qfluentwidgets import FluentIcon, InfoBarPosition, qconfig
 
 from .ViewConfigs.config import cfg
+from ..Core.GachaReport import gacha_report_read
 from ..Core.GachaReport.gacha_report_utils import getDefaultGameDataPath
-from ..Scripts.UI import custom_icon
+from ..Scripts.UI import custom_icon, custom_dialog
 from ..Scripts.UI.style_sheet import StyleSheet
 from ..Scripts.Utils import config_utils, log_recorder as log
 from ..Scripts.Updater import check_update
@@ -81,6 +82,14 @@ class SettingWidget(ScrollArea):
         # Default
 
         self.defaultGroup = SettingCardGroup("操作", self.scrollWidget)
+
+        self.defaultUIDDeleteCard = PushSettingCard(
+            "删除",
+            custom_icon.MyFluentIcon.DELETE,
+            "删除UID档案",
+            "选择需要删除的UID数据",
+            self.defaultGroup
+        )
 
         self.defaultLogDeleteCard = PushSettingCard(
             "删除",
@@ -167,6 +176,7 @@ class SettingWidget(ScrollArea):
 
         # Default
 
+        self.defaultGroup.addSettingCard(self.defaultUIDDeleteCard)
         self.defaultGroup.addSettingCard(self.defaultLogDeleteCard)
         self.defaultGroup.addSettingCard(self.defaultCacheDeleteCard)
 
@@ -213,6 +223,15 @@ class SettingWidget(ScrollArea):
         self.gameDataCard.setContent(getDefaultGameDataPath())
         log.infoWrite(f"[Settings] Game path reset")
 
+    @staticmethod
+    def __defaultUIDDeleteCardReturnSignal(uid):
+        utils.deleteDir(f"{utils.workingDir}/data/{uid}/", False)
+
+    def __defaultUIDDeleteCardClicked(self):
+        w = custom_dialog.ComboboxDialog("删除UID数据档案", "选择UID", gacha_report_read.getUIDList(), self)
+        w.returnSignal.connect(self.__defaultUIDDeleteCardReturnSignal)
+        w.exec()
+
     def __defaultLogDeleteCardClicked(self):
         utils.deleteAllLogFiles()
         InfoBar.success("成功", "旧日志文件已清空", InfoBarPosition.TOP_RIGHT, parent=self.window())
@@ -254,6 +273,7 @@ class SettingWidget(ScrollArea):
         self.storageConfigCard.clicked.connect(lambda: utils.openFolder(self.configPath))
 
         # Default
+        self.defaultUIDDeleteCard.clicked.connect(self.__defaultUIDDeleteCardClicked)
         self.defaultLogDeleteCard.clicked.connect(self.__defaultLogDeleteCardClicked)
         self.defaultCacheDeleteCard.clicked.connect(self.__defaultCacheDeleteCardClicked)
 

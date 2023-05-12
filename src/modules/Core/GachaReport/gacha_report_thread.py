@@ -34,16 +34,20 @@ class GachaReportThread(QThread):
             while True:
                 apiPerUnit = updateAPI(self.gachaUrl, GACHATYPE[key], 20, page, end_id)
                 responsePerUnit = json.loads(requests.get(apiPerUnit).content.decode("utf-8"))
-                gachaPerResponse = responsePerUnit["data"]["list"]
-                if not len(gachaPerResponse):
-                    break
-                self.uid = responsePerUnit['data']["list"][0]['uid']
-                self.trigger.emit((0, f"正在获取第{str(page + 1)}页 | {key}", self.uid))
-                for i in gachaPerResponse:
-                    gachaList.append(originalToUIGFListUnit(i, UIGF_GACHATYPE[GACHATYPE[key]]))
-                end_id = responsePerUnit["data"]["list"][-1]["id"]
-                page += 1
-                self.usleep(500)
+                if responsePerUnit["data"]:
+                    gachaPerResponse = responsePerUnit["data"]["list"]
+                    if not len(gachaPerResponse):
+                        break
+                    self.uid = responsePerUnit['data']["list"][0]['uid']
+                    self.trigger.emit((0, f"正在获取第{str(page + 1)}页 | {key}", self.uid))
+                    for i in gachaPerResponse:
+                        gachaList.append(originalToUIGFListUnit(i, UIGF_GACHATYPE[GACHATYPE[key]]))
+                    end_id = responsePerUnit["data"]["list"][-1]["id"]
+                    page += 1
+                    self.usleep(500)
+                else:
+                    self.trigger.emit((-1, f"数据获取失败", "请检查:\n你输入URL是否可用\n距离上一次在游戏内打开祈愿记录的时间间隔在一天以内"))
+                    return
         pathlib.Path(f"{utils.workingDir}/data/{self.uid}").mkdir(parents=True, exist_ok=True)
         UIGFExportJsonData["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         UIGFExportJsonData["info"]["export_timestamp"] = int(round(time.time() * 1000))

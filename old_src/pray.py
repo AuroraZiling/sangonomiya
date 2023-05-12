@@ -13,7 +13,6 @@ from PySide6.QtGui import QFont, QBrush, QColor, QFontDatabase
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QWidget, QMainWindow, QHBoxLayout, QTableWidget, QPushButton, QApplication, QVBoxLayout, \
     QMessageBox, QAbstractItemView, QHeaderView, QLabel, QFrame, QTextEdit, QTableWidgetItem, QComboBox, QFileDialog
-import qdarkstyle
 
 from modules.api import information, analysis, transformation
 from modules.sub_widgets import about_widget, announce_widget, settings_widget
@@ -645,7 +644,6 @@ class LeftPrayListThread(QThread):
 if __name__ == '__main__':
     app = QApplication(argv)
     app.setWindowIcon(QtGui.QIcon(os.path.join(basedir, 'assets/icon.ico')))
-    app.setStyleSheet(qdarkstyle.load_stylesheet())
     start = MainForm()
     start.show()
     exit(app.exec())

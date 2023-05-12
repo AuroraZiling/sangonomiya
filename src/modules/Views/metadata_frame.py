@@ -1,10 +1,11 @@
 from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
 
-from qfluentwidgets import SwitchSettingCard, PushSettingCard, InfoBar, InfoBarPosition
+from qfluentwidgets import SwitchSettingCard, PushSettingCard, InfoBar, InfoBarPosition, IndeterminateProgressBar
 from qfluentwidgets import FluentIcon
 
 from .ViewConfigs.config import cfg
-from ..Scripts.Utils import metadata_utils, config_utils, log_recorder as log
+from .ViewFunctions.metadataFunctions import MetadataUpdateThread
+from ..Scripts.Utils import config_utils, log_recorder as log
 from ..Scripts.UI.style_sheet import StyleSheet
 
 utils = config_utils.ConfigUtils()
@@ -18,6 +19,7 @@ class MetaDataWidget(QFrame):
         self.baseVBox = QVBoxLayout(self)
 
         self.metaDataTitleLabel = QLabel("元数据", self)
+        self.metaDataSubTitleLabel = QLabel("建议在大版本更新后更新", self)
 
         self.metaDataAutoUpdateLabel = QLabel("自动更新", self)
 
@@ -29,21 +31,25 @@ class MetaDataWidget(QFrame):
             parent=self
         )
 
-        self.metaDataCharacterWeaponUpdateLabel = QLabel("角色/武器", self)
+        self.metaDataCharacterWeaponUpdateLabel = QLabel("更新", self)
 
-        self.metaDataCharacterWeaponUpdateCard = PushSettingCard(
+        self.metaDataUpdateCard = PushSettingCard(
             "更新",
             FluentIcon.UPDATE,
-            "更新角色和武器的元数据列表",
+            "更新元数据",
             "",
             parent=self
         )
 
+        self.metaDataUpdateProgressBar = IndeterminateProgressBar(self)
+
         self.baseVBox.addWidget(self.metaDataTitleLabel)
+        self.baseVBox.addWidget(self.metaDataSubTitleLabel)
         self.baseVBox.addWidget(self.metaDataAutoUpdateLabel)
         self.baseVBox.addWidget(self.metaDataAutoUpdateCard)
         self.baseVBox.addWidget(self.metaDataCharacterWeaponUpdateLabel)
-        self.baseVBox.addWidget(self.metaDataCharacterWeaponUpdateCard)
+        self.baseVBox.addWidget(self.metaDataUpdateCard)
+        self.baseVBox.addWidget(self.metaDataUpdateProgressBar)
         self.baseVBox.addStretch(1)
 
         self.setObjectName("MetaDataWidget")
@@ -52,15 +58,26 @@ class MetaDataWidget(QFrame):
 
         log.infoWrite("[Settings] All cache files deleted")
 
-    def __metaDataCharacterWeaponUpdateCardClicked(self):
-        metadata_utils.updateMetaData("character")
-        metadata_utils.updateMetaData("weapon")
-        InfoBar.success("成功", "角色/武器元数据列表已更新", position=InfoBarPosition.TOP_RIGHT, parent=self)
-        log.infoWrite(f"[Metadata] Character and weapon metadata updated")
+    def __metaDataUpdateCardSignal(self, status):
+        if status:
+            self.metaDataUpdateCard.setEnabled(True)
+            self.metaDataUpdateProgressBar.setVisible(False)
+            InfoBar.success("成功", "元数据已更新", position=InfoBarPosition.TOP_RIGHT, parent=self)
+            log.infoWrite(f"[Metadata] Character and weapon metadata updated")
+
+    def __metaDataUpdateCardClicked(self):
+        self.metaDataUpdateCard.setEnabled(False)
+        self.metaDataUpdateProgressBar.setVisible(True)
+        self.metaDataUpdateThread = MetadataUpdateThread()
+        self.metaDataUpdateThread.start()
+        self.metaDataUpdateThread.trigger.connect(self.__metaDataUpdateCardSignal)
 
     def initFrame(self):
         self.metaDataTitleLabel.setObjectName("metaDataTitleLabel")
+        self.metaDataSubTitleLabel.setObjectName("metaDataSubTitleLabel")
         self.metaDataAutoUpdateLabel.setFont(utils.getFont(18))
         self.metaDataCharacterWeaponUpdateLabel.setFont(utils.getFont(18))
 
-        self.metaDataCharacterWeaponUpdateCard.clicked.connect(self.__metaDataCharacterWeaponUpdateCardClicked)
+        self.metaDataUpdateProgressBar.setVisible(False)
+
+        self.metaDataUpdateCard.clicked.connect(self.__metaDataUpdateCardClicked)

@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
 
 from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit
 
+from .ViewFunctions.homeFunctions import HomeSoftwareAnnouncementThread, HomeCurrentUPThread
 from ..Scripts.UI.style_sheet import StyleSheet
 from ..Scripts.Utils import config_utils, log_recorder as log
 
@@ -12,6 +13,9 @@ class HomeWidget(QFrame):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+
+        self.homeCurrentUPThread = None
+        self.homeSoftwareAnnouncementThread = None
 
         self.baseVBox = QVBoxLayout(self)
 
@@ -24,6 +28,14 @@ class HomeWidget(QFrame):
         self.topHBox.addWidget(self.topRefreshBtn)
         self.baseVBox.addLayout(self.topHBox)
 
+        self.currentUPTitleLabel = QLabel("当期UP信息", self)
+        self.currentUPCharacterLabel = QLabel("暂无", self)
+        self.currentUPWeaponLabel = QLabel("暂无", self)
+
+        self.baseVBox.addWidget(self.currentUPTitleLabel)
+        self.baseVBox.addWidget(self.currentUPCharacterLabel)
+        self.baseVBox.addWidget(self.currentUPWeaponLabel)
+
         self.announceTitleLabel = QLabel("公告", self)
         self.announceTextBox = TextEdit(self)
 
@@ -34,6 +46,7 @@ class HomeWidget(QFrame):
         StyleSheet.HOME_FRAME.apply(self)
 
         self.initFrame()
+        self.getCurrentUPFromMetaData()
         self.getAnnouncementFromMetaData()
 
         log.infoWrite("[Home] UI Initialized")
@@ -42,15 +55,33 @@ class HomeWidget(QFrame):
         self.topTitleLabel.setObjectName("homeFrameTitle")
         self.topRefreshBtn.setFixedWidth(100)
 
+        self.currentUPTitleLabel.setObjectName("currentUPTitleLabel")
+        self.currentUPCharacterLabel.setObjectName("currentUPCharacterLabel")
+        self.currentUPWeaponLabel.setObjectName("currentUPWeaponLabel")
+
         self.announceTitleLabel.setObjectName("homeFrameAnnounceTitle")
         self.announceTextBox.setObjectName("homeFrameAnnounce")
         self.announceTextBox.setReadOnly(True)
         self.announceTextBox.setFrameShape(QFrame.Shape.NoFrame)
         self.announceTextBox.setContentsMargins(5, 5, 5, 5)
 
+    def __getCurrentUPFromMetaDataSignal(self, upType, info):
+        if upType == 0:
+            self.currentUPCharacterLabel.setText(info)
+        elif upType == 1:
+            self.currentUPWeaponLabel.setText(info)
+
+    def getCurrentUPFromMetaData(self):
+        self.homeCurrentUPThread = HomeCurrentUPThread()
+        self.homeCurrentUPThread.start()
+        self.homeCurrentUPThread.trigger.connect(self.__getCurrentUPFromMetaDataSignal)
+        log.infoWrite("[Home] Current UP Get")
+
+    def __getAnnouncementFromMetaDataSignal(self, info):
+        self.announceTextBox.setText(info)
+
     def getAnnouncementFromMetaData(self):
-        content = f'''Sangonomiya Version is {utils.appVersion}
-PyQt-fluent-widgets Version is {utils.UIVersion}
-Sangonomiya is working at {utils.workingDir}'''
-        self.announceTextBox.setText(content)
-        log.infoWrite("[Home] Announcement Set")
+        self.homeSoftwareAnnouncementThread = HomeSoftwareAnnouncementThread()
+        self.homeSoftwareAnnouncementThread.start()
+        self.homeSoftwareAnnouncementThread.trigger.connect(self.__getAnnouncementFromMetaDataSignal)
+        log.infoWrite("[Home] Announcement Get")

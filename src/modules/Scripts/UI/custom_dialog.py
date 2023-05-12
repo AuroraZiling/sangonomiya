@@ -57,7 +57,7 @@ class ComboboxDialog(MaskDialogBase, Ui_MessageBox):
     returnSignal = Signal(str)
     cancelSignal = Signal()
 
-    def __init__(self, title: str, content: str, parent=None):
+    def __init__(self, title: str, content: str, comboBoxItems: list, parent=None):
         super().__init__(parent=parent)
         self._setUpUi(title, content, self.widget)
 
@@ -69,8 +69,8 @@ class ComboboxDialog(MaskDialogBase, Ui_MessageBox):
         self.customHBox = QHBoxLayout(self)
         self.comboboxWidget = ComboBox(self)
         self.comboboxWidget.setFixedWidth(240)
-        self.comboboxWidget.addItems(gacha_report_read.getUIDList())
-        if gacha_report_read.getUIDList():
+        self.comboboxWidget.addItems(comboBoxItems)
+        if comboBoxItems:
             self.comboboxWidget.setCurrentIndex(0)
         self.comboboxWidget.setContentsMargins(24, 24, 24, 24)
         self.customHBox.addWidget(self.comboboxWidget)

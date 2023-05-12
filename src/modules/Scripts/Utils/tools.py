@@ -33,7 +33,9 @@ class Tools:
         else:
             return "Unknown"
 
+
     def getConfigPath(self):
+        '''
         configPath = str(
             Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation))).replace(
             "\\", "/")
@@ -42,7 +44,9 @@ class Tools:
         if not os.path.exists(f"{configPath}/sangonomiya"):
             os.mkdir(f"{configPath}/sangonomiya")
         if self.OSName == "Windows":
-            configPath = f"{configPath}/Python/sangonomiya"
+            configPath = f"{configPath}/sangonomiya"
+        '''
+        configPath = self.workingDir + "/configs"
         return configPath
 
     def openFolder(self, path):
@@ -52,13 +56,14 @@ class Tools:
             os.system(f"open {path}")
 
     @staticmethod
-    def deleteDir(filePaths):
+    def deleteDir(filePaths, createDir=True):
         if os.path.exists(filePaths):
             try:
                 shutil.rmtree(filePaths)
             except PermissionError:
                 return
-        os.mkdir(filePaths)
+        if createDir:
+            os.mkdir(filePaths)
 
     def getLogAmount(self):
         return len(os.listdir(self.logDir))
