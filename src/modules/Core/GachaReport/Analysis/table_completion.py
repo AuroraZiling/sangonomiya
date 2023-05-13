@@ -2,7 +2,7 @@ from ....Scripts.Utils.metadata_utils import readMetaData
 from ....constant import COLOR_MAPPING
 
 
-def findUnitColorMapping(data, unit):
+def findUnitStar(data, unit):
     if unit in data["5"]:
         return "5"
     elif unit in data["4"]:
@@ -23,6 +23,7 @@ def originalTableDataToComplete(data):
             unit.append("单抽")
             unit.append("0")
             unit.append("#FF0000")
+            unit.append("X")
         time_tmp = [i[3] for i in data[eachData]]
         pos = 0
         while pos < len(time_tmp) - 9:
@@ -42,9 +43,12 @@ def originalTableDataToComplete(data):
                 guaranteeCounter = 0
             if eachUnitName not in permanentList:
                 if eachUnitType == "武器":
-                    data[eachData][index][6] = COLOR_MAPPING[findUnitColorMapping(weaponList, eachUnitName)]
+                    data[eachData][index][6] = COLOR_MAPPING[findUnitStar(weaponList, eachUnitName)]
+                    data[eachData][index][7] = findUnitStar(weaponList, eachUnitName)
                 elif eachUnitType == "角色":
-                    data[eachData][index][6] = COLOR_MAPPING[findUnitColorMapping(characterList, eachUnitName)]
+                    data[eachData][index][6] = COLOR_MAPPING[findUnitStar(characterList, eachUnitName)]
+                    data[eachData][index][7] = findUnitStar(characterList, eachUnitName)
             elif eachUnitName in permanentList:
                 data[eachData][index][6] = COLOR_MAPPING["5"]
+                data[eachData][index][7] = "5"
     return data

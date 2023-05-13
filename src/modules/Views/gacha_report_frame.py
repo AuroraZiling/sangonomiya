@@ -1,11 +1,12 @@
 from PySide6 import QtGui
+from PySide6.QtCharts import QChartView
 from PySide6.QtCore import Qt, QModelIndex
-from PySide6.QtGui import QColor, QPalette
+from PySide6.QtGui import QColor, QPalette, QPainter
 from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QAbstractItemView, QHeaderView, \
     QTableWidgetItem, QStyleOptionViewItem
 
 from qfluentwidgets import FluentIcon, RoundMenu, TableWidget, TextEdit, MessageBox, InfoBarPosition, ComboBox, \
-    Action, InfoBar, PushButton, StateToolTip, TableItemDelegate
+    Action, InfoBar, PushButton, StateToolTip, TableItemDelegate, InfoBarIcon, isDarkTheme
 from qfluentwidgets import DropDownPushButton
 
 from .ViewConfigs.config import cfg
@@ -15,12 +16,11 @@ from ..Scripts.UI.style_sheet import StyleSheet
 from ..Scripts.UI.custom_dialog import URLDialog
 from ..Core.GachaReport.gacha_report_utils import getDefaultGameDataPath, convertAPI
 from ..Core.GachaReport import gacha_report_read
-from ..Core.GachaReport.Analysis import table_completion
+from ..Core.GachaReport.Analysis import table_completion, analysis
 from ..Core.GachaReport.MihoyoAPI import by_web_cache
 from ..constant import GACHATYPE
 
 utils = config_utils.ConfigUtils()
-
 
 rowColorMapping = {}
 
@@ -83,23 +83,21 @@ class GachaReportWidget(QFrame):
         self.bottomRightBasicLevel5TotalLabel = QLabel("未知5星数量")
         self.bottomRightBasicLevel5TotalTextEdit = TextEdit()
         self.bottomRightBasicLevel4TotalLabel = QLabel("未知4星数量")
-        self.bottomRightBasicLevel4TotalTextEdit = TextEdit()
         self.bottomRightBasicLevel3TotalLabel = QLabel("未知3星数量")
         self.bottomRightAnalysisLabel = QLabel("保底情况")
-        self.bottomRightWeaponAlertLabel = QLabel("对于武器的保底分析会不准确")
         self.bottomRightAnalysisGuaranteeLabel = QLabel("未知")
-        self.bottomRightGraphBtn = PushButton("图像", self)
+        self.bottomRightGraphLabel = QLabel("图像", self)
+        self.bottomRightGraphView = QChartView(self)
         self.bottomRightVBox.addWidget(self.bottomRightBasicLabel)
         self.bottomRightVBox.addWidget(self.bottomRightBasicTotalLabel)
         self.bottomRightVBox.addWidget(self.bottomRightBasicLevel5TotalLabel)
         self.bottomRightVBox.addWidget(self.bottomRightBasicLevel5TotalTextEdit)
         self.bottomRightVBox.addWidget(self.bottomRightBasicLevel4TotalLabel)
-        self.bottomRightVBox.addWidget(self.bottomRightBasicLevel4TotalTextEdit)
         self.bottomRightVBox.addWidget(self.bottomRightBasicLevel3TotalLabel)
         self.bottomRightVBox.addWidget(self.bottomRightAnalysisLabel)
-        self.bottomRightVBox.addWidget(self.bottomRightWeaponAlertLabel)
         self.bottomRightVBox.addWidget(self.bottomRightAnalysisGuaranteeLabel)
-        self.bottomRightVBox.addWidget(self.bottomRightGraphBtn)
+        self.bottomRightVBox.addWidget(self.bottomRightGraphLabel)
+        self.bottomRightVBox.addWidget(self.bottomRightGraphView)
 
         self.bottomHBox.addLayout(self.bottomLeftVBox)
         self.bottomHBox.addLayout(self.bottomRightVBox)
@@ -118,7 +116,7 @@ class GachaReportWidget(QFrame):
 
     def __gachaReportThreadStateTooltipClosed(self):
         self.gachaReportThread.exit(0)
-        self.gachaReportStatusChanged((1, "Operation cancelled"))
+        self.gachaReportStatusChanged((1, "Operation cancelled", "Operation cancelled"))
         InfoBar.warning("操作终止", "数据读取已停止",
                         position=InfoBarPosition.BOTTOM, parent=self)
 
@@ -190,30 +188,37 @@ class GachaReportWidget(QFrame):
 
     def setInteractive(self, mode):
         self.bottomLeftGachaTable.setEnabled(mode)
+        self.headerRightGachaTypeCombobox.setEnabled(mode)
         self.headerRightUIDSelectCombobox.setEnabled(mode)
         self.bottomRightBasicLevel5TotalTextEdit.setEnabled(mode)
-        self.bottomRightBasicLevel4TotalTextEdit.setEnabled(mode)
-        self.bottomRightGraphBtn.setEnabled(mode)
+        self.bottomRightGraphLabel.setEnabled(mode)
+
+    def emptyAllStatistics(self):
+        self.bottomLeftGachaTable.clearContents()
+        self.bottomRightBasicLevel5TotalTextEdit.clear()
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
         if not gacha_report_read.getUIDList():
             self.setInteractive(False)
             InfoBar.warning("警告", "找不到UID",
                             position=InfoBarPosition.BOTTOM_RIGHT, parent=self)
+            self.initData()
+            self.emptyAllStatistics()
         else:
             self.initData()
             self.setInteractive(True)
+        self.bottomRightGraphView.setBackgroundBrush(QColor(37, 37, 37) if isDarkTheme() else QColor(255, 255, 255))
 
     def initFrame(self):
         self.headerLeftGachaReportTitleLabel.setFont(utils.getFont(18))
         self.headerLeftGachaReportUIDLabel.setStyleSheet("color: grey;")
-        self.headerRightGachaTypeCombobox.setFixedWidth(200)
+        self.headerRightGachaTypeCombobox.setFixedWidth(160)
         self.headerRightGachaTypeCombobox.addItems(["角色活动祈愿", "武器祈愿", "常驻祈愿"])
         self.headerRightGachaTypeCombobox.setEnabled(False)
         self.headerRightGachaTypeCombobox.currentIndexChanged.connect(self.__headerRightGachaTypeComboboxChanged)
-        self.headerRightUIDSelectCombobox.setFixedWidth(175)
+        self.headerRightUIDSelectCombobox.setFixedWidth(160)
         self.headerRightUIDSelectCombobox.currentIndexChanged.connect(self.__headerRightUIDSelectComboboxChanged)
-        self.headerRightFullUpdateDropBtn.setFixedWidth(175)
+        self.headerRightFullUpdateDropBtn.setFixedWidth(160)
         self.headerRightFullUpdateDropBtn.setMenu(self.headerRightFullUpdateDropBtnMenu)
 
         self.bottomLeftGachaTable.setFixedWidth(620)
@@ -236,12 +241,12 @@ class GachaReportWidget(QFrame):
         self.bottomRightBasicLevel4TotalLabel.setFont(utils.getFont(10))
         self.bottomRightBasicLevel3TotalLabel.setFont(utils.getFont(10))
         self.bottomRightBasicLevel5TotalTextEdit.setReadOnly(True)
-        self.bottomRightBasicLevel4TotalTextEdit.setReadOnly(True)
 
         self.bottomRightAnalysisLabel.setFont(utils.getFont(14))
-        self.bottomRightWeaponAlertLabel.setFont(utils.getFont(10))
-        self.bottomRightWeaponAlertLabel.setVisible(False)
         self.bottomRightAnalysisGuaranteeLabel.setFont(utils.getFont(10))
+        self.bottomRightGraphLabel.setFont(utils.getFont(14))
+        self.bottomRightGraphView.setFixedHeight(150)
+        self.bottomRightGraphView.setRenderHint(QPainter.Antialiasing)
 
     def tableUpdateData(self, currentData):
         global rowColorMapping
@@ -255,8 +260,32 @@ class GachaReportWidget(QFrame):
         self.bottomLeftGachaTable.setItemDelegate(CustomTableItemDelegate(self.bottomLeftGachaTable))
         log.infoWrite(f"[GachaReport] Gacha table updated")
 
+    def analysisUpdateData(self, currentData):
+        analyzer = analysis.Analysis(currentData)
+        self.bottomRightBasicTotalLabel.setText(f"祈愿次数: {analyzer.get_total_amount_to_string()}")
+        self.bottomRightBasicLevel5TotalLabel.setText(
+            f"5星数量: {analyzer.get_star_5_amount_to_string()} ({analyzer.get_star_5_percent_to_string()})")
+        self.bottomRightBasicLevel5TotalTextEdit.setText(analyzer.get_star_5_to_string())
+        self.bottomRightBasicLevel4TotalLabel.setText(
+            f"4星数量: {analyzer.get_star_4_amount_to_string()} ({analyzer.get_star_4_percent_to_string()})")
+        self.bottomRightBasicLevel3TotalLabel.setText(f"3星数量: {analyzer.get_star_3_amount_to_string()}")
+        self.bottomRightAnalysisGuaranteeLabel.setText(
+            analyzer.get_guarantee(self.headerRightGachaTypeCombobox.currentText()))
+        self.bottomRightGraphView.setChart(analyzer.get_pie_chart())
+
     def __headerRightGachaTypeComboboxChanged(self):
         log.infoWrite(f"[GachaReport] Gacha type selection changed")
+        if self.headerRightGachaTypeCombobox.currentText() == "武器祈愿":
+            InfoBar(
+                icon=InfoBarIcon.INFORMATION,
+                title="注意",
+                content="针对武器的分析(神铸)不准确",
+                orient=Qt.Vertical,
+                isClosable=True,
+                position=InfoBarPosition.BOTTOM_LEFT,
+                duration=2000,
+                parent=self
+            ).show()
         if not self.completedOriginalTableData:
             self.currentUID = self.headerRightUIDSelectCombobox.currentText()
             tableOriginalData = gacha_report_read.convertDataToTable(gacha_report_read.getDataFromUID(self.currentUID))
@@ -265,6 +294,7 @@ class GachaReportWidget(QFrame):
             GACHATYPE[self.headerRightGachaTypeCombobox.currentText()]]
         self.bottomLeftGachaTable.setRowCount(len(currentTableData))
         self.tableUpdateData(currentTableData)
+        self.analysisUpdateData(currentTableData)
 
     def __headerRightUIDSelectComboboxChanged(self):
         currentUID = self.headerRightUIDSelectCombobox.currentText()

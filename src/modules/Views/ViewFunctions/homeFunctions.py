@@ -50,5 +50,9 @@ class HomeSoftwareAnnouncementThread(QThread):
 
     def run(self):
         self.trigger.emit("正在获取公告...")
-        originalInfo = requests.get(SOFTWARE_ANNOUNCEMENT_URL).text
+        try:
+            originalInfo = requests.get(SOFTWARE_ANNOUNCEMENT_URL).text
+        except requests.exceptions.SSLError:
+            self.trigger.emit("公告获取失败")
+            return
         self.trigger.emit(originalInfo)

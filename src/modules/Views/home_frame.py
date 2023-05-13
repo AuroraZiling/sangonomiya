@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
 
-from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit
+from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit, InfoBar, InfoBarPosition
 
 from .ViewFunctions.homeFunctions import HomeSoftwareAnnouncementThread, HomeCurrentUPThread
 from ..Scripts.UI.style_sheet import StyleSheet
@@ -51,9 +51,14 @@ class HomeWidget(QFrame):
 
         log.infoWrite("[Home] UI Initialized")
 
+    def __topRefreshBtnClicked(self):
+        self.getAnnouncementFromMetaData()
+        self.getCurrentUPFromMetaData()
+
     def initFrame(self):
         self.topTitleLabel.setObjectName("homeFrameTitle")
         self.topRefreshBtn.setFixedWidth(100)
+        self.topRefreshBtn.clicked.connect(self.__topRefreshBtnClicked)
 
         self.currentUPTitleLabel.setObjectName("currentUPTitleLabel")
         self.currentUPCharacterLabel.setObjectName("currentUPCharacterLabel")
