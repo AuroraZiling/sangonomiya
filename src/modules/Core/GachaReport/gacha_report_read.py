@@ -16,6 +16,7 @@ def getDataFromUID(uid):
     else:
         return None
 
+
 def convertDataToTable(data):
     categories = {"200": [], "301": [], "302": []}
     for unit in data["list"]:

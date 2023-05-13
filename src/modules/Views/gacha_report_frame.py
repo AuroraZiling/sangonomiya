@@ -1,9 +1,11 @@
 from PySide6 import QtGui
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QAbstractItemView, QHeaderView, QTableWidgetItem
+from PySide6.QtCore import Qt, QModelIndex
+from PySide6.QtGui import QColor, QPalette
+from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QAbstractItemView, QHeaderView, \
+    QTableWidgetItem, QStyleOptionViewItem
 
 from qfluentwidgets import FluentIcon, RoundMenu, TableWidget, TextEdit, MessageBox, InfoBarPosition, ComboBox, \
-    Action, InfoBar, PushButton, StateToolTip
+    Action, InfoBar, PushButton, StateToolTip, TableItemDelegate
 from qfluentwidgets import DropDownPushButton
 
 from .ViewConfigs.config import cfg
@@ -15,10 +17,22 @@ from ..Core.GachaReport.gacha_report_utils import getDefaultGameDataPath, conver
 from ..Core.GachaReport import gacha_report_read
 from ..Core.GachaReport.Analysis import table_completion
 from ..Core.GachaReport.MihoyoAPI import by_web_cache
+from ..constant import GACHATYPE
 
 utils = config_utils.ConfigUtils()
 
-GACHATYPE_TO_CODE = {"角色活动祈愿": "301", "武器祈愿": "302", "常驻祈愿": "200"}
+
+rowColorMapping = {}
+
+
+class CustomTableItemDelegate(TableItemDelegate):
+    """ Custom table item delegate """
+
+    def initStyleOption(self, option: QStyleOptionViewItem, index: QModelIndex):
+        super().initStyleOption(option, index)
+        global rowColorMapping
+        option.palette.setColor(QPalette.Text, rowColorMapping[index.row()])
+        option.palette.setColor(QPalette.HighlightedText, rowColorMapping[index.row()])
 
 
 class GachaReportWidget(QFrame):
@@ -152,7 +166,7 @@ class GachaReportWidget(QFrame):
             MessageBox("失败", "无法从游戏缓存中获取请求", self)
 
     def __headerRightFullUpdateDropBtnURL(self):
-        w = URLDialog("输入URL", "请在下方输入MiHoyoAPI的URL", self)
+        w = URLDialog("输入URL", "请在下方输入MiHoYoAPI的URL", self)
         w.returnSignal.connect(self.__headerRightFullUpdateDropBtnURLReturnSignal)
         w.exec()
 
@@ -202,14 +216,19 @@ class GachaReportWidget(QFrame):
         self.headerRightFullUpdateDropBtn.setFixedWidth(175)
         self.headerRightFullUpdateDropBtn.setMenu(self.headerRightFullUpdateDropBtnMenu)
 
+        self.bottomLeftGachaTable.setFixedWidth(620)
         self.bottomLeftGachaTable.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.bottomLeftGachaTable.resizeColumnsToContents()
-        self.bottomLeftGachaTable.setColumnCount(5)
+        self.bottomLeftGachaTable.setColumnCount(6)
         self.bottomLeftGachaTable.verticalHeader().setHidden(True)
-        self.bottomLeftGachaTable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.bottomLeftGachaTable.setColumnWidth(0, 60)
+        self.bottomLeftGachaTable.setColumnWidth(1, 75)
+        self.bottomLeftGachaTable.setColumnWidth(2, 140)
+        self.bottomLeftGachaTable.setColumnWidth(3, 160)
+        self.bottomLeftGachaTable.setColumnWidth(4, 85)
+        self.bottomLeftGachaTable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
         self.bottomLeftGachaTable.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.bottomLeftGachaTable.setHorizontalHeaderLabels(
-            ["序号", "类型", "名称", "获取时间", "十连/单抽"])
+            ["序号", "类型", "名称", "获取时间", "十连/单抽", "保底内"])
 
         self.bottomRightBasicLabel.setFont(utils.getFont(14))
         self.bottomRightBasicTotalLabel.setFont(utils.getFont(12))
@@ -225,11 +244,15 @@ class GachaReportWidget(QFrame):
         self.bottomRightAnalysisGuaranteeLabel.setFont(utils.getFont(10))
 
     def tableUpdateData(self, currentData):
+        global rowColorMapping
+        rowColorMapping = {}
         for index, each in enumerate(currentData):
-            for eachColumn in range(0, 5):
+            for eachColumn in range(0, 6):
                 self.bottomLeftGachaTable.setItem(index, eachColumn, QTableWidgetItem())
                 self.bottomLeftGachaTable.setRowHeight(index, 40)
                 self.bottomLeftGachaTable.item(index, eachColumn).setText(each[eachColumn])
+                rowColorMapping.update({index: QColor(each[6])})
+        self.bottomLeftGachaTable.setItemDelegate(CustomTableItemDelegate(self.bottomLeftGachaTable))
         log.infoWrite(f"[GachaReport] Gacha table updated")
 
     def __headerRightGachaTypeComboboxChanged(self):
@@ -239,7 +262,7 @@ class GachaReportWidget(QFrame):
             tableOriginalData = gacha_report_read.convertDataToTable(gacha_report_read.getDataFromUID(self.currentUID))
             self.completedOriginalTableData = table_completion.originalTableDataToComplete(tableOriginalData)
         currentTableData = self.completedOriginalTableData[
-            GACHATYPE_TO_CODE[self.headerRightGachaTypeCombobox.currentText()]]
+            GACHATYPE[self.headerRightGachaTypeCombobox.currentText()]]
         self.bottomLeftGachaTable.setRowCount(len(currentTableData))
         self.tableUpdateData(currentTableData)
 
