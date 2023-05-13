@@ -1,6 +1,6 @@
 from PySide6.QtCharts import QPieSeries, QPieSlice, QChart
-from PySide6.QtCore import Qt, QMargins, QRectF
-from PySide6.QtGui import QPen, QColor, QFont
+from PySide6.QtCore import Qt, QRectF
+from PySide6.QtGui import QColor, QFont
 
 from qfluentwidgets import isDarkTheme
 from ....Scripts.Utils.metadata_utils import readMetaData

@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
 
-from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit, InfoBar, InfoBarPosition
+from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit
 
 from .ViewFunctions.homeFunctions import HomeSoftwareAnnouncementThread, HomeCurrentUPThread
 from ..Scripts.UI.style_sheet import StyleSheet

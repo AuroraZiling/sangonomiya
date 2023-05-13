@@ -1,4 +1,8 @@
-暂不开放
+### Release 7 (推荐)
+[Coding Artifact: 下载/Download](https://sangonomiya.coding.net/public-artifacts/sangonomiya/release/packages)
+
+[Github Release: 下载/Download](https://github.com/AuroraZiling/sangonomiya/releases)
+
 
 ***
 
@@ -6,7 +10,7 @@
 
 以下版本已过时，大部分功能无法正常使用
 
-### Release 6 (推荐)
+### Release 6
 [阿里云盘: 下载/Download](https://www.aliyundrive.com/s/ay3Y7WJbJho)
 [蓝奏云: 下载/Download](https://auroraziling.lanzouv.com/b02juwo3g)
 

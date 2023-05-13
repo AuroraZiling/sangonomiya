@@ -55,4 +55,7 @@ class HomeSoftwareAnnouncementThread(QThread):
         except requests.exceptions.SSLError:
             self.trigger.emit("公告获取失败")
             return
+        except requests.exceptions.ConnectionError:
+            self.trigger.emit("无网络连接")
+            return
         self.trigger.emit(originalInfo)

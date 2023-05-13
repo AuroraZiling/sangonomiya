@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QAbstrac
     QTableWidgetItem, QStyleOptionViewItem
 
 from qfluentwidgets import FluentIcon, RoundMenu, TableWidget, TextEdit, MessageBox, InfoBarPosition, ComboBox, \
-    Action, InfoBar, PushButton, StateToolTip, TableItemDelegate, InfoBarIcon, isDarkTheme
+    Action, InfoBar, StateToolTip, TableItemDelegate, InfoBarIcon, isDarkTheme
 from qfluentwidgets import DropDownPushButton
 
 from .ViewConfigs.config import cfg
@@ -26,7 +26,6 @@ rowColorMapping = {}
 
 
 class CustomTableItemDelegate(TableItemDelegate):
-    """ Custom table item delegate """
 
     def initStyleOption(self, option: QStyleOptionViewItem, index: QModelIndex):
         super().initStyleOption(option, index)
@@ -55,9 +54,7 @@ class GachaReportWidget(QFrame):
         self.headerHBox = QHBoxLayout()
         self.headerLeftVBox = QVBoxLayout()
         self.headerLeftGachaReportTitleLabel = QLabel("祈愿记录")
-        self.headerLeftGachaReportUIDLabel = QLabel("未知的UID")
         self.headerLeftVBox.addWidget(self.headerLeftGachaReportTitleLabel)
-        self.headerLeftVBox.addWidget(self.headerLeftGachaReportUIDLabel)
 
         self.headerRightHBox = QHBoxLayout()
         self.headerRightGachaTypeCombobox = ComboBox(self)
@@ -211,7 +208,6 @@ class GachaReportWidget(QFrame):
 
     def initFrame(self):
         self.headerLeftGachaReportTitleLabel.setFont(utils.getFont(18))
-        self.headerLeftGachaReportUIDLabel.setStyleSheet("color: grey;")
         self.headerRightGachaTypeCombobox.setFixedWidth(160)
         self.headerRightGachaTypeCombobox.addItems(["角色活动祈愿", "武器祈愿", "常驻祈愿"])
         self.headerRightGachaTypeCombobox.setEnabled(False)
@@ -301,7 +297,6 @@ class GachaReportWidget(QFrame):
         UIDList = gacha_report_read.getUIDList()
         if currentUID and currentUID in UIDList:
             log.infoWrite(f"[GachaReport] UID Selected: {currentUID}")
-            self.headerLeftGachaReportUIDLabel.setText(currentUID)
             self.headerRightGachaTypeCombobox.setEnabled(True)
             tableOriginalData = gacha_report_read.convertDataToTable(gacha_report_read.getDataFromUID(currentUID))
             self.completedOriginalTableData = table_completion.originalTableDataToComplete(tableOriginalData)

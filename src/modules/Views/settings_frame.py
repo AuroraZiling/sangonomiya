@@ -1,4 +1,6 @@
 # coding:utf-8
+import webbrowser
+
 from PySide6 import QtGui
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
@@ -251,8 +253,13 @@ class SettingWidget(ScrollArea):
     def __updateCheckCardClicked(self):
         latestVersion = check_update.findLatestVersion()
         if check_update.compareVersion(utils.appVersion, latestVersion):
-            w = MessageBox("发现新版本", latestVersion["version"], self)
-            print(w.exec())
+            w = MessageBox("发现新版本，是否前往下载页", latestVersion, self)
+            if w.exec():
+                if "Dev" in utils.appVersion:
+                    webbrowser.open("https://sangonomiya.coding.net/public-artifacts/sangonomiya/pre-release/packages")
+                else:
+                    webbrowser.open("https://sangonomiya.coding.net/public-artifacts/sangonomiya/release/packages")
+
         else:
             MessageBox("更新", "暂无可用更新", self).exec()
 

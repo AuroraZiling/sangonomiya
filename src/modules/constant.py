@@ -29,3 +29,8 @@ HTML_MODEL = '''
   </body>
 </html>
 '''
+
+UPDATE_URL = "https://api.github.com/repos/AuroraZiling/sangonomiya/releases"
+
+FONT_MAPPING = ["TeyvatNeue-Regular-1.002.otf", "InazumaNeue-Regular-1.000.otf", "SumeruNeue-Regular-0.007.otf", "DeshretNeue-Regular-1.002.otf", "KhaenriahNeue-Regular-2.000.otf", "KhaenriahNeue-Chasm-2.000.otf"]
+FONT_NAME_MAPPING = ["Teyvat Neue", "Inazuma Neue", "Sumeru Neue", "Deshret Neue", "Khaenriah Neue", "Khaenriah Neue Chasm"]

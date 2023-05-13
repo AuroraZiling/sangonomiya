@@ -1,5 +1,6 @@
 import os
 import pickle
+import time
 
 from ...Scripts.Utils.tools import Tools
 
@@ -17,8 +18,17 @@ def getDataFromUID(uid):
         return None
 
 
+def sortDataByTime(data):
+    return [i[:-1] for i in sorted(data, key=lambda unit: unit[-1])][::-1]
+
+
 def convertDataToTable(data):
     categories = {"200": [], "301": [], "302": []}
+    copied_categories = {"200": [], "301": [], "302": []}
     for unit in data["list"]:
         categories[unit["uigf_gacha_type"]].append([unit["item_type"], unit["name"], unit["time"]])
+        copied_categories[unit["uigf_gacha_type"]].append([unit["item_type"], unit["name"], unit["time"], time.mktime(time.strptime(unit["time"], "%Y-%m-%d %H:%M:%S"))])
+    categories["200"] = sortDataByTime(copied_categories["200"])
+    categories["301"] = sortDataByTime(copied_categories["301"])
+    categories["302"] = sortDataByTime(copied_categories["302"])
     return categories

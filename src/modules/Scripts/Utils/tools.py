@@ -1,12 +1,10 @@
-import os
-import sys
-import shutil
 import json
+import os
+import shutil
+import sys
 import time
-from pathlib import Path
-import win32clipboard
 
-from PySide6.QtCore import QStandardPaths
+import win32clipboard
 
 
 class Tools:

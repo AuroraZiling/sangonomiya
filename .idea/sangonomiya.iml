@@ -11,6 +11,7 @@
     <orderEntry type="module" module-name="asta" />
     <orderEntry type="module" module-name="SangonomiyaMetadata" />
     <orderEntry type="module" module-name="sangonomiya.Metadata" />
+    <orderEntry type="module" module-name="sangonomiyaUpdater" />
   </component>
   <component name="PyNamespacePackagesService">
     <option name="namespacePackageFolders">
