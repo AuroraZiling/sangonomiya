@@ -1,8 +1,13 @@
 # coding:utf-8
+import logging
 import sys
 import ctypes
 import time
+import traceback
+import datetime
 
+import win32api
+import win32con
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QStackedWidget, QHBoxLayout
@@ -40,6 +45,36 @@ def startUp():
     assetsCheck()
     if utils.getConfigAutoDeleteLog() and utils.getLogAmount() > 3:
         utils.deleteDir(utils.logDir)
+
+
+class GlobalExceptHookHandler(object):
+    def __init__(self, logFile):
+        self.__logFile = logFile
+
+        self.__logger = self.__BuildLogger()
+        sys.excepthook = self.__HandleException
+
+    def __BuildLogger(self):
+        logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(logging.FileHandler(self.__logFile))
+        return logger
+
+    def __HandleException(self, excType, excValue, tb):
+        try:
+            currentTime = datetime.datetime.now()
+            self.__logger.info("\n\n---===Oops! Sangonomiya Crushed===---")
+            self.__logger.info('Timestamp: %s' % (currentTime.strftime("%Y-%m-%d %H:%M:%S")))
+            self.__logger.error("Uncaught exception：", exc_info=(excType, excValue, tb))
+            self.__logger.info('\n\n')
+        except:
+            pass
+
+        sys.__excepthook__(excType, excValue, tb)
+
+        err_msg = ''.join(traceback.format_exception(excType, excValue, tb))
+        err_msg += '\n Sangonomiya 发生了不可预料的崩溃，请查看 logs/error.log 内容并反馈'
+        win32api.MessageBox(0, err_msg, "Error", win32con.MB_OK)
 
 
 class Window(FramelessWindow):
@@ -198,7 +233,13 @@ if __name__ == '__main__':
     log.infoWrite("[Main] Sangonomiya is starting...")
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon(f"{utils.workingDir}/assets/avatar.png"))
-    w = Window()
-    w.show()
-    app.exec()
+    try:
+        w = Window()
+        w.show()
+        GlobalExceptHookHandler(f"{utils.workingDir}/logs/error.log")
+        app.exec()
+    except Exception as e:
+        log.infoWrite("-----===== Error =====-----")
+        log.infoWrite(e)
     log.infoWrite("[Main] Sangonomiya has been shutdown")
+    log.infoWrite("-----===== Stop Tracking =====-----")

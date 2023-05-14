@@ -25,7 +25,7 @@ def assetsCheck():
                 open(f"{utils.workingDir}/assets/configs/files_verification.json", 'r', encoding="utf-8").read())[
                 "files"]
         for file in filesList:
-            if not os.path.exists(file[0]):
+            if not os.path.exists(f"{utils.workingDir}{file[0]}"):
                 log.errorWrite(f"[File Verification] 素材({file})文件不存在")
     except FileNotFoundError:
         log.errorWrite("[File Verification] 素材索引文件不存在")
