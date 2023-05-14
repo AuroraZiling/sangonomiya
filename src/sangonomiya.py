@@ -1,5 +1,6 @@
 # coding:utf-8
 import logging
+import os
 import sys
 import ctypes
 import time
@@ -220,6 +221,10 @@ class Window(FramelessWindow):
 
         StyleSheet.MAIN_WINDOW.apply(self)
 
+    def closeEvent(self, event):
+        event.accept()
+        os._exit(0)
+
     def switchTo(self, widget):
         self.mainStackWidget.setCurrentWidget(widget)
 
@@ -233,13 +238,9 @@ if __name__ == '__main__':
     log.infoWrite("[Main] Sangonomiya is starting...")
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon(f"{utils.workingDir}/assets/avatar.png"))
-    try:
-        w = Window()
-        w.show()
-        GlobalExceptHookHandler(f"{utils.workingDir}/logs/error.log")
-        app.exec()
-    except Exception as e:
-        log.infoWrite("-----===== Error =====-----")
-        log.infoWrite(e)
+    w = Window()
+    w.show()
+    GlobalExceptHookHandler(f"{utils.workingDir}/logs/error.log")
+    app.exec()
     log.infoWrite("[Main] Sangonomiya has been shutdown")
     log.infoWrite("-----===== Stop Tracking =====-----")
