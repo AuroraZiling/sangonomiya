@@ -19,7 +19,7 @@ class AnnouncementWidget(QFrame):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        if not (utils.jsonValidator(f"{utils.workingDir}/cache/announce.json") and utils.jsonValidator(f"{utils.workingDir}/cache/announce_icons.json")):
+        if not (utils.jsonValidator(f"{utils.workingDir}/cache/announce.json") or utils.jsonValidator(f"{utils.workingDir}/cache/announce_icons.json")):
             log.infoWrite("[Announcement] Get announce.json")
             downloader.downloadFromJson(ANNOUNCE_REQUEST_URL, utils.workingDir + "/cache/", "announce.json")
             log.infoWrite("[Announcement] Get announce_icon.json")
