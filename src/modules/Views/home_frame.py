@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
+from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QGridLayout
 
 from qfluentwidgets import PrimaryPushButton, FluentIcon, TextEdit
 
@@ -29,11 +30,32 @@ class HomeWidget(QFrame):
         self.baseVBox.addLayout(self.topHBox)
 
         self.currentUPTitleLabel = QLabel("当期UP信息", self)
-        self.currentUPCharacterLabel = QLabel("暂无", self)
+
+        self.currentUP1Box = QHBoxLayout(self)
+        self.currentUP1RightBox = QVBoxLayout(self)
+        self.currentUP1IconLabel = QLabel(self)
+        self.currentUP1Box.addWidget(self.currentUP1IconLabel)
+        self.currentUP1CharacterLabel = QLabel("暂无", self)
+        self.currentUP1TimeLabel = QLabel("未知", self)
+        self.currentUP1RightBox.addWidget(self.currentUP1CharacterLabel)
+        self.currentUP1RightBox.addWidget(self.currentUP1TimeLabel)
+        self.currentUP1Box.addLayout(self.currentUP1RightBox)
+
+        self.currentUP2Box = QHBoxLayout(self)
+        self.currentUP2RightBox = QVBoxLayout(self)
+        self.currentUP2IconLabel = QLabel(self)
+        self.currentUP2Box.addWidget(self.currentUP2IconLabel)
+        self.currentUP2CharacterLabel = QLabel("暂无", self)
+        self.currentUP2TimeLabel = QLabel("未知", self)
+        self.currentUP2RightBox.addWidget(self.currentUP2CharacterLabel)
+        self.currentUP2RightBox.addWidget(self.currentUP2TimeLabel)
+        self.currentUP2Box.addLayout(self.currentUP2RightBox)
+
         self.currentUPWeaponLabel = QLabel("暂无", self)
 
         self.baseVBox.addWidget(self.currentUPTitleLabel)
-        self.baseVBox.addWidget(self.currentUPCharacterLabel)
+        self.baseVBox.addLayout(self.currentUP1Box)
+        self.baseVBox.addLayout(self.currentUP2Box)
         self.baseVBox.addWidget(self.currentUPWeaponLabel)
 
         self.announceTitleLabel = QLabel("公告", self)
@@ -52,6 +74,8 @@ class HomeWidget(QFrame):
         log.infoWrite("[Home] UI Initialized")
 
     def __topRefreshBtnClicked(self):
+        if self.homeCurrentUPThread.isRunning() or self.homeSoftwareAnnouncementThread.isRunning():
+            return
         self.getAnnouncementFromMetaData()
         self.getCurrentUPFromMetaData()
 
@@ -61,7 +85,18 @@ class HomeWidget(QFrame):
         self.topRefreshBtn.clicked.connect(self.__topRefreshBtnClicked)
 
         self.currentUPTitleLabel.setObjectName("currentUPTitleLabel")
-        self.currentUPCharacterLabel.setObjectName("currentUPCharacterLabel")
+        self.currentUP1IconLabel.setObjectName("currentUP1IconLabel")
+        self.currentUP1IconLabel.setFixedSize(79, 64)
+        self.currentUP1IconLabel.setScaledContents(True)
+        self.currentUP1CharacterLabel.setObjectName("currentUP1CharacterLabel")
+        self.currentUP1TimeLabel.setObjectName("currentUP1TimeLabel")
+
+        self.currentUP2IconLabel.setObjectName("currentUP2IconLabel")
+        self.currentUP2IconLabel.setFixedSize(79, 64)
+        self.currentUP2IconLabel.setScaledContents(True)
+        self.currentUP2CharacterLabel.setObjectName("currentUP2CharacterLabel")
+        self.currentUP2TimeLabel.setObjectName("currentUP2TimeLabel")
+
         self.currentUPWeaponLabel.setObjectName("currentUPWeaponLabel")
 
         self.announceTitleLabel.setObjectName("homeFrameAnnounceTitle")
@@ -70,9 +105,15 @@ class HomeWidget(QFrame):
         self.announceTextBox.setFrameShape(QFrame.Shape.NoFrame)
         self.announceTextBox.setContentsMargins(5, 5, 5, 5)
 
-    def __getCurrentUPFromMetaDataSignal(self, upType, info):
-        if upType == 0:
-            self.currentUPCharacterLabel.setText(info)
+    def __getCurrentUPFromMetaDataSignal(self, upType, upPool, info, timePeriod, iconPath):
+        if upType == 0 and upPool == 0:
+            self.currentUP1CharacterLabel.setText(info)
+            self.currentUP1TimeLabel.setText(timePeriod)
+            self.currentUP1IconLabel.setPixmap(QPixmap(iconPath))
+        elif upType == 0 and upPool == 1:
+            self.currentUP2CharacterLabel.setText(info)
+            self.currentUP2TimeLabel.setText(timePeriod)
+            self.currentUP2IconLabel.setPixmap(QPixmap(iconPath))
         elif upType == 1:
             self.currentUPWeaponLabel.setText(info)
 

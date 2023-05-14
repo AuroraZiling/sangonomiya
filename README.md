@@ -33,9 +33,9 @@
 
 ## 下载 / Download
 
-### Coding Artifact (Pre-release Only)
+### Coding Artifact
 
-https://sangonomiya.coding.net/public-artifacts/sangonomiya/pre-release/packages
+https://sangonomiya.coding.net/public-artifacts/sangonomiya/release/packages
 
 ### GitHub Release
 
@@ -43,18 +43,16 @@ https://github.com/AuroraZiling/sangonomiya/releases
 
 ## 卸载 / Uninstall
 
-1. 程序所在文件夹，即`sangonomiya.exe`所在的文件夹
-2. AppData文件夹，即`C:\Users\[Username]\AppData\Roaming\Python\sangonomiya`文件夹
+程序所在文件夹，即`sangonomiya.exe`所在的文件夹
 
 ## 已实现功能 / Implemented Features
 
-- [x] 彩色列表
+- [x] 图表显示
 - [x] JSON导入/导出 (符合[UIGF统一可交换祈愿记录标准](https://github.com/DGP-Studio/Snap.Genshin/wiki/StandardFormat))
-- [x] 列表显示数据增多 (比如是否属于十连/单抽等)
 - [x] 基础的数据分析
-- [x] 公告显示
+- [x] 软件和游戏内的公告显示
 - [x] 当期UP池显示
-- [x] 多UID
+- [x] 多UID支持
 
 ## 更新日志 / Changelog
 

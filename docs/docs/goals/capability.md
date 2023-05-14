@@ -12,7 +12,7 @@
 
 - [x] **已于Release 5 Dev 6实装** 缓存占用空间显示
 
-- [x] **已于Release 6 Dev 3实装] 多UID支持
+- [x] **已于Release 6 Dev 3实装]** 多UID支持
 
 - [x] **已于Release 6 Dev 7实装** UIGF(Json) v2.2 导入/导出支持
 

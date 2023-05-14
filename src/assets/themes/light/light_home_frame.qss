@@ -12,11 +12,38 @@ QLabel#currentUPTitleLabel {
     padding-left: 10px;
 }
 
-QLabel#currentUPCharacterLabel {
-    font: 20px 'Segoe UI', 'Microsoft YaHei';
+QLabel#currentUP1IconLabel {
+    padding-left: 15px;
+}
+
+QLabel#currentUP1CharacterLabel {
+    font: 22px 'Segoe UI', 'Microsoft YaHei';
     background-color: transparent;
     color: black;
-    padding-left: 10px;
+}
+
+QLabel#currentUP1TimeLabel {
+    font: 16px 'Segoe UI', 'Microsoft YaHei';
+    background-color: transparent;
+    color: grey;
+    padding-left: 5px;
+}
+
+QLabel#currentUP2IconLabel {
+    padding-left: 15px;
+}
+
+QLabel#currentUP2CharacterLabel {
+    font: 22px 'Segoe UI', 'Microsoft YaHei';
+    background-color: transparent;
+    color: black;
+}
+
+QLabel#currentUP2TimeLabel {
+    font: 16px 'Segoe UI', 'Microsoft YaHei';
+    background-color: transparent;
+    color: grey;
+    padding-left: 5px;
 }
 
 QLabel#currentUPWeaponLabel {

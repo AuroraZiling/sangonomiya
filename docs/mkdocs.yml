@@ -39,6 +39,7 @@ nav:
     - 构建:
         - 构建: build/index.md
     - 开发日志:
+        - Release 8: dev_logs/r8.md
         - Release 7: dev_logs/r7.md
         - Release 6: dev_logs/r6.md
         - Release 5: dev_logs/r5.md
