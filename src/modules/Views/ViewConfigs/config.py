@@ -43,8 +43,12 @@ class Config(QConfig):
     ConfigItem("Versions", "ui", UIVersion)
 
     # Game
-    gameDataFolder = ConfigItem(
-        "Folders", "GameData", getDefaultGameDataPath(), FolderValidator())
+    if not getDefaultGameDataPath():
+        gameDataFolder = ConfigItem(
+            "Folders", "GameData", "Game Path Not Found")
+    else:
+        gameDataFolder = ConfigItem(
+            "Folders", "GameData", getDefaultGameDataPath(), FolderValidator())
 
     # Storage
     storageDataFolders = ConfigItem(

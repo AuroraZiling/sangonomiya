@@ -1,23 +1,22 @@
 from PySide6 import QtGui
-from PySide6.QtCharts import QChartView
+from PySide6.QtCharts import QChartView, QChart
 from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtGui import QColor, QPalette, QPainter
 from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QAbstractItemView, QHeaderView, \
     QTableWidgetItem, QStyleOptionViewItem
 
+from qfluentwidgets import DropDownPushButton
 from qfluentwidgets import FluentIcon, RoundMenu, TableWidget, TextEdit, MessageBox, InfoBarPosition, ComboBox, \
     Action, InfoBar, StateToolTip, TableItemDelegate, InfoBarIcon, isDarkTheme
-from qfluentwidgets import DropDownPushButton
-
 from .ViewConfigs.config import cfg
-from ..Scripts.Utils import config_utils, log_recorder as log
-from ..Core.GachaReport.gacha_report_thread import GachaReportThread
-from ..Scripts.UI.style_sheet import StyleSheet
-from ..Scripts.UI.custom_dialog import URLDialog
-from ..Core.GachaReport.gacha_report_utils import getDefaultGameDataPath, convertAPI
 from ..Core.GachaReport import gacha_report_read
 from ..Core.GachaReport.Analysis import table_completion, analysis
 from ..Core.GachaReport.MihoyoAPI import by_web_cache
+from ..Core.GachaReport.gacha_report_thread import GachaReportThread
+from ..Core.GachaReport.gacha_report_utils import convertAPI
+from ..Scripts.UI.custom_dialog import URLDialog
+from ..Scripts.UI.style_sheet import StyleSheet
+from ..Scripts.Utils import config_utils, log_recorder as log
 from ..constant import GACHATYPE
 
 utils = config_utils.ConfigUtils()
@@ -143,7 +142,11 @@ class GachaReportWidget(QFrame):
             self.headerRightFullUpdateDropBtn.setEnabled(True)
 
     def __headerRightFullUpdateDropBtnWebCache(self):
-        gachaURL = convertAPI(by_web_cache.getURL(getDefaultGameDataPath()))
+        gameDataPath = cfg.gameDataFolder.value
+        if not gameDataPath or gameDataPath == "Game Path Not Found":
+            InfoBar.error("错误", "游戏路径未找到", InfoBarPosition.TOP_RIGHT, parent=self.window())
+            return
+        gachaURL = convertAPI(by_web_cache.getURL(gameDataPath))
         if gachaURL:
             resp = MessageBox("成功", "请求已被获取，是否更新数据?", self)
             if resp.exec():
@@ -190,8 +193,15 @@ class GachaReportWidget(QFrame):
         self.bottomRightGraphLabel.setEnabled(mode)
 
     def emptyAllStatistics(self):
+        self.headerRightGachaTypeCombobox.setCurrentText("")
         self.bottomLeftGachaTable.clearContents()
-        self.bottomRightBasicLevel5TotalTextEdit.clear()
+        self.bottomRightBasicTotalLabel.setText("未知抽数")
+        self.bottomRightBasicLevel5TotalLabel.setText("未知5星数量")
+        self.bottomRightBasicLevel5TotalTextEdit.setText("")
+        self.bottomRightBasicLevel4TotalLabel.setText("未知4星数量")
+        self.bottomRightBasicLevel3TotalLabel.setText("未知3星数量")
+        self.bottomRightAnalysisGuaranteeLabel.setText("未知")
+        self.bottomRightGraphView.setChart(QChart())
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
         if not gacha_report_read.getUIDList():
@@ -317,5 +327,8 @@ class GachaReportWidget(QFrame):
         self.currentUID = cfg.gachaReportLastUID.value
         if self.currentUID:
             self.headerRightUIDSelectCombobox.setCurrentText(self.currentUID)
+            self.__headerRightUIDSelectComboboxChanged()
+        else:
+            self.headerRightUIDSelectCombobox.setCurrentIndex(0)
             self.__headerRightUIDSelectComboboxChanged()
         log.infoWrite("[GachaReport] Data initialized")

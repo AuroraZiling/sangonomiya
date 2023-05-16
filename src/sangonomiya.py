@@ -12,7 +12,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QStackedWidget, QHBoxLayout
 
-from qfluentwidgets import FluentIcon, NavigationInterface, NavigationItemPosition, setTheme, Theme, isDarkTheme, \
+from qfluentwidgets import FluentIcon, NavigationInterface, NavigationItemPosition, \
     InfoBar, InfoBarPosition
 from qframelesswindow import FramelessWindow
 
@@ -23,8 +23,8 @@ from modules.Views import home_frame, gacha_report_frame, link_frame, announceme
 from modules.Scripts.UI import custom_icon
 from modules.Scripts.UI.title_bar import CustomTitleBar
 from modules.Scripts.UI.style_sheet import StyleSheet
-from modules.Scripts.Utils import file_verification, metadata_utils, config_utils, downloader, log_recorder as log
-from modules.Metadata import character_list, weapon_list
+from modules.Scripts.Utils import file_verification, metadata_utils, config_utils, log_recorder as log
+from modules.Metadata import character_list
 
 utils = config_utils.ConfigUtils()
 

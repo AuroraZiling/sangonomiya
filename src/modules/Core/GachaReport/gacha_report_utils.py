@@ -10,7 +10,7 @@ GAME_LOG_PATH = os.environ["userprofile"] + '/AppData/LocalLow/miHoYo/原神/out
 def getDefaultGameDataPath():
     if not os.path.exists(GAME_LOG_PATH):
         log.infoWrite(f"[GachaReport.utils] Game Path not found")
-        return 0, "Game Log Not found"
+        return False
     with open(GAME_LOG_PATH, 'r', encoding='utf-8') as f:
         logFile = f.read()
     res = re.search("([A-Z]:/.+(GenshinImpact_Data|YuanShen_Data))", logFile)

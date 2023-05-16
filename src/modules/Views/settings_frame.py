@@ -39,7 +39,7 @@ class SettingWidget(ScrollArea):
             "浏览",
             FluentIcon.FOLDER,
             "游戏文件夹",
-            cfg.get(cfg.gameDataFolder),
+            cfg.get(cfg.gameDataFolder) if getDefaultGameDataPath() else "Game Path Not Found",
             self.gameGroup
         )
         self.gameDataResetCard = PushSettingCard(
@@ -221,9 +221,16 @@ class SettingWidget(ScrollArea):
         log.infoWrite(f"[Settings] Game path changed: {folder}")
 
     def __gameDataResetCardClicked(self):
-        cfg.set(cfg.gameDataFolder, getDefaultGameDataPath())
-        self.gameDataCard.setContent(getDefaultGameDataPath())
-        log.infoWrite(f"[Settings] Game path reset")
+        if getDefaultGameDataPath():
+            cfg.set(cfg.gameDataFolder, getDefaultGameDataPath())
+            self.gameDataCard.setContent(getDefaultGameDataPath())
+            InfoBar.success("成功", "游戏路径已重置", InfoBarPosition.TOP_RIGHT, parent=self.window())
+            log.infoWrite(f"[Settings] Game path reset")
+        else:
+            cfg.set(cfg.gameDataFolder, "Game Path Not Found")
+            InfoBar.error("错误", "游戏路径未找到", InfoBarPosition.TOP_RIGHT, parent=self.window())
+            self.gameDataCard.setContent("Game Path Not Found")
+            log.infoWrite(f"[Settings] Game path not found")
 
     def __defaultUIDDeleteCardReturnSignal(self, uid):
         if uid:

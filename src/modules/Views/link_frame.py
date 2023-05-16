@@ -149,9 +149,9 @@ UIGF(Json)版本: {tmp_uigf_version}'''
         self.uigfStandard = choice
         if choice == "UIGF(Json) v2.3" and not readMetaData("uigf_dict"):
             self.uigfStandard = "unavailable"
-            InfoBar.error("失败", "UIGF API - Dict 不存在，请更新UIGF API元数据", InfoBarPosition.TOP_RIGHT, parent=self.window())
+            InfoBar.error("失败", "UIGF API - Dict 不存在，请更新UIGF API元数据", InfoBarPosition.TOP_RIGHT,
+                          parent=self.window())
             log.errorWrite(f"[Link][Export] Export Failed. Possible Reason: configs/metadata/uigf_dict.json not found")
-
 
     def __exportCardClicked(self):
         w = custom_dialog.ComboboxDialog("导出", "选择UIGF导出标准", ["UIGF(Json) v2.2", "UIGF(Json) v2.3"], self)
