@@ -221,10 +221,6 @@ class Window(FramelessWindow):
 
         StyleSheet.MAIN_WINDOW.apply(self)
 
-    def closeEvent(self, event):
-        event.accept()
-        os._exit(0)
-
     def switchTo(self, widget):
         self.mainStackWidget.setCurrentWidget(widget)
 

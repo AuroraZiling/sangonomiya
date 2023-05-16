@@ -10,23 +10,29 @@ from ....constant import COLOR_MAPPING
 class Analysis:
     def __init__(self, data):
         self.data = data
-
-        self.total_amount = int(self.data[0][0])
-        self.star_5 = [f"[{unit[0]}]{unit[2]}" for unit in self.data if unit[7] == "5"]
-        self.star_5_amount = len(self.star_5)
-        self.star_4 = [f"[{unit[0]}]{unit[2]}" for unit in self.data if unit[7] == "4"]
-        self.star_4_amount = len(self.star_4)
-        self.star_3_amount = len([unit for unit in self.data if unit[7] == "3"])
-
+        self.total_amount = 0
+        self.star_5 = []
+        self.star_5_amount = 0
+        self.star_4 = []
+        self.star_4_amount = 0
+        self.star_3_amount = 0
         self.chart = QChart()
-        self.chartSeries = QPieSeries()
-        self.chart5Star = QPieSlice()
-        self.chart4Star = QPieSlice()
-        self.chart3Star = QPieSlice()
+        if self.data:
+            self.total_amount = int(self.data[0][0])
+            self.star_5 = [f"[{unit[0]}]{unit[2]}" for unit in self.data if unit[7] == "5"]
+            self.star_5_amount = len(self.star_5)
+            self.star_4 = [f"[{unit[0]}]{unit[2]}" for unit in self.data if unit[7] == "4"]
+            self.star_4_amount = len(self.star_4)
+            self.star_3_amount = len([unit for unit in self.data if unit[7] == "3"])
 
-        self.characterList = readMetaData("character")
-        self.weaponList = readMetaData("weapon")
-        self.permanentList = readMetaData("permanent")
+            self.chartSeries = QPieSeries()
+            self.chart5Star = QPieSlice()
+            self.chart4Star = QPieSlice()
+            self.chart3Star = QPieSlice()
+
+            self.characterList = readMetaData("character")
+            self.weaponList = readMetaData("weapon")
+            self.permanentList = readMetaData("permanent")
 
     def get_total_amount_to_string(self):
         return str(self.total_amount)
@@ -47,10 +53,16 @@ class Analysis:
         return str(self.star_3_amount)
 
     def get_star_5_percent_to_string(self):
-        return f"{round(self.star_5_amount / self.total_amount, 2)}%"
+        if self.total_amount:
+            return f"{round(self.star_5_amount / self.total_amount, 2)}%"
+        else:
+            return "0%"
 
     def get_star_4_percent_to_string(self):
-        return f"{round(self.star_4_amount / self.total_amount, 2)}%"
+        if self.total_amount:
+            return f"{round(self.star_4_amount / self.total_amount, 2)}%"
+        else:
+            return "0%"
 
     def get_guarantee(self, data_type):
         guarantee_text = ""
@@ -80,12 +92,15 @@ class Analysis:
             guarantee_text += f"最近一次在第{nearest_5_star[0]}抽得到{nearest_5_star[2]}"
             guarantee_text += f"\n将在第{int(nearest_5_star[0]) + 90}抽之前必出五星"
             guarantee_text += f"\n当前已经{self.total_amount}/{int(nearest_5_star[0]) + additional_fix}抽, 还差{int(nearest_5_star[0]) + additional_fix - self.total_amount}抽"
-            guarantee_text += f"\n预计最多需要{int(nearest_5_star[0]) + additional_fix - self.total_amount}个纠缠之缘, 约等于{(int(nearest_5_star[0]) + additional_fix - self.total_amount) * 160}原石"
+            guarantee_text += f"\n预计最多需要{int(nearest_5_star[0]) + additional_fix - self.total_amount}个相遇之缘, 约等于{(int(nearest_5_star[0]) + additional_fix - self.total_amount) * 160}原石"
         elif not nearest_5_star:
             guarantee_text = "暂无数据"
         return guarantee_text
 
     def get_pie_chart(self):
+
+        if not self.data:
+            return self.chart
 
         self.chartSeries.append('5星', 0)
         self.chartSeries.append('4星', 0)

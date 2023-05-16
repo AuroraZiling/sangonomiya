@@ -29,7 +29,6 @@ class CustomTableItemDelegate(TableItemDelegate):
 
     def initStyleOption(self, option: QStyleOptionViewItem, index: QModelIndex):
         super().initStyleOption(option, index)
-        global rowColorMapping
         option.palette.setColor(QPalette.Text, rowColorMapping[index.row()])
         option.palette.setColor(QPalette.HighlightedText, rowColorMapping[index.row()])
 

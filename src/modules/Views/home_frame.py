@@ -73,6 +73,11 @@ class HomeWidget(QFrame):
 
         log.infoWrite("[Home] UI Initialized")
 
+    def closeEvent(self, event):
+        self.homeCurrentUPThread.exit()
+        self.homeSoftwareAnnouncementThread.exit()
+        event.accept()
+
     def __topRefreshBtnClicked(self):
         if self.homeCurrentUPThread.isRunning() or self.homeSoftwareAnnouncementThread.isRunning():
             return
