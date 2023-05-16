@@ -1,0 +1,31 @@
+QLabel#headerLeftTitleLabel {
+    font: 33px 'Segoe UI', 'Microsoft YaHei';
+    background-color: transparent;
+    color: white;
+    padding-left: 10px;
+}
+
+QLabel#basicNameLabel {
+    font: 28px 'Segoe UI', 'Microsoft YaHei';
+    background-color: transparent;
+    color: white;
+    padding-left: 10px;
+}
+
+QLabel#basicSignatureLabel {
+    font: 14px 'Segoe UI', 'Microsoft YaHei';
+    background-color: transparent;
+    color: grey;
+    padding-left: 10px;
+}
+
+QLabel#basicAvatarLabel {
+    padding-left: 15px;
+}
+
+QLabel#detailTitleLabel {
+    font: 28px 'Segoe UI', 'Microsoft YaHei';
+    background-color: transparent;
+    color: white;
+    padding-left: 10px;
+}

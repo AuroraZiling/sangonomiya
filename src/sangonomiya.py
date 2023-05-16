@@ -19,7 +19,7 @@ from qframelesswindow import FramelessWindow
 from modules.Scripts.Utils.file_verification import assetsCheck
 
 from modules.Views import home_frame, gacha_report_frame, link_frame, announcement_frame, \
-    settings_frame, about_frame, metadata_frame, glyphs_frame
+    settings_frame, about_frame, metadata_frame, glyphs_frame, account_frame
 from modules.Scripts.UI import custom_icon
 from modules.Scripts.UI.title_bar import CustomTitleBar
 from modules.Scripts.UI.style_sheet import StyleSheet
@@ -97,6 +97,7 @@ class Window(FramelessWindow):
         self.mainGachaReportInterface = gacha_report_frame.GachaReportWidget(self)
         self.mainLinkInterface = link_frame.LinkWidget(self)
         self.mainAnnouncementInterface = announcement_frame.AnnouncementWidget(self)
+        self.mainAccountInterface = account_frame.AccountWidget(self)
         self.mainGlyphsInterface = glyphs_frame.GlyphsWidget(self)
         self.mainMetaDataInterface = metadata_frame.MetaDataWidget(self)
         self.mainSettingInterface = settings_frame.SettingWidget(self)
@@ -106,6 +107,7 @@ class Window(FramelessWindow):
         self.mainStackWidget.addWidget(self.mainGachaReportInterface)
         self.mainStackWidget.addWidget(self.mainLinkInterface)
         self.mainStackWidget.addWidget(self.mainAnnouncementInterface)
+        self.mainStackWidget.addWidget(self.mainAccountInterface)
         self.mainStackWidget.addWidget(self.mainGlyphsInterface)
         self.mainStackWidget.addWidget(self.mainMetaDataInterface)
         self.mainStackWidget.addWidget(self.mainSettingInterface)
@@ -156,6 +158,13 @@ class Window(FramelessWindow):
             icon=custom_icon.MyFluentIcon.ANNOUNCEMENT,
             text="公告",
             onClick=lambda: self.switchTo(self.mainAnnouncementInterface)
+        )
+
+        self.mainNavigationInterface.addItem(
+            routeKey=self.mainAccountInterface.objectName(),
+            icon=FluentIcon.TAG,
+            text="个人信息",
+            onClick=lambda: self.switchTo(self.mainAccountInterface)
         )
 
         self.mainNavigationInterface.addSeparator()

@@ -13,6 +13,7 @@ class StyleSheet(StyleSheetBase, Enum):
     MAIN_WINDOW = "general"
     GACHA_REPORT_FRAME = "general"
     ANNOUNCEMENT_FRAME = "general"
+    ACCOUNT_FRAME = "account_frame"
     LINK_FRAME = "link_frame"
     LINK_CARD = "link_card"
     HOME_FRAME = "home_frame"

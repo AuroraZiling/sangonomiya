@@ -2,10 +2,13 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/docs/docs/dev_logs/r8.md" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/assets/themes/dark/dark_account_frame.qss" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/logs/Sangonomiya 2023-05-05-10-18-39.log" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/logs/Sangonomiya 2023-05-08-18-17-41.log" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/logs/Sangonomiya 2023-05-12-21-06-12.log" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/logs/Sangonomiya 2023-05-13-18-29-40.log" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/modules/Views/ViewFunctions/accountFunctions.py" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/modules/Views/account_frame.py" charset="UTF-8" />
     <file url="PROJECT" charset="GBK" />
   </component>
 </project>
