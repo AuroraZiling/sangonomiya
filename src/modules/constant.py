@@ -1,5 +1,6 @@
 UIGF_GACHATYPE = {"100": "100", "200": "200", "301": "301", "400": "301", "302": "302"}
-UIGF_VERSION = "v2.2"
+UIGF_VERSION = ["UIGF(Json) v2.2", "UIGF(Json) v2.3"]
+UIGF_VERSION_EXPORT = {"UIGF(Json) v2.2": "v2.2", "UIGF(Json) v2.3": "v2.3"}
 UIGF_DATA_MODEL = {"info": {"uid": "", "lang": "zh-cn", "export_time": ""}, "list": []}
 GACHATYPE = {"新手祈愿": "100", "常驻祈愿": "200", "角色活动祈愿": "301", "角色活动祈愿-2": "400", "武器祈愿": "302"}
 

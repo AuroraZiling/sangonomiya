@@ -23,7 +23,6 @@ class ImportSupport:
         self.UIGFImportJsonData["info"]["export_timestamp"] = int(round(time.time() * 1000))
         self.UIGFImportJsonData["info"]["export_app"] = "sangonomiya"
         self.UIGFImportJsonData["info"]["export_app_version"] = utils.appVersion
-        self.UIGFImportJsonData["info"]["uigf_version"] = UIGF_VERSION
         self.UIGFImportJsonData['info']['uid'] = self.uid
         self.UIGFImportJsonData["list"] = uigfDataList["list"]
         pathlib.Path(f"{utils.workingDir}/data/{self.uid}").mkdir(parents=True, exist_ok=True)

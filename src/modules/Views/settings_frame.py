@@ -225,9 +225,10 @@ class SettingWidget(ScrollArea):
         self.gameDataCard.setContent(getDefaultGameDataPath())
         log.infoWrite(f"[Settings] Game path reset")
 
-    @staticmethod
-    def __defaultUIDDeleteCardReturnSignal(uid):
-        utils.deleteDir(f"{utils.workingDir}/data/{uid}/", False)
+    def __defaultUIDDeleteCardReturnSignal(self, uid):
+        if uid:
+            utils.deleteDir(f"{utils.workingDir}/data/{uid}/", False)
+            InfoBar.success("成功", f"档案 {uid} 已删除", InfoBarPosition.TOP_RIGHT, parent=self.window())
 
     def __defaultUIDDeleteCardClicked(self):
         w = custom_dialog.ComboboxDialog("删除UID数据档案", "选择UID", gacha_report_read.getUIDList(), self)
@@ -264,7 +265,6 @@ class SettingWidget(ScrollArea):
             MessageBox("更新", "暂无可用更新", self).exec()
 
     def __connectSignalToSlot(self):
-        """ connect signal to slot """
         cfg.appRestartSig.connect(lambda: InfoBar.warning("警告", self.tr(
             "更改将在应用重启后更新"), parent=self.window(), position=InfoBarPosition.TOP_RIGHT))
         cfg.themeChanged.connect(setTheme)

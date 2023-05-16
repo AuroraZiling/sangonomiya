@@ -6,6 +6,8 @@ import time
 
 import win32clipboard
 
+from ...constant import UIGF_VERSION_EXPORT
+
 
 class Tools:
     def __init__(self):
@@ -80,7 +82,7 @@ class Tools:
         try:
             file = json.loads(open(path, 'r', encoding="utf-8").read())
             if requirement == "uigf":
-                if not file["info"]["uigf_version"] == "v2.2":
+                if not file["info"]["uigf_version"] in UIGF_VERSION_EXPORT.values():
                     return False
         except json.decoder.JSONDecodeError:
             return False

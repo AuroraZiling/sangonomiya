@@ -6,7 +6,7 @@ import requests
 
 from PySide6.QtCore import QThread, Signal
 
-from ...constant import UIGF_VERSION, UIGF_GACHATYPE, UIGF_DATA_MODEL, GACHATYPE
+from ...constant import UIGF_VERSION, UIGF_GACHATYPE, UIGF_DATA_MODEL, GACHATYPE, UIGF_VERSION_EXPORT
 from ..UIGF.converter import originalToUIGFListUnit
 from .gacha_report_utils import updateAPI
 from ...Scripts.Utils.config_utils import ConfigUtils
@@ -53,7 +53,7 @@ class GachaReportThread(QThread):
         UIGFExportJsonData["info"]["export_timestamp"] = int(round(time.time() * 1000))
         UIGFExportJsonData["info"]["export_app"] = "sangonomiya"
         UIGFExportJsonData["info"]["export_app_version"] = utils.appVersion
-        UIGFExportJsonData["info"]["uigf_version"] = UIGF_VERSION
+        UIGFExportJsonData["info"]["uigf_version"] = UIGF_VERSION_EXPORT[UIGF_VERSION]
         UIGFExportJsonData['info']['uid'] = self.uid
         UIGFExportJsonData["list"] = gachaList
         open(f"{utils.workingDir}/data/{self.uid}/{self.uid}_export_data.json", "w", encoding="utf-8").write(
