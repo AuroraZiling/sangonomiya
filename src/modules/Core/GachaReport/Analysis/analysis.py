@@ -18,12 +18,12 @@ class Analysis:
         self.star_3_amount = 0
         self.chart = QChart()
         if self.data:
-            self.total_amount = int(self.data[0][0])
-            self.star_5 = [f"[{unit[0]}]{unit[2]}" for unit in self.data if unit[7] == "5"]
+            self.total_amount = int(self.data[0]["order"])
+            self.star_5 = [f"[{unit['order']}]{unit['name']}" for unit in self.data if unit['rank_type'] == "5"]
             self.star_5_amount = len(self.star_5)
-            self.star_4 = [f"[{unit[0]}]{unit[2]}" for unit in self.data if unit[7] == "4"]
+            self.star_4 = [f"[{unit['order']}]{unit['name']}" for unit in self.data if unit['rank_type'] == "4"]
             self.star_4_amount = len(self.star_4)
-            self.star_3_amount = len([unit for unit in self.data if unit[7] == "3"])
+            self.star_3_amount = len([unit for unit in self.data if unit['rank_type'] == "3"])
 
             self.chartSeries = QPieSeries()
             self.chart5Star = QPieSlice()
@@ -66,33 +66,33 @@ class Analysis:
 
     def get_guarantee(self, data_type):
         guarantee_text = ""
-        nearest_5_star = []
+        nearest_5_star = {}
         additional_fix = 80 if data_type == "武器祈愿" else 90
         is_permanent_pool = True if data_type == "常驻祈愿" else False
         for unit in self.data:
-            if unit[2] in self.characterList["5"] or unit[2] in self.weaponList["5"]:
+            if unit['rank_type'] == "5":
                 nearest_5_star = unit
                 break
         if nearest_5_star and not is_permanent_pool:
-            if nearest_5_star[2] in self.permanentList:
+            if nearest_5_star["name"] in self.permanentList:
                 guarantee_text += "情况: 小保底歪了/直接进入大保底"
-                guarantee_text += f"\n最近一次在第{nearest_5_star[0]}抽得到{nearest_5_star[2]}"
-                guarantee_text += f"\n将在第{int(nearest_5_star[0]) + additional_fix}抽之前必出当期UP"
-                guarantee_text += f"\n当前已经{self.total_amount}/{int(nearest_5_star[0]) + additional_fix}抽, 还差{int(nearest_5_star[0]) + additional_fix - self.total_amount}抽"
-                guarantee_text += f"\n预计最多需要{int(nearest_5_star[0]) + additional_fix - self.total_amount}个纠缠之缘, 约等于{(int(nearest_5_star[0]) + additional_fix - self.total_amount) * 160}原石"
-            elif nearest_5_star[2] not in self.permanentList:
+                guarantee_text += f"\n最近一次在第{nearest_5_star['order']}抽得到{nearest_5_star['name']}"
+                guarantee_text += f"\n将在第{int(nearest_5_star['order']) + additional_fix}抽之前必出当期UP"
+                guarantee_text += f"\n当前已经{self.total_amount}/{int(nearest_5_star['order']) + additional_fix}抽, 还差{int(nearest_5_star['order']) + additional_fix - self.total_amount}抽"
+                guarantee_text += f"\n预计最多需要{int(nearest_5_star['order']) + additional_fix - self.total_amount}个纠缠之缘, 约等于{(int(nearest_5_star['order']) + additional_fix - self.total_amount) * 160}原石"
+            elif nearest_5_star["name"] not in self.permanentList:
                 guarantee_text += "情况: 保底重置/等待小保底"
-                guarantee_text += f"\n最近一次在第{nearest_5_star[0]}抽得到{nearest_5_star[2]}"
-                guarantee_text += f"\n(第{int(nearest_5_star[0]) + additional_fix}抽之前有50%的概率出当期UP，在第{int(nearest_5_star[0]) + 2 * additional_fix}抽之前必出当期UP)"
-                guarantee_text += f"\n小保底: 当前已经{self.total_amount}/{int(nearest_5_star[0]) + additional_fix}抽, 还差{int(nearest_5_star[0]) + additional_fix - self.total_amount}抽"
-                guarantee_text += f"\n预计最多需要{int(nearest_5_star[0]) + additional_fix - self.total_amount}个纠缠之缘, 约等于{(int(nearest_5_star[0]) + additional_fix - self.total_amount) * 160}原石"
-                guarantee_text += f"\n大保底: 当前已经{self.total_amount}/{int(nearest_5_star[0]) + 2 * additional_fix}抽, 还差{int(nearest_5_star[0]) + 2 * additional_fix - self.total_amount}抽"
-                guarantee_text += f"\n预计最多需要{int(nearest_5_star[0]) + 2 * additional_fix - self.total_amount}个纠缠之缘, 约等于{(int(nearest_5_star[0]) + 2 * additional_fix - self.total_amount) * 160}原石"
+                guarantee_text += f"\n最近一次在第{nearest_5_star['order']}抽得到{nearest_5_star['name']}"
+                guarantee_text += f"\n(第{int(nearest_5_star['order']) + additional_fix}抽之前有50%的概率出当期UP，在第{int(nearest_5_star['order']) + 2 * additional_fix}抽之前必出当期UP)"
+                guarantee_text += f"\n小保底: 当前已经{self.total_amount}/{int(nearest_5_star['order']) + additional_fix}抽, 还差{int(nearest_5_star['order']) + additional_fix - self.total_amount}抽"
+                guarantee_text += f"\n预计最多需要{int(nearest_5_star['order']) + additional_fix - self.total_amount}个纠缠之缘, 约等于{(int(nearest_5_star['order']) + additional_fix - self.total_amount) * 160}原石"
+                guarantee_text += f"\n大保底: 当前已经{self.total_amount}/{int(nearest_5_star['order']) + 2 * additional_fix}抽, 还差{int(nearest_5_star['order']) + 2 * additional_fix - self.total_amount}抽"
+                guarantee_text += f"\n预计最多需要{int(nearest_5_star['order']) + 2 * additional_fix - self.total_amount}个纠缠之缘, 约等于{(int(nearest_5_star['order']) + 2 * additional_fix - self.total_amount) * 160}原石"
         elif is_permanent_pool:
-            guarantee_text += f"最近一次在第{nearest_5_star[0]}抽得到{nearest_5_star[2]}"
-            guarantee_text += f"\n将在第{int(nearest_5_star[0]) + 90}抽之前必出五星"
-            guarantee_text += f"\n当前已经{self.total_amount}/{int(nearest_5_star[0]) + additional_fix}抽, 还差{int(nearest_5_star[0]) + additional_fix - self.total_amount}抽"
-            guarantee_text += f"\n预计最多需要{int(nearest_5_star[0]) + additional_fix - self.total_amount}个相遇之缘, 约等于{(int(nearest_5_star[0]) + additional_fix - self.total_amount) * 160}原石"
+            guarantee_text += f"最近一次在第{nearest_5_star['order']}抽得到{nearest_5_star['name']}"
+            guarantee_text += f"\n将在第{int(nearest_5_star['order']) + 90}抽之前必出五星"
+            guarantee_text += f"\n当前已经{self.total_amount}/{int(nearest_5_star['order']) + additional_fix}抽, 还差{int(nearest_5_star['order']) + additional_fix - self.total_amount}抽"
+            guarantee_text += f"\n预计最多需要{int(nearest_5_star['order']) + additional_fix - self.total_amount}个相遇之缘, 约等于{(int(nearest_5_star['order']) + additional_fix - self.total_amount) * 160}原石"
         elif not nearest_5_star:
             guarantee_text = "暂无数据"
         return guarantee_text

@@ -20,7 +20,6 @@ def getDefaultGameDataPath():
 
 
 def extractAPI(url):
-    print(url)
     res = re.findall("https://.+?webview_gacha.+?game_biz=hk4e_(?:cn|global)", url)
     if res:
         return res[-1]

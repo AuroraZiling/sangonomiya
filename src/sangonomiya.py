@@ -1,6 +1,5 @@
 # coding:utf-8
 import logging
-import os
 import sys
 import ctypes
 import time
@@ -83,6 +82,8 @@ class Window(FramelessWindow):
     def __init__(self):
         super().__init__()
 
+        self.initMetaData()
+
         file_verification.create_directory(f"{utils.workingDir}/logs")
 
         self.setTitleBar(CustomTitleBar(self))
@@ -110,8 +111,6 @@ class Window(FramelessWindow):
         self.mainStackWidget.addWidget(self.mainSettingInterface)
         self.mainStackWidget.addWidget(self.mainAboutInterface)
 
-        self.initMetaData()
-
         self.initLayout()
         self.initNavigation()
         self.initWindow()
@@ -119,23 +118,11 @@ class Window(FramelessWindow):
         log.infoWrite("[Main] UI Initialized")
 
     def initMetaData(self):
-        if not metadata_utils.readMetaData("character"):
-            characterData = character_list.categoryCharacterInStar()
-            metadata_utils.updateMetaData("character", characterData)
-            log.infoWrite("[MetaData] 角色元数据列表已更新")
-            InfoBar.success("成功", "角色元数据列表已更新", position=InfoBarPosition.BOTTOM_RIGHT, parent=self)
-
         if not metadata_utils.readMetaData("permanent"):
             characterData = character_list.getPermanentCharacter()
             metadata_utils.updateMetaData("permanent", characterData)
             log.infoWrite("[MetaData] 常驻角色元数据列表已更新")
             InfoBar.success("成功", "常驻角色元数据列表已更新", position=InfoBarPosition.BOTTOM_RIGHT, parent=self)
-
-        if not metadata_utils.readMetaData("weapon"):
-            weaponData = weapon_list.categoryWeaponInStar()
-            metadata_utils.updateMetaData("weapon", weaponData)
-            log.infoWrite("[MetaData] 武器元数据列表已更新")
-            InfoBar.success("成功", "武器元数据列表已更新", position=InfoBarPosition.BOTTOM_RIGHT, parent=self)
 
     def initLayout(self):
         self.mainHBoxLayout.setSpacing(0)
