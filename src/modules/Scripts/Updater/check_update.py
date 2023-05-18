@@ -1,3 +1,4 @@
+# coding:utf-8
 import requests
 from ...constant import UPDATE_URL
 

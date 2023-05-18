@@ -1,11 +1,7 @@
-import asyncio
-
 from PySide6.QtGui import QPixmap
-from PySide6 import QtGui, QtWidgets
 from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
 
-from qfluentwidgets import HyperlinkCard, isDarkTheme, TextEdit, ComboBox
-from qfluentwidgets import FluentIcon
+from qfluentwidgets import TextEdit, ComboBox
 
 from .ViewFunctions.accountFunctions import AccountGetInfoThread
 from ..Core.GachaReport import gacha_report_read

@@ -3,7 +3,7 @@ import pickle
 import time
 
 from ...Scripts.Utils.config_utils import ConfigUtils
-from ...constant import UIGF_VERSION, UIGF_VERSION_EXPORT
+from ...constant import UIGF_VERSION_EXPORT
 from ...Scripts.Utils.metadata_utils import readMetaData
 
 utils = ConfigUtils()

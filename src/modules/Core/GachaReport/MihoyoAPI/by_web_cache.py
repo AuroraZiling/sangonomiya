@@ -1,5 +1,5 @@
 from pathlib import Path
-from urllib import parse
+import os
 from win32api import GetTempFileName, GetTempPath, CopyFile
 
 from ....Scripts.Utils.tools import Tools
@@ -12,13 +12,14 @@ def getURL(gameDataPath):
     url = None
     webCacheData = Path(gameDataPath) / "webCaches/Cache/Cache_Data/data_2"
     webCacheDataTmp = Path(GetTempFileName(GetTempPath(), f"webCacheData", 0)[0])
+    if not os.path.exists(str(webCacheData)):
+        return None
     CopyFile(str(webCacheData), str(webCacheDataTmp))
     results = [extractAPI(result) for result in [result.split(b"\x00")[0].decode(errors="ignore") for result in webCacheDataTmp.read_bytes().split(b"1/0/")]]
     results = [result for result in results if result]
 
     if results:
-        timestamp_list = [int(dict(parse.parse_qsl(parse.urlparse(result).query)).get("timestamp", 0)) for result in results]
-        url = results[timestamp_list.index(max(timestamp_list))]
+        url = results[-1]
 
     if webCacheDataTmp.is_file():
         webCacheDataTmp.unlink()

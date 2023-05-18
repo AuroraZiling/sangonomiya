@@ -28,7 +28,10 @@ def extractAPI(url):
 
 
 def convertAPI(url):
-    return "https://hk4e-api.mihoyo.com/event/gacha_info/api/getGachaLog?" + url.split("?")[1]
+    if url:
+        return "https://hk4e-api.mihoyo.com/event/gacha_info/api/getGachaLog?" + url.split("?")[1]
+    else:
+        return None
 
 
 def updateAPI(url, gachaType, size, page, end_id):

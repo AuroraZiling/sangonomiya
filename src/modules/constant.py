@@ -39,3 +39,17 @@ UPDATE_URL = "https://api.github.com/repos/AuroraZiling/sangonomiya/releases"
 
 FONT_MAPPING = ["TeyvatNeue-Regular-1.002.otf", "InazumaNeue-Regular-1.000.otf", "SumeruNeue-Regular-0.007.otf", "DeshretNeue-Regular-1.002.otf", "KhaenriahNeue-Regular-2.000.otf", "KhaenriahNeue-Chasm-2.000.otf"]
 FONT_NAME_MAPPING = ["Teyvat Neue", "Inazuma Neue", "Sumeru Neue", "Deshret Neue", "Khaenriah Neue", "Khaenriah Neue Chasm"]
+
+GITHUB_RELEASE_URL = "https://api.github.com/repos/AuroraZiling/sangonomiya/releases/latest"
+
+UPDATE_SCRIPT_MODEL = """
+echo "DON'T CLOSE THIS WINDOW"
+powershell -command \"Start-Sleep -s 3\"
+powershell -command \"Get-childitem -Path .. -exclude *.json,*.zip,*.bat,temp,data -Recurse | Remove-Item -Force -Recurse\"
+powershell -command \"Expand-Archive -Path .\\{filename} -DestinationPath ..\\ -Force\"
+powershell -command \"Remove-Item -Path .\\{filename}\"
+cd ../.
+start .\\"Sangonomiya.exe\"
+powershell -command \"Remove-Item -Path .\\temp\\update.bat\"
+exit
+"""

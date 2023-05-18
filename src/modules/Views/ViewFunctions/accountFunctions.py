@@ -8,12 +8,12 @@ from ...Scripts.Utils import downloader
 from ...Scripts.Utils.tools import Tools
 
 utils = Tools()
-client = EnkaNetworkAPI(lang="chs")
+#client = EnkaNetworkAPI(lang="chs")
 uid = ""
-result = {"nickname": "正在获取...", "level": "正在获取...",
-          "icon_url": "正在获取...", "signature": "正在获取...",
-          "achievement": "正在获取...",
-          "abyss_floor": "正在获取..."}
+result = {"nickname": "暂不可用", "level": "暂不可用",
+          "icon_url": "正在获取...", "signature": "暂不可用",
+          "achievement": "暂不可用",
+          "abyss_floor": "暂不可用"}
 
 
 class AccountGetInfoThread(QThread):
@@ -26,12 +26,13 @@ class AccountGetInfoThread(QThread):
 
     def run(self):
         self.trigger.emit(result)
-        asyncio.run(connectENKA())
-        if not os.path.exists(f"{utils.workingDir}/cache/{result['icon_url'].split('/')[-1]}"):
-            downloader.downloadFromImage(result["icon_url"], f"{utils.workingDir}/cache/", result["icon_url"].split('/')[-1])
-        self.trigger.emit(result)
+        #asyncio.run(connectENKA())
+        #if not os.path.exists(f"{utils.workingDir}/cache/{result['icon_url'].split('/')[-1]}"):
+        #    downloader.downloadFromImage(result["icon_url"], f"{utils.workingDir}/cache/", result["icon_url"].split('/')[-1])
+        #self.trigger.emit(result)
 
 
+'''
 async def connectENKA():
     async with client:
         global result
@@ -39,3 +40,4 @@ async def connectENKA():
         result = {"nickname": data.player.nickname, "level": data.player.level,
                   "icon_url": data.player.avatar.icon.url, "signature": data.player.signature,
                   "achievement": data.player.achievement, "abyss_floor": f"{data.player.abyss_floor}-{data.player.abyss_room}"}
+'''

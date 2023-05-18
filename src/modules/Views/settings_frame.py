@@ -1,22 +1,22 @@
 # coding:utf-8
-import webbrowser
-
 from PySide6 import QtGui
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 
-from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea, ExpandLayout, isDarkTheme, Dialog,
+from qfluentwidgets import (SettingCardGroup, PushSettingCard, ScrollArea, ExpandLayout, Dialog,
                             OptionsSettingCard,
-                            SwitchSettingCard, setTheme, InfoBar, MessageBox)
+                            SwitchSettingCard, setTheme, InfoBar, StateToolTip)
 from qfluentwidgets import FluentIcon, InfoBarPosition, qconfig
 
 from .ViewConfigs.config import cfg
+from .ViewFunctions.settingsFunctions import UpdateThread, IsNeedUpdateThread
 from ..Core.GachaReport import gacha_report_read
 from ..Core.GachaReport.gacha_report_utils import getDefaultGameDataPath
 from ..Scripts.UI import custom_icon, custom_dialog
 from ..Scripts.UI.style_sheet import StyleSheet
 from ..Scripts.Utils import config_utils, log_recorder as log
-from ..Scripts.Updater import check_update
+from ..Scripts.Utils.updater import installUpdate
+from ..Scripts.UI.custom_dialog import ComboboxDialog
 
 utils = config_utils.ConfigUtils()
 
@@ -31,6 +31,11 @@ class SettingWidget(ScrollArea):
         self.settingLabel = QLabel("设置", self)
 
         self.configPath = utils.configPath
+        self.newVersion = None
+        self.updateThread = None
+        self.updateThreadStateTooltip = None
+        self.isNeedUpdateThread = None
+        self.isNeedUpdateThreadStateTooltip = None
 
         # Game
 
@@ -258,18 +263,57 @@ class SettingWidget(ScrollArea):
         self.defaultCacheDeleteCard.titleLabel.setText(
             f"清空缓存文件 (约 {utils.getDirSize(utils.workingDir + '/cache')} MB)")
 
-    def __updateCheckCardClicked(self):
-        latestVersion = check_update.findLatestVersion()
-        if check_update.compareVersion(utils.appVersion, latestVersion):
-            w = MessageBox("发现新版本，是否前往下载页", latestVersion, self)
-            if w.exec():
-                if "Dev" in utils.appVersion:
-                    webbrowser.open("https://sangonomiya.coding.net/public-artifacts/sangonomiya/pre-release/packages")
-                else:
-                    webbrowser.open("https://sangonomiya.coding.net/public-artifacts/sangonomiya/release/packages")
+    def __updateThreadStateTooltipClosed(self):
+        self.updateThread.exit(0)
+        self.updateCheckCard.setEnabled(True)
+        self.updateThreadStatusChanged(1, "Operation cancelled")
+        InfoBar.warning("操作终止", "更新已停止",
+                        position=InfoBarPosition.BOTTOM, parent=self)
 
-        else:
-            MessageBox("更新", "暂无可用更新", self).exec()
+    def updateThreadStatusChanged(self, status, content):
+        if self.updateThreadStateTooltip:
+            self.updateThreadStateTooltip.setContent(content)
+            if status:
+                self.updateCheckCard.setEnabled(True)
+                self.updateThreadStateTooltip.setState(True)
+                if status == 2:
+                    installUpdate()
+                self.updateThreadStateTooltip = None
+
+    def __updateReturnSignal(self, msg):
+        if msg:
+            downloadWay = "Github Release" if "Github" in msg else "Coding Artifact"
+            self.updateCheckCard.setEnabled(False)
+            self.updateThread = UpdateThread(self.newVersion, downloadWay)
+            self.updateThreadStateTooltip = StateToolTip("正在更新", "下载更新中...", self)
+            self.updateThreadStateTooltip.closedSignal.connect(self.__updateThreadStateTooltipClosed)
+            self.updateThreadStateTooltip.move(5, 5)
+            self.updateThreadStateTooltip.show()
+            self.updateThread.start()
+            self.updateThread.trigger.connect(self.updateThreadStatusChanged)
+
+    def isNeedUpdateThreadStatusChanged(self, status, content):
+        if status == 1:
+            InfoBar.success("提示", content, InfoBarPosition.TOP_RIGHT, parent=self)
+        elif status == 2:
+            InfoBar.error("错误", content, InfoBarPosition.TOP_RIGHT, parent=self)
+        elif status == 0:
+            self.newVersion = content
+            self.isNeedUpdateThreadStateTooltip.setState(True)
+            self.isNeedUpdateThreadStateTooltip = None
+            w = ComboboxDialog("更新", f"发现新版本: {self.newVersion['tag_name']}\n是否更新?",
+                               ["Coding Artifact (国内推荐)", "Github Release (国外推荐)"], self)
+            w.returnSignal.connect(self.__updateReturnSignal)
+            w.exec()
+
+    def __updateCheckCardClicked(self):
+        self.updateCheckCard.setEnabled(False)
+        self.isNeedUpdateThread = IsNeedUpdateThread(utils.appVersion)
+        self.isNeedUpdateThreadStateTooltip = StateToolTip("更新", "正在获取版本号...", self)
+        self.isNeedUpdateThreadStateTooltip.move(5, 5)
+        self.isNeedUpdateThreadStateTooltip.show()
+        self.isNeedUpdateThread.start()
+        self.isNeedUpdateThread.trigger.connect(self.isNeedUpdateThreadStatusChanged)
 
     def __connectSignalToSlot(self):
         cfg.appRestartSig.connect(lambda: InfoBar.warning("警告", self.tr(

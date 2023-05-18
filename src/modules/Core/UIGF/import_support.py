@@ -4,7 +4,7 @@ import pickle
 import time
 
 from ...Scripts.Utils.config_utils import ConfigUtils
-from ...constant import UIGF_DATA_MODEL, UIGF_VERSION
+from ...constant import UIGF_DATA_MODEL
 
 utils = ConfigUtils()
 
