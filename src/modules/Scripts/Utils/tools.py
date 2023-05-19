@@ -27,6 +27,15 @@ class Tools:
         self.license = self.__get_license()
         self.open_source_license = self.__get_open_source_license()
 
+        logFileName = "Sangonomiya " + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + ".log"
+        logging.basicConfig(
+            level=logging.DEBUG,
+            format='%(asctime)s - %(levelname)s - %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S',
+            filename=self.log_dir + "/" + logFileName,
+            filemode='w',
+            encoding="utf-8"
+        )
     @staticmethod
     def __get_working_dir() -> str:
         """Get the working directory of the program

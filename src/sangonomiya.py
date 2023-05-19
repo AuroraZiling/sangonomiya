@@ -78,17 +78,6 @@ class Window(FramelessWindow):
 
         self.initMetaData()
 
-        utils.create_directory(f"{utils.working_dir}/logs")
-        logFileName = "Sangonomiya " + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + ".log"
-        logging.basicConfig(
-            level=logging.DEBUG,
-            format='%(asctime)s - %(levelname)s - %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S',
-            filename=utils.log_dir + "/" + logFileName,
-            filemode='w',
-            encoding="utf-8"
-        )
-
         self.setTitleBar(CustomTitleBar(self))
         self.setWindowFlags(Qt.WindowType.WindowMinimizeButtonHint | Qt.WindowType.MSWindowsFixedSizeDialogHint)
 
