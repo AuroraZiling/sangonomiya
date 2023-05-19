@@ -1,3 +1,5 @@
+import logging
+
 from PySide6 import QtGui
 from PySide6.QtCharts import QChartView, QChart
 from PySide6.QtCore import Qt, QModelIndex
@@ -8,7 +10,8 @@ from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QAbstrac
 from qfluentwidgets import DropDownPushButton
 from qfluentwidgets import FluentIcon, RoundMenu, TableWidget, TextEdit, MessageBox, InfoBarPosition, ComboBox, \
     Action, InfoBar, StateToolTip, TableItemDelegate, InfoBarIcon, isDarkTheme
-from .ViewConfigs.config import cfg
+from ..config import cfg
+from ..Scripts.Utils import tools
 from ..Core.GachaReport import gacha_report_read
 from ..Core.GachaReport.Analysis import table_completion, analysis
 from ..Core.GachaReport.MihoyoAPI import by_web_cache
@@ -16,10 +19,9 @@ from ..Core.GachaReport.gacha_report_thread import GachaReportThread
 from ..Core.GachaReport.gacha_report_utils import convertAPI
 from ..Scripts.UI.custom_dialog import URLDialog
 from ..Scripts.UI.style_sheet import StyleSheet
-from ..Scripts.Utils import config_utils, log_recorder as log
 from ..constant import GACHATYPE
 
-utils = config_utils.ConfigUtils()
+utils = tools.Tools()
 
 rowColorMapping = {}
 
@@ -100,7 +102,7 @@ class GachaReportWidget(QFrame):
         self.baseVBox.addLayout(self.headerHBox)
         self.baseVBox.addLayout(self.bottomHBox)
 
-        log.infoWrite("[GachaReport] UI Initialized")
+        logging.info("[GachaReport] UI Initialized")
 
         self.setObjectName("GachaReportFrame")
         StyleSheet.GACHA_REPORT_FRAME.apply(self)
@@ -216,7 +218,7 @@ class GachaReportWidget(QFrame):
         self.bottomRightGraphView.setBackgroundBrush(QColor(37, 37, 37) if isDarkTheme() else QColor(255, 255, 255))
 
     def initFrame(self):
-        self.headerLeftGachaReportTitleLabel.setFont(utils.getFont(18))
+        self.headerLeftGachaReportTitleLabel.setFont(utils.get_font(18))
         self.headerRightGachaTypeCombobox.setFixedWidth(160)
         self.headerRightGachaTypeCombobox.addItems(["角色活动祈愿", "武器祈愿", "常驻祈愿"])
         self.headerRightGachaTypeCombobox.setEnabled(False)
@@ -240,16 +242,16 @@ class GachaReportWidget(QFrame):
         self.bottomLeftGachaTable.setHorizontalHeaderLabels(
             ["序号", "类型", "名称", "获取时间", "十连/单抽", "保底内"])
 
-        self.bottomRightBasicLabel.setFont(utils.getFont(14))
-        self.bottomRightBasicTotalLabel.setFont(utils.getFont(12))
-        self.bottomRightBasicLevel5TotalLabel.setFont(utils.getFont(10))
-        self.bottomRightBasicLevel4TotalLabel.setFont(utils.getFont(10))
-        self.bottomRightBasicLevel3TotalLabel.setFont(utils.getFont(10))
+        self.bottomRightBasicLabel.setFont(utils.get_font(14))
+        self.bottomRightBasicTotalLabel.setFont(utils.get_font(12))
+        self.bottomRightBasicLevel5TotalLabel.setFont(utils.get_font(10))
+        self.bottomRightBasicLevel4TotalLabel.setFont(utils.get_font(10))
+        self.bottomRightBasicLevel3TotalLabel.setFont(utils.get_font(10))
         self.bottomRightBasicLevel5TotalTextEdit.setReadOnly(True)
 
-        self.bottomRightAnalysisLabel.setFont(utils.getFont(14))
-        self.bottomRightAnalysisGuaranteeLabel.setFont(utils.getFont(10))
-        self.bottomRightGraphLabel.setFont(utils.getFont(14))
+        self.bottomRightAnalysisLabel.setFont(utils.get_font(14))
+        self.bottomRightAnalysisGuaranteeLabel.setFont(utils.get_font(10))
+        self.bottomRightGraphLabel.setFont(utils.get_font(14))
         self.bottomRightGraphView.setFixedHeight(150)
         self.bottomRightGraphView.setRenderHint(QPainter.Antialiasing)
 
@@ -264,7 +266,7 @@ class GachaReportWidget(QFrame):
                 self.bottomLeftGachaTable.item(index, eachColumn).setText(columnModel[eachColumn])
                 rowColorMapping.update({index: QColor(columnModel[6])})
         self.bottomLeftGachaTable.setItemDelegate(CustomTableItemDelegate(self.bottomLeftGachaTable))
-        log.infoWrite(f"[GachaReport] Gacha table updated")
+        logging.info(f"[GachaReport] Gacha table updated")
 
     def analysisUpdateData(self, currentData):
         analyzer = analysis.Analysis(currentData)
@@ -280,7 +282,7 @@ class GachaReportWidget(QFrame):
         self.bottomRightGraphView.setChart(analyzer.get_pie_chart())
 
     def __headerRightGachaTypeComboboxChanged(self):
-        log.infoWrite(f"[GachaReport] Gacha type selection changed")
+        logging.info(f"[GachaReport] Gacha type selection changed")
         if self.headerRightGachaTypeCombobox.currentText() == "武器祈愿":
             InfoBar(
                 icon=InfoBarIcon.INFORMATION,
@@ -306,7 +308,7 @@ class GachaReportWidget(QFrame):
         currentUID = self.headerRightUIDSelectCombobox.currentText()
         UIDList = gacha_report_read.getUIDList()
         if currentUID and currentUID in UIDList:
-            log.infoWrite(f"[GachaReport] UID Selected: {currentUID}")
+            logging.info(f"[GachaReport] UID Selected: {currentUID}")
             self.headerRightGachaTypeCombobox.setEnabled(True)
             tableOriginalData = gacha_report_read.convertDataToTable(gacha_report_read.getDataFromUID(currentUID))
 
@@ -331,4 +333,4 @@ class GachaReportWidget(QFrame):
         else:
             self.headerRightUIDSelectCombobox.setCurrentIndex(0)
             self.__headerRightUIDSelectComboboxChanged()
-        log.infoWrite("[GachaReport] Data initialized")
+        logging.info("[GachaReport] Data initialized")

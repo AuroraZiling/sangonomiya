@@ -1,5 +1,6 @@
 # coding:utf-8
 import json
+import logging
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
@@ -11,12 +12,11 @@ from qfluentwidgets import FluentIcon
 from ..Core.GachaReport import gacha_report_read
 from ..Scripts.UI import custom_msgBox, custom_dialog
 from ..Scripts.UI.style_sheet import StyleSheet
-from ..Scripts.Utils import config_utils, log_recorder as log
+from ..Scripts.Utils import tools
 from ..Core.UIGF.import_support import ImportSupport
 from ..Core.UIGF.export_support import ExportSupport
-from ..Scripts.Utils.metadata_utils import readMetaData
 
-utils = config_utils.ConfigUtils()
+utils = tools.Tools()
 
 
 class LinkWidget(ScrollArea):
@@ -29,7 +29,6 @@ class LinkWidget(ScrollArea):
         self.linkLabel = QLabel("UIGF 导入和导出", self)
 
         self.uigfStandard = "UIGF(Json) v2.2"
-        self.configPath = utils.configPath
 
         # Import
         self.importGroup = SettingCardGroup("导入", self.scrollWidget)
@@ -65,7 +64,7 @@ class LinkWidget(ScrollArea):
         self.setObjectName("LinkFrame")
         self.__initWidget()
 
-        log.infoWrite(f"[Link] UI Initialized")
+        logging.info(f"[Link] UI Initialized")
 
     def __initWidget(self):
         self.resize(1000, 800)
@@ -112,9 +111,9 @@ class LinkWidget(ScrollArea):
 
     def __importCardClicked(self):
         filePath = QFileDialog.getOpenFileName(self, "打开 UIGF(Json) 文件", "./", "UIGF(json) File (*.json)")[0]
-        log.infoWrite(f"[Link][Import] Get UIGF File: {filePath}")
-        if utils.jsonValidator(filePath, "uigf"):
-            log.infoWrite(f"[Sangonomiya][Link] UIGF Import File Path: {filePath}")
+        logging.info(f"[Link][Import] Get UIGF File: {filePath}")
+        if utils.json_validator(filePath, "uigf"):
+            logging.info(f"[Sangonomiya][Link] UIGF Import File Path: {filePath}")
             importFile = json.loads(open(filePath, 'r', encoding="utf-8").read())
             tmp_uid = importFile["info"]["uid"]
             tmp_language = importFile["info"]["lang"]
@@ -134,7 +133,7 @@ UIGF(Json)版本: {tmp_uigf_version}'''
                 importSupport.UIGFSave(importFile)
                 InfoBar.success("成功", f"档案 {tmp_uid} 已成功导入", InfoBarPosition.TOP_RIGHT, parent=self.window())
 
-                log.infoWrite(f"[Link][Import] Imported ({tmp_uid} from {tmp_export_application})")
+                logging.info(f"[Link][Import] Imported ({tmp_uid} from {tmp_export_application})")
 
     def __exportCardReturnSignal(self, uid):
         filePath = QFileDialog.getSaveFileName(self, "保存 UIGF(Json) 文件", f"./{uid}_export_data.json",
@@ -143,15 +142,15 @@ UIGF(Json)版本: {tmp_uigf_version}'''
             exportSupport = ExportSupport(uid, self.uigfStandard)
             exportSupport.UIGFSave(filePath)
             InfoBar.success("成功", f"档案 {uid} 已成功导出", InfoBarPosition.TOP_RIGHT, parent=self.window())
-            log.infoWrite(f"[Link][Export] Exported ({uid} to {filePath})")
+            logging.info(f"[Link][Export] Exported ({uid} to {filePath})")
 
     def __exportCardStandardReturnSignal(self, choice):
         self.uigfStandard = choice
-        if choice == "UIGF(Json) v2.3" and not readMetaData("uigf_dict"):
+        if choice == "UIGF(Json) v2.3" and not utils.read_metadata("uigf_dict"):
             self.uigfStandard = "unavailable"
             InfoBar.error("失败", "UIGF API - Dict 不存在，请更新UIGF API元数据", InfoBarPosition.TOP_RIGHT,
                           parent=self.window())
-            log.errorWrite(f"[Link][Export] Export Failed. Possible Reason: configs/metadata/uigf_dict.json not found")
+            logging.error(f"[Link][Export] Export Failed. Possible Reason: configs/metadata/uigf_dict.json not found")
 
     def __exportCardClicked(self):
         w = custom_dialog.ComboboxDialog("导出", "选择UIGF导出标准", ["UIGF(Json) v2.2", "UIGF(Json) v2.3"], self)

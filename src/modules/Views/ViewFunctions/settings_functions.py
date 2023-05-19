@@ -1,13 +1,35 @@
 # coding:utf-8
+import logging
 import os
 import time
 
 import requests
 from PySide6.QtCore import Signal, QThread
-from ...Scripts.Utils import updater, config_utils
+from ...Scripts.Utils import updater, tools
 from ...Scripts.Utils.updater import cleanUpdateZip
 
-utils = config_utils.ConfigUtils()
+utils = tools.Tools()
+
+
+def delete_all_log():
+    logDir = os.listdir(f"{utils.working_dir}/cache")
+    for eachLogFile in logDir:
+        try:
+            os.remove(f"{utils.working_dir}/cache/{eachLogFile}")
+        except PermissionError:
+            continue
+    logging.info("[Settings] All log files deleted")
+
+
+def delete_all_cache():
+    cacheDir = os.listdir(f"{utils.working_dir}/cache")
+    for eachCacheFile in cacheDir:
+        try:
+            os.remove(f"{utils.working_dir}/cache/{eachCacheFile}")
+        except PermissionError:
+            continue
+    logging.info("[Settings] All cache files deleted")
+
 
 class UpdateThread(QThread):
     trigger = Signal(int, str)
@@ -55,7 +77,7 @@ class IsNeedUpdateThread(QThread):
 
     def run(self):
         cleanUpdateZip()
-        self.newVersion = updater.isNeedUpdate(utils.appVersion)
+        self.newVersion = updater.isNeedUpdate(utils.app_version)
         if self.newVersion is None:
             self.trigger.emit(1, "Sangonomiya 无需更新")
             return

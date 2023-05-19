@@ -27,8 +27,8 @@ class AccountGetInfoThread(QThread):
     def run(self):
         self.trigger.emit(result)
         #asyncio.run(connectENKA())
-        #if not os.path.exists(f"{utils.workingDir}/cache/{result['icon_url'].split('/')[-1]}"):
-        #    downloader.downloadFromImage(result["icon_url"], f"{utils.workingDir}/cache/", result["icon_url"].split('/')[-1])
+        #if not os.path.exists(f"{utils.working_dir}/cache/{result['icon_url'].split('/')[-1]}"):
+        #    downloader.downloadFromImage(result["icon_url"], f"{utils.working_dir}/cache/", result["icon_url"].split('/')[-1])
         #self.trigger.emit(result)
 
 

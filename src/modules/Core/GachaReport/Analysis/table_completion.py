@@ -1,9 +1,11 @@
-from ....Scripts.Utils.metadata_utils import readMetaData
+from ....Scripts.Utils import tools
 from ....constant import COLOR_MAPPING
+
+utils = tools.Tools()
 
 
 def originalTableDataToComplete(data):
-    permanentList = readMetaData("permanent")
+    permanentList = utils.read_metadata("permanent")
     for eachData in ["200", "301", "302"]:
         currentData = data[eachData]
         guaranteeCounter = 0

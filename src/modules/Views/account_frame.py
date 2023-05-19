@@ -1,15 +1,17 @@
+import logging
+
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
 
 from qfluentwidgets import TextEdit, ComboBox
 
-from .ViewFunctions.accountFunctions import AccountGetInfoThread
+from .ViewFunctions.account_functions import AccountGetInfoThread
 from ..Core.GachaReport import gacha_report_read
-from .ViewConfigs.config import cfg
+from src.modules.config import cfg
 from ..Scripts.UI.style_sheet import StyleSheet
-from ..Scripts.Utils import config_utils, log_recorder as log
+from ..Scripts.Utils import tools
 
-utils = config_utils.ConfigUtils()
+utils = tools.Tools()
 
 
 class AccountWidget(QFrame):
@@ -48,7 +50,7 @@ class AccountWidget(QFrame):
         self.setObjectName("AccountFrame")
         self.initFrame()
         StyleSheet.ACCOUNT_FRAME.apply(self)
-        log.infoWrite("[Account] UI initialized")
+        logging.info("[Account] UI initialized")
 
     def initFrame(self):
         self.headerLeftTitleLabel.setObjectName("headerLeftTitleLabel")
@@ -62,13 +64,13 @@ class AccountWidget(QFrame):
 
         self.detailTitleLabel.setObjectName("detailTitleLabel")
         self.detailTextEdit.setReadOnly(True)
-        self.detailTextEdit.setFont(utils.getFont(14))
+        self.detailTextEdit.setFont(utils.get_font(14))
 
     def __accountGetInfoSignal(self, result):
         if result["icon_url"] == "正在获取...":
-            self.basicAvatarLabel.setPixmap(QPixmap(f"{utils.workingDir}/assets/unknownAvatar.png"))
+            self.basicAvatarLabel.setPixmap(QPixmap(f"{utils.working_dir}/assets/unknownAvatar.png"))
         else:
-            self.basicAvatarLabel.setPixmap(QPixmap(f"{utils.workingDir}/cache/{result['icon_url'].split('/')[-1]}"))
+            self.basicAvatarLabel.setPixmap(QPixmap(f"{utils.working_dir}/cache/{result['icon_url'].split('/')[-1]}"))
         self.basicNameLabel.setText(f"{result['nickname']} ({result['level']})")
         self.basicSignatureLabel.setText(result["signature"])
         text = f'''成就数: {result['achievement']}
@@ -80,7 +82,7 @@ class AccountWidget(QFrame):
         self.accountGetInfoThread = AccountGetInfoThread(self.headerRightUIDComboBox.currentText())
         self.accountGetInfoThread.start()
         self.accountGetInfoThread.trigger.connect(self.__accountGetInfoSignal)
-        log.infoWrite("[Account] Basic Info Get")
+        logging.info("[Account] Basic Info Get")
 
     def showEvent(self, event):
         self.headerRightUIDComboBox.clear()
@@ -92,5 +94,3 @@ class AccountWidget(QFrame):
         else:
             self.headerRightUIDComboBox.setCurrentIndex(0)
             self.__headerRightUIDComboBoxChanged()
-
-
