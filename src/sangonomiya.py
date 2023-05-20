@@ -5,10 +5,9 @@ import ctypes
 import time
 import traceback
 import datetime
-
-import Tools.demo.markov
 import win32api
 import win32con
+
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QStackedWidget, QHBoxLayout

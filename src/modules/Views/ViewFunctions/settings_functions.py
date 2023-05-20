@@ -12,13 +12,13 @@ utils = tools.Tools()
 
 
 def delete_all_log():
-    logDir = os.listdir(f"{utils.working_dir}/cache")
+    logDir = os.listdir(f"{utils.working_dir}/logs")
     for eachLogFile in logDir:
         try:
-            os.remove(f"{utils.working_dir}/cache/{eachLogFile}")
+            os.remove(f"{utils.working_dir}/logs/{eachLogFile}")
         except PermissionError:
             continue
-    logging.info("[Settings] All log files deleted")
+    logging.info("[Settings] All logs deleted")
 
 
 def delete_all_cache():
