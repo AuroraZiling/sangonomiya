@@ -64,11 +64,11 @@ class AboutWidget(QFrame):
         self.aboutFeedbackVBox = QVBoxLayout(self)
         self.aboutFeedbackLabel = QLabel("反馈", self)
         self.aboutFeedbackDocumentHyperlink = HyperlinkCard(
-            url='https://auroraziling.github.io/sangonomiya/',
+            url='https://theimaginary.netlify.app/sangonomiya/',
             text="访问",
             parent=self,
             icon=FluentIcon.GLOBE,
-            title="Sangonomiya 文档"
+            title="The Imaginary 文档"
         )
         self.aboutFeedbackGithubIssueHyperlink = HyperlinkCard(
             url='https://github.com/AuroraZiling/sangonomiya/issues',

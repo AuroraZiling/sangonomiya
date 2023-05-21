@@ -14,9 +14,6 @@ utils = Tools()
 
 
 class URLDialog(MaskDialogBase, Ui_MessageBox):
-    """ Message box """
-
-    returnSignal = Signal(str)
     cancelSignal = Signal()
 
     def __init__(self, title: str, content: str, parent=None):
@@ -45,10 +42,11 @@ class URLDialog(MaskDialogBase, Ui_MessageBox):
         clipboardText = gacha_report_utils.extractAPI(utils.get_clipboard_text())
         if clipboardText:
             self.textEditWidget.setText(clipboardText)
+        else:
+            self.textEditWidget.setPlaceholderText("剪贴板中没有抽卡记录")
 
     def __yesButtonClicked(self):
         self.accept()
-        self.returnSignal.emit(self.textEditWidget.toPlainText())
 
 
 class ComboboxDialog(MaskDialogBase, Ui_MessageBox):
