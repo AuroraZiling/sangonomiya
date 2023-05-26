@@ -19,7 +19,8 @@ def getDataFromUID(uid):
 
 
 def sortDataByTime(data):
-    return [i for i in sorted(data, key=lambda unit: unit["timestamp"])][::-1]
+    opt = [i for i in sorted(data, key=lambda unit: unit["id"])][::-1]
+    return opt
 
 
 def convertDataToTable(data):
@@ -27,6 +28,7 @@ def convertDataToTable(data):
     copied_categories = {"200": [], "301": [], "302": []}
     for unit in data["list"]:
         eachUnit = {
+            "id": unit["id"],
             "item_type": unit["item_type"],
             "name": unit["name"],
             "time": unit["time"],
