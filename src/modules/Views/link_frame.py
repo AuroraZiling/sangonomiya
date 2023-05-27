@@ -121,19 +121,22 @@ class LinkWidget(ScrollArea):
             tmp_export_application = importFile["info"]["export_app"]
             tmp_application_version = importFile["info"]["export_app_version"]
             tmp_uigf_version = importFile["info"]["uigf_version"]
-            alertMessage = f'''UID: {tmp_uid}
+            if tmp_uigf_version == "v2.2" or (tmp_uigf_version == "v2.3" and utils.json_validator(filePath, "v2.3")):
+                alertMessage = f'''UID: {tmp_uid}
 语言: {tmp_language}
 导出时间: {tmp_export_time}  
 导出应用: {tmp_export_application}
 导出应用版本: {tmp_application_version}
 UIGF(Json)版本: {tmp_uigf_version}'''
-            w = custom_msgBox.TextEditMsgBox("验证", "请验证如下信息:", alertMessage, self)
-            if w.exec():
-                importSupport = ImportSupport(tmp_uid, tmp_language, tmp_export_time)
-                importSupport.UIGFSave(importFile)
-                InfoBar.success("成功", f"档案 {tmp_uid} 已成功导入", InfoBarPosition.TOP_RIGHT, parent=self.window())
+                w = custom_msgBox.TextEditMsgBox("验证", "请验证如下信息:", alertMessage, self)
+                if w.exec():
+                    importSupport = ImportSupport(tmp_uid, tmp_language, tmp_export_time)
+                    importSupport.UIGFSave(importFile)
+                    InfoBar.success("成功", f"档案 {tmp_uid} 已成功导入", InfoBarPosition.TOP_RIGHT, parent=self.window())
 
-                logging.info(f"[Link][Import] Imported ({tmp_uid} from {tmp_export_application})")
+                    logging.info(f"[Link][Import] Imported ({tmp_uid} from {tmp_export_application})")
+        else:
+            InfoBar.error("导入失败", "导入的文件不是有效的UIGF文件", InfoBarPosition.TOP_RIGHT, parent=self)
 
     def __exportCardReturnSignal(self, uid):
         filePath = QFileDialog.getSaveFileName(self, "保存 UIGF(Json) 文件", f"./{uid}_export_data.json",
