@@ -1,3 +1,4 @@
+import datetime
 import json
 import pathlib
 import pickle
@@ -50,7 +51,7 @@ class GachaReportThread(QThread):
                     return
         pathlib.Path(f"{utils.working_dir}/data/{self.uid}").mkdir(parents=True, exist_ok=True)
         UIGFExportJsonData["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        UIGFExportJsonData["info"]["export_timestamp"] = int(round(time.time() * 1000))
+        UIGFExportJsonData["info"]["export_timestamp"] = int(time.mktime(datetime.datetime.now().timetuple()))
         UIGFExportJsonData["info"]["export_app"] = "sangonomiya"
         UIGFExportJsonData["info"]["export_app_version"] = utils.app_version
         UIGFExportJsonData["info"]["uigf_version"] = UIGF_VERSION_EXPORT[UIGF_VERSION]

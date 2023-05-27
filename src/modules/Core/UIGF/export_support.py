@@ -1,3 +1,4 @@
+import datetime
 import json
 import pickle
 import time
@@ -21,7 +22,7 @@ class ExportSupport:
             for eachUnit in data["list"]:
                 eachUnit["item_id"] = uigfDict[eachUnit["name"]]
         data["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        data["info"]["export_timestamp"] = int(round(time.time() * 1000))
+        data["info"]["export_timestamp"] = int(time.mktime(datetime.datetime.now().timetuple()))
         data["info"]["export_app"] = "sangonomiya"
         data["info"]["export_app_version"] = utils.app_version
         data["info"]["uigf_version"] = UIGF_VERSION_EXPORT[self.uigfStandard]

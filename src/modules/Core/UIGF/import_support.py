@@ -1,3 +1,4 @@
+import datetime
 import json
 import pathlib
 import pickle
@@ -19,7 +20,7 @@ class ImportSupport:
 
     def UIGFSave(self, uigfDataList):
         self.UIGFImportJsonData["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        self.UIGFImportJsonData["info"]["export_timestamp"] = int(round(time.time() * 1000))
+        self.UIGFImportJsonData["info"]["export_timestamp"] = int(time.mktime(datetime.datetime.now().timetuple()))
         self.UIGFImportJsonData["info"]["export_app"] = "sangonomiya"
         self.UIGFImportJsonData["info"]["export_app_version"] = utils.app_version
         self.UIGFImportJsonData['info']['uid'] = self.uid
