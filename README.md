@@ -29,7 +29,7 @@
 
 ---
 
-**文档: [Sangonomiya Documents](https://sangonomiya.netlify.app/)** [![Netlify Status](https://api.netlify.com/api/v1/badges/41a6827f-3fdb-4026-a374-542a46df6461/deploy-status)](https://app.netlify.com/sites/sangonomiya/deploys)
+**文档: [Sangonomiya Documents](https://imaginary.quantasea.cn/sangonomiya/)**
 
 ## 下载 / Download
 
@@ -56,7 +56,7 @@ https://github.com/AuroraZiling/sangonomiya/releases
 
 ## 更新日志 / Changelog
 
-[Change Log](https://auroraziling.github.io/sangonomiya/dev_logs/r7/)
+[Change Log](https://imaginary.quantasea.cn/sangonomiya/logs/new.html)
 
 ## 状态 / Status
 
