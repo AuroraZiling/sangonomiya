@@ -1,3 +1,6 @@
+APP_VERSION = "8.0.9"
+UI_VERSION = "0.9.0"
+
 UIGF_GACHATYPE = {"100": "100", "200": "200", "301": "301", "400": "301", "302": "302"}
 UIGF_VERSION = ["UIGF(Json) v2.2", "UIGF(Json) v2.3"]
 UIGF_VERSION_EXPORT = {"UIGF(Json) v2.2": "v2.2", "UIGF(Json) v2.3": "v2.3"}
@@ -6,9 +9,9 @@ GACHATYPE = {"新手祈愿": "100", "常驻祈愿": "200", "角色活动祈愿":
 
 SOFTWARE_ANNOUNCEMENT_URL = "https://raw.staticdn.net/AuroraZiling/sangonomiya.Metadata/main/announcement.txt"
 
-CHARACTER_URL = "https://wiki.biligame.com/ys/%E8%A7%92%E8%89%B2%E7%AD%9B%E9%80%89"
+CHARACTER_URL = "https://api-static.mihoyo.com/common/blackboard/ys_obc/v1/home/content/list?app_sn=ys_obc&channel_id=25"
 PERMANENT_CHARACTER_URL = "https://raw.staticdn.net/AuroraZiling/sangonomiya.Metadata/main/metadata.json"
-WEAPON_URL = "https://wiki.biligame.com/ys/%E6%AD%A6%E5%99%A8%E5%9B%BE%E9%89%B4"
+WEAPON_URL = "https://api-static.mihoyo.com/common/blackboard/ys_obc/v1/home/content/list?app_sn=ys_obc&channel_id=5"
 UIGF_ITEM_ID_URL = "https://api.uigf.org/dict/genshin/{lang}.json"
 UIGF_MD5_URL = "https://api.uigf.org/dict/genshin/md5.json"
 
@@ -53,3 +56,7 @@ start .\\"Sangonomiya.exe\"
 powershell -command \"Remove-Item -Path .\\temp\\update.bat\"
 exit
 """
+
+UIGF_3_JSON_SCHEMA = {
+
+}
