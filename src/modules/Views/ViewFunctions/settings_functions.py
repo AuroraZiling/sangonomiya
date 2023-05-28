@@ -53,7 +53,7 @@ class UpdateThread(QThread):
                 return
             url = compressed_url
         else:
-            url = f"https://sangonomiya-generic.pkg.coding.net/asta/release/[{self.info['tag_name']}]Sangonomiya.zip"
+            url = f"https://sangonomiya-generic.pkg.coding.net/sangonomiya/release/[{self.info['tag_name']}]Sangonomiya.zip"
             file_name = f"Sangonomiya.zip"
         if not os.path.exists('temp'):
             os.mkdir('temp')

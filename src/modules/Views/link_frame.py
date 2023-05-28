@@ -67,7 +67,6 @@ class LinkWidget(ScrollArea):
         logging.info(f"[Link] UI Initialized")
 
     def __initWidget(self):
-        self.resize(1000, 800)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setViewportMargins(0, 120, 0, 20)
         self.setWidget(self.scrollWidget)

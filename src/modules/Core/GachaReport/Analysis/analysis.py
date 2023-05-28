@@ -8,6 +8,13 @@ from ....constant import COLOR_MAPPING
 
 utils = tools.Tools()
 
+
+def empty_chart():
+    chart = QChart()
+    chart.setBackgroundVisible(False)
+    return chart
+
+
 class Analysis:
     def __init__(self, data):
         self.data = data
@@ -21,6 +28,18 @@ class Analysis:
         if self.data:
             self.total_amount = int(self.data[0]["order"])
             self.star_5 = [f"[{unit['order']}]{unit['name']}" for unit in self.data if unit['rank_type'] == "5"]
+
+            self.star_5_cost = ""
+            if self.star_5:
+                counter = 1
+                opt = []
+                for unit in reversed(self.data):
+                    if unit['rank_type'] == "5":
+                        opt.append(f"[{counter}]{unit['name']}")
+                        counter = 0
+                    counter += 1
+                self.star_5_cost = ' '.join(reversed(opt))
+
             self.star_5_amount = len(self.star_5)
             self.star_4 = [f"[{unit['order']}]{unit['name']}" for unit in self.data if unit['rank_type'] == "4"]
             self.star_4_amount = len(self.star_4)
@@ -40,6 +59,9 @@ class Analysis:
 
     def get_star_5_to_string(self):
         return ' '.join(self.star_5)
+
+    def get_star_5_cost_to_string(self):
+        return self.star_5_cost if self.star_5 else ""
 
     def get_star_5_amount_to_string(self):
         return str(self.star_5_amount)
@@ -64,6 +86,18 @@ class Analysis:
             return f"{round(self.star_4_amount / self.total_amount, 2)}%"
         else:
             return "0%"
+
+    def get_star_5_average_to_string(self):
+        if self.star_5_amount:
+            return f"{round(self.total_amount / self.star_5_amount, 2)}"
+        else:
+            return "0.00%"
+
+    def get_star_4_average_to_string(self):
+        if self.star_4_amount:
+            return f"{round(self.total_amount / self.star_4_amount, 2)}"
+        else:
+            return "0.00%"
 
     def get_guarantee(self, data_type):
         guarantee_text = ""
@@ -101,7 +135,7 @@ class Analysis:
     def get_pie_chart(self):
 
         if not self.data:
-            return self.chart
+            return empty_chart()
 
         self.chartSeries.append('5星', 0)
         self.chartSeries.append('4星', 0)
@@ -123,12 +157,11 @@ class Analysis:
         self.chart3Star.setValue(self.star_3_amount)
 
         self.chart.addSeries(self.chartSeries)
-        self.chart.setPlotArea(QRectF(0, 0, 500, 150))
         self.chart.setBackgroundVisible(False)
         self.chart.createDefaultAxes()
 
         self.chart.legend().setVisible(True)
-        self.chart.legend().setGeometry(QRectF(0, 0, 100, 100))
+        self.chart.legend().setGeometry(QRectF(0, 0, 200, 200))
         self.chart.legend().setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.chart.legend().setLabelColor(QColor(255, 255, 255) if isDarkTheme() else QColor(0, 0, 0))
 

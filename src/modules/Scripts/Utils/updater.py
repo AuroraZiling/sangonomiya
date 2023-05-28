@@ -20,7 +20,7 @@ def cleanUpdateZip():
 def installUpdate():
     if not os.listdir(f"{utils.working_dir}/temp"):
         return
-    if os.path.exists(f"{utils.working_dir}/asta.py"):
+    if os.path.exists(f"{utils.working_dir}/sangonomiya.py"):
         return
     with open('temp/update.bat', 'w') as f:
         target = [i for i in os.listdir(f"{utils.working_dir}/temp") if not ".bat" in i]
